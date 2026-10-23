@@ -1,0 +1,43 @@
+{
+  "name": "alexender-dev",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Alexender's developer portfolio, services, creator hub, and coding playground.",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "next build --webpack",
+    "preview": "node scripts/preview.mjs",
+    "check": "tsc --noEmit",
+    "check:config": "node --import tsx scripts/check-config.ts",
+    "test": "node --import tsx scripts/run-tests.mjs",
+    "setup": "node scripts/setup.mjs",
+    "build:ready": "npm run check:config && npm run build",
+    "setup:editor": "node scripts/copy-monaco.mjs",
+    "postinstall": "node scripts/copy-monaco.mjs",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@fontsource-variable/dm-sans": "^5.2.0",
+    "@fontsource-variable/manrope": "^5.2.0",
+    "@monaco-editor/react": "4.7.0",
+    "lucide-react": "1.61.0",
+    "monaco-editor": "0.52.2",
+    "next": "16.4.2",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@next/env": "16.4.2",
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "postcss": "^8.5.0",
+    "tailwindcss": "4.3.3",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  }
+}

@@ -1,0 +1,8 @@
+[build]
+  command = "npm run build:ready"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Use Netlify's Next.js runtime for the code runner and contact redirect.

@@ -1,0 +1,60 @@
+/* The playground shares the portfolio palette and its one theme preference. */
+.detour-playground {
+  --pg-bg: var(--bg);
+  --pg-panel: var(--surface);
+  --pg-soft: var(--surface-soft);
+  --pg-fg: var(--text);
+  --pg-muted: var(--muted);
+  --pg-border: var(--line);
+  --pg-accent: var(--green);
+  --pg-accent-ink: #ffffff;
+  --pg-accent-soft: color-mix(in srgb, var(--green) 10%, var(--surface));
+  --pg-success: #26733c;
+  --pg-success-bg: #e7f4e9;
+  --pg-warning: #815112;
+  --pg-warning-bg: #fff3d9;
+  --pg-error: #ab3544;
+  --pg-error-bg: #ffedf0;
+}
+
+:root[data-theme="dark"] .detour-playground {
+  --pg-accent-ink: var(--accent-ink);
+  --pg-success: #a8d98a;
+  --pg-success-bg: #223923;
+  --pg-warning: #e8bf73;
+  --pg-warning-bg: #352a19;
+  --pg-error: #f4a1ad;
+  --pg-error-bg: #3a242b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .detour-playground {
+    --pg-accent-ink: var(--accent-ink);
+    --pg-success: #a8d98a;
+    --pg-success-bg: #223923;
+    --pg-warning: #e8bf73;
+    --pg-warning-bg: #352a19;
+    --pg-error: #f4a1ad;
+    --pg-error-bg: #3a242b;
+  }
+}
+
+/* Keep portfolio element resets from overriding Tailwind's local utilities. */
+.detour-playground :where(h1, h2, h3, p) {
+  margin-top: revert-layer;
+}
+.detour-playground :where(h1, h2, h3) {
+  font-size: revert-layer;
+  letter-spacing: revert-layer;
+}
+.detour-playground :where(button, input, select, textarea) {
+  font: revert-layer;
+}
+.detour-playground
+  :where(a, button, input, select, textarea, summary):focus-visible {
+  outline: 2px solid var(--pg-accent);
+  outline-offset: 3px;
+}
+.detour-playground :where(button, a, summary) {
+  -webkit-tap-highlight-color: transparent;
+}

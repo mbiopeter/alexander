@@ -1,0 +1,165 @@
+import Link from "next/link";
+import {
+  ArrowUpRight,
+  Braces,
+  Check,
+  Database,
+  ListTodo,
+  Terminal,
+} from "lucide-react";
+import type { Project } from "@/data/projects";
+
+function ProjectArtwork({ slug }: { slug: string }) {
+  if (slug === "focusboard") {
+    return (
+      <div
+        className="flex h-full flex-col gap-3 rounded-xl border border-[#203c1420] bg-white/85 p-5 text-[#263a28]"
+        aria-hidden="true"
+      >
+        <div className="mb-1 flex items-center justify-between">
+          <span className="flex items-center gap-2 text-xs font-semibold">
+            <ListTodo size={17} /> Your next good idea
+          </span>
+          <span className="text-[10px] text-[#63765e]">2 of 3 done</span>
+        </div>
+        {[
+          "Make a little plan",
+          "Build something useful",
+          "Share it with the world",
+        ].map((item, index) => (
+          <div
+            key={item}
+            className="flex items-center gap-3 rounded-lg border border-[#203c1410] bg-white p-3 text-[11px]"
+          >
+            <span
+              className={`flex h-4 w-4 items-center justify-center rounded border ${index < 2 ? "border-[#6a8a44] bg-[#d9eac6]" : "border-[#b6c3a9]"}`}
+            >
+              {index < 2 && <Check size={11} />}
+            </span>
+            <span className={index < 2 ? "text-[#6f7b67] line-through" : ""}>
+              {item}
+            </span>
+          </div>
+        ))}
+        <div className="mt-1 h-1.5 rounded-full bg-[#e7eddc]">
+          <div className="h-full w-2/3 rounded-full bg-[#8caa65]" />
+        </div>
+      </div>
+    );
+  }
+  if (slug === "django-api-lab") {
+    return (
+      <div
+        className="h-full overflow-hidden rounded-xl border border-white/15 bg-[#282334] p-5 text-[#e5ddec]"
+        aria-hidden="true"
+      >
+        <div className="flex items-center justify-between border-b border-white/10 pb-3">
+          <span className="flex items-center gap-2 font-mono text-[11px]">
+            <Terminal size={15} />
+            <span className="text-[#c8ed99]">GET</span> /api/tasks/
+          </span>
+          <span className="rounded bg-[#d4f3b319] px-2 py-1 font-mono text-[9px] text-[#c8ed99]">
+            200 OK
+          </span>
+        </div>
+        <pre className="mt-4 font-mono text-[11px] leading-[1.9] text-[#cbbddc]">
+          {
+            '{\n  "count": 3,\n  "results": [\n    { "id": 1, "title": "Build an idea" }\n  ]\n}'
+          }
+        </pre>
+      </div>
+    );
+  }
+  return (
+    <div
+      className="h-full overflow-hidden rounded-xl border border-[#57361b1c] bg-white/85 p-5 text-[#684933]"
+      aria-hidden="true"
+    >
+      <div className="mb-4 flex items-center justify-between">
+        <span className="flex items-center gap-2 text-xs font-semibold">
+          <Database size={16} /> A cleaner kind of data
+        </span>
+        <Check size={16} />
+      </div>
+      <div className="overflow-hidden rounded-lg border border-[#71523120] text-[10px]">
+        <div className="grid grid-cols-3 bg-[#f7eddf] px-3 py-2 font-semibold">
+          <span>Name</span>
+          <span>Role</span>
+          <span>City</span>
+        </div>
+        {[
+          ["Ada", "Developer", "Nairobi"],
+          ["Sam", "Designer", "Accra"],
+          ["Mina", "Creator", "Lagos"],
+        ].map((row) => (
+          <div
+            key={row[0]}
+            className="grid grid-cols-3 border-t border-[#71523112] px-3 py-3"
+          >
+            {row.map((cell) => (
+              <span key={cell}>{cell}</span>
+            ))}
+          </div>
+        ))}
+      </div>
+      <p className="mb-0 mt-3 text-[9px] text-[#8b7158]">
+        Sample data · Clean. Preview. Download.
+      </p>
+    </div>
+  );
+}
+
+export function ProjectCard({ project }: { project: Project }) {
+  const artBackground =
+    project.accent === "green"
+      ? "bg-[#e5edda]"
+      : project.accent === "violet"
+        ? "bg-[#eae3f1]"
+        : "bg-[#f5e8d8]";
+  return (
+    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] transition-transform duration-200 hover:-translate-y-1">
+      <Link
+        href={`/projects/${project.slug}/`}
+        className={`block h-64 overflow-hidden p-5 ${artBackground}`}
+        aria-label={`Explore ${project.title}`}
+      >
+        <ProjectArtwork slug={project.slug} />
+      </Link>
+      <div className="flex flex-1 flex-col p-6">
+        <p className="mb-3 flex items-center justify-between gap-3 text-[10px] font-medium uppercase tracking-[.12em] text-[var(--muted)]">
+          <span>{project.category}</span>
+          <span className="flex items-center gap-1.5 normal-case tracking-normal">
+            <Braces size={12} />
+            {project.kind}
+          </span>
+        </p>
+        <h3 className="mb-3 text-[22px] font-semibold tracking-tight">
+          <Link href={`/projects/${project.slug}/`}>{project.title}</Link>
+        </h3>
+        <p className="mb-5 text-sm leading-relaxed text-[var(--muted)]">
+          {project.summary}
+        </p>
+        <ul className="mb-6 mt-auto flex flex-wrap gap-1.5">
+          {project.stack.map((item) => (
+            <li
+              key={item}
+              className="rounded border border-[var(--line)] px-2 py-1 text-[10px] text-[var(--muted)]"
+            >
+              {item}
+            </li>
+          ))}
+        </ul>
+        <Link
+          href={`/projects/${project.slug}/`}
+          className="flex items-center justify-between border-t border-[var(--line)] pt-4 text-xs font-semibold"
+        >
+          Try the demo
+          <ArrowUpRight
+            size={18}
+            className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+          />
+        </Link>
+      </div>
+    </article>
+  );
+}

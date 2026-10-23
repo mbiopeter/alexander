@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <rect width="1200" height="630" fill="#202c23"/>
+  <g fill="none" stroke="#53654a" opacity=".5"><circle cx="1020" cy="200" r="230"/><circle cx="1020" cy="200" r="290"/><circle cx="1020" cy="200" r="350"/></g>
+  <rect x="80" y="70" width="54" height="54" rx="15" fill="#d3f76b"/>
+  <text x="92" y="109" fill="#202c23" font-family="Arial, sans-serif" font-size="43" font-weight="700">a.</text>
+  <text x="151" y="108" fill="#f3f5e9" font-family="Arial, sans-serif" font-size="32" font-weight="700" letter-spacing="-1">alexender.</text>
+  <text x="83" y="194" fill="#b4c4a5" font-family="Arial, sans-serif" font-size="16" letter-spacing="3">DEVELOPER. CREATOR. PROBLEM SOLVER.</text>
+  <text x="77" y="302" fill="#f5f7ee" font-family="Arial, sans-serif" font-size="84" font-weight="700" letter-spacing="-4">Good ideas deserve</text>
+  <text x="77" y="401" fill="#d3f76b" font-family="Arial, sans-serif" font-size="84" font-weight="700" letter-spacing="-4">great code.</text>
+  <path d="M83 426Q330 407 582 424" fill="none" stroke="#91a867" stroke-width="5" stroke-linecap="round"/>
+  <text x="82" y="502" fill="#c3cfb8" font-family="Arial, sans-serif" font-size="23">Web development · Software development · Debugging</text>
+  <rect x="82" y="544" width="235" height="41" rx="8" fill="#d3f76b"/>
+  <text x="103" y="571" fill="#202c23" font-family="Arial, sans-serif" font-size="17" font-weight="600">Let’s build something ↗</text>
+  <text x="995" y="498" fill="#d3f76b" font-family="Arial, sans-serif" font-size="200" font-weight="400">✳</text>
+</svg>
