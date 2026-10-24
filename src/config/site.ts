@@ -8,10 +8,15 @@ export const siteConfig = {
     // Only availability is exposed to the browser. The server resolves the
     // private username/number when the visitor opens the contact route.
     whatsappEnabled: process.env.NEXT_PUBLIC_WHATSAPP_ENABLED === "true",
+    email: process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() ?? "",
   },
   socials: {
     tiktokUrl: process.env.NEXT_PUBLIC_TIKTOK_URL?.trim() ?? "",
     githubUrl: process.env.NEXT_PUBLIC_GITHUB_URL?.trim() ?? "",
+    linkedinUrl: process.env.NEXT_PUBLIC_LINKEDIN_URL?.trim() ?? "",
+  },
+  profile: {
+    cvUrl: process.env.NEXT_PUBLIC_CV_URL?.trim() ?? "",
   },
   payment: {
     paystackPaymentUrl:

@@ -11,8 +11,10 @@ export function makeMetadata(
     ? title
     : `${title} — Alexender`;
   const pageUrl = origin ? new URL(path, origin).toString() : undefined;
+  const project = ["focusboard", "django-api-lab", "data-tidy"].find((slug) => path === `/projects/${slug}/`);
+  const shareImage = project ? `/social/${project}.png` : path.startsWith("/playground/") ? "/social/playground.png" : path.startsWith("/notes/") ? "/social/notes.png" : "/social-card.png";
   const imageUrl = origin
-    ? new URL("/social-card.png", origin).toString()
+    ? new URL(shareImage, origin).toString()
     : undefined;
   return {
     title: { absolute: fullTitle },
@@ -31,7 +33,7 @@ export function makeMetadata(
                 url: imageUrl,
                 width: 1200,
                 height: 630,
-                alt: "Alexender — Developer & Creator",
+                alt: fullTitle,
               },
             ],
           }

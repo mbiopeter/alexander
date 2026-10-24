@@ -11,10 +11,69 @@ import {
 } from "@/components/page-ui";
 import { DestinationLink } from "@/components/destination-link";
 
+const serviceExamples: Record<string, {
+  title: string;
+  scenario: string;
+  connection: string;
+  projectSlug: string;
+  projectLabel: string;
+  related: string[];
+}> = {
+  "web-development": {
+    title: "A clear path through a useful website.",
+    scenario: "You have an offer to explain and one important thing visitors should be able to do. We can shape the pages around that journey, then make the forms and interactions work across screen sizes.",
+    connection: "Focusboard is a small frontend example of understandable controls, useful validation, and visible state changes.",
+    projectSlug: "focusboard",
+    projectLabel: "Explore the Focusboard demo",
+    related: ["python-django", "custom-software", "maintenance"],
+  },
+  "python-django": {
+    title: "An interface that needs reliable data behind it.",
+    scenario: "Your product needs records, permissions, or an API for another interface. We can define the data and response contract, implement it in Django, and check the important success and error paths.",
+    connection: "The Django API Lab illustrates response contracts and validation. It is a browser simulation for learning, with a separate Python sketch.",
+    projectSlug: "django-api-lab",
+    projectLabel: "Explore the API simulation",
+    related: ["web-development", "python-automation", "maintenance"],
+  },
+  "custom-software": {
+    title: "A repeated workflow that needs a better home.",
+    scenario: "You are moving the same information between notes, spreadsheets, and messages. We can identify the core task and build a focused first version with the fields, states, and handover your workflow needs.",
+    connection: "Focusboard shows a small workflow from creating a task to tracking its completion. Its build notes explain where local storage fits and where a backend would be needed.",
+    projectSlug: "focusboard",
+    projectLabel: "Read the Focusboard build notes",
+    related: ["python-django", "web-development", "python-automation"],
+  },
+  "python-automation": {
+    title: "The same cleanup before every report.",
+    scenario: "A recurring CSV or spreadsheet needs predictable cleanup before it is useful. We can agree the input rules, expected output, and exceptions, then turn those steps into a repeatable Python workflow.",
+    connection: "Data Tidy is a browser tool that makes a cleanup process visible. Its parsing and export choices are a practical example of the questions to settle before automating.",
+    projectSlug: "data-tidy",
+    projectLabel: "Explore the CSV cleanup demo",
+    related: ["custom-software", "python-django", "debugging"],
+  },
+  debugging: {
+    title: "A small input that breaks the expected result.",
+    scenario: "A form, API, or script works with one example but fails with another. We can isolate the smallest failing case, trace the cause, and check a focused fix against that case and nearby edge cases.",
+    connection: "Data Tidy’s build notes show why quoted commas, blank rows, and uneven fields need explicit handling. The downloadable source includes tests for its parsing and cleanup helpers.",
+    projectSlug: "data-tidy",
+    projectLabel: "Inspect the Data Tidy build notes",
+    related: ["maintenance", "python-django", "web-development"],
+  },
+  maintenance: {
+    title: "An improvement that respects what already works.",
+    scenario: "An existing project needs a new field, a clearer screen, or a dependency update. We can map the affected behaviour, agree the change, and check the paths your users already rely on.",
+    connection: "Focusboard is a small example of state worth preserving: tasks, priorities, and completion. Its build notes explain how saved records are checked before being restored.",
+    projectSlug: "focusboard",
+    projectLabel: "See the Focusboard build decisions",
+    related: ["debugging", "web-development", "custom-software"],
+  },
+};
+
 export function ServiceDetail({ service }: { service: Service }) {
-  const related = services
-    .filter((item) => item.slug !== service.slug)
-    .slice(0, 3);
+  const example = serviceExamples[service.slug];
+  const related = (example?.related ?? [])
+    .map((slug) => services.find((item) => item.slug === slug))
+    .filter((item): item is Service => Boolean(item));
 
   return (
     <main id="main" className="page-main">
@@ -50,6 +109,18 @@ export function ServiceDetail({ service }: { service: Service }) {
               </h2>
               <p className="body-copy">{service.description}</p>
             </Reveal>
+
+            {example && (
+              <article className="info-card mt-10">
+                <p className="eyebrow mb-4">WHAT THIS COULD LOOK LIKE</p>
+                <h3 className="mb-4 text-xl font-semibold tracking-tight">{example.title}</h3>
+                <p className="mb-5 text-sm leading-7 text-[var(--muted)]">{example.scenario}</p>
+                <p className="mb-5 border-t border-[var(--line)] pt-5 text-sm leading-7 text-[var(--muted)]">{example.connection}</p>
+                <Link href={`/projects/${example.projectSlug}/#behind-the-build`} className="text-link">
+                  {example.projectLabel} <ArrowUpRight size={16} aria-hidden="true" />
+                </Link>
+              </article>
+            )}
 
             <Reveal className="mt-12">
               <h3 className="mb-5 text-xl font-semibold tracking-tight">

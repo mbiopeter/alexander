@@ -15,7 +15,7 @@ import { makeMetadata } from "@/lib/metadata";
 
 export const metadata = makeMetadata(
   "Hire Alexender",
-  "Discuss a website, Python and Django application, automation, or debugging project with Alexender. Start with a short brief and continue on WhatsApp.",
+  "Discuss a website, Python and Django application, automation, or debugging project with Alexender. Start with a short brief you can review before sending.",
   "/hire/",
 );
 
@@ -124,7 +124,8 @@ export default function HirePage() {
             <ContactForm />
             <p className="mt-4 px-2 text-center text-xs leading-6 text-[var(--muted)]">
               The service and project description are all you need. Add the
-              optional details only if they help explain the project.
+              optional details only if they help explain the project. You can
+              review or copy the full brief before continuing.
             </p>
           </div>
         </div>
@@ -187,6 +188,10 @@ export default function HirePage() {
               [
                 "Does sending a brief commit me to a project?",
                 "No. It starts a conversation. We agree on the work, price, and timeline before starting.",
+              ],
+              [
+                "What happens when I open my draft?",
+                "You review and send the message in your chosen app. Opening a draft does not send an enquiry, and this website does not confirm message delivery. You can also copy the brief if your app does not carry the text through.",
               ],
               [
                 "Is developer support a project payment?",

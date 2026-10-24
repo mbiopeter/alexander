@@ -17,6 +17,8 @@ import {
   FolderOpen,
   Lightbulb,
   LoaderCircle,
+  Maximize2,
+  Minimize2,
   Pause,
   Play,
   RotateCcw,
@@ -24,6 +26,8 @@ import {
   Terminal,
   Trash2,
   Trophy,
+  Undo2,
+  Upload,
   X,
 } from "lucide-react";
 import {
@@ -36,8 +40,16 @@ import {
 import {
   answerKey,
   collectAnswer,
+  isDraftWithinLimit,
+  MAX_BACKUP_BYTES,
+  parsePracticeBackup,
+  restorePractice,
+  selectionFromSearch,
+  serializePracticeBackup,
   useProgress,
   type CollectedAnswer,
+  type PracticeBackup,
+  type RestoreMode,
 } from "@/lib/progress";
 import { useTheme } from "@/context/theme-context";
 import type { RunReport, TestResult } from "@/lib/runner";
@@ -113,6 +125,17 @@ export default function TrainingPlayground({
   const [motionPaused, setMotionPaused] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [selectedResult, setSelectedResult] = useState(0);
+  const [focusMode, setFocusMode] = useState(false);
+  const [connectionCheck, setConnectionCheck] = useState(0);
+  const [undo, setUndo] = useState<{ key: string; code: string; message: string } | null>(null);
+  const [pendingBackup, setPendingBackup] = useState<{ name: string; backup: PracticeBackup } | null>(null);
+  const [restoreMode, setRestoreMode] = useState<RestoreMode>("merge");
+  const [replaceConfirmed, setReplaceConfirmed] = useState(false);
+  const [backupError, setBackupError] = useState<string | null>(null);
+  const [readingBackup, setReadingBackup] = useState(false);
+  const importInputRef = useRef<HTMLInputElement | null>(null);
+  const importPanelRef = useRef<HTMLElement | null>(null);
+  const linkApplied = useRef(false);
   const runRef = useRef<{ controller: AbortController; key: string } | null>(
     null,
   );
@@ -124,6 +147,8 @@ export default function TrainingPlayground({
   const language = getLanguage(progress.language)!;
   const key = answerKey(language.id, challenge.id);
   const code = progress.drafts[key] ?? challenge.starter[language.id];
+  const currentCode = useRef(code);
+  currentCode.current = code;
   const isRunning = run.phase === "running";
   const solvedInLanguage = progress.answers.filter(
     (answer) => answer.language === language.id,
@@ -139,6 +164,34 @@ export default function TrainingPlayground({
     connection !== "unavailable";
 
   useEffect(() => {
+    if (!ready) return;
+    const applyLink = () => {
+      const selection = selectionFromSearch(window.location.search);
+      if (Object.keys(selection).length) {
+        runRef.current?.controller.abort();
+        runRef.current = null;
+        setRun({ phase: "idle" });
+        setShowSolution(false);
+        setUndo(null);
+        setProgress((current) => ({ ...current, ...selection }));
+      }
+    };
+    if (!linkApplied.current) {
+      linkApplied.current = true;
+      applyLink();
+    }
+    window.addEventListener("popstate", applyLink);
+    return () => window.removeEventListener("popstate", applyLink);
+  }, [ready, setProgress]);
+
+  useEffect(() => {
+    if (focusMode) document.body.dataset.practiceFocus = "true";
+    else delete document.body.dataset.practiceFocus;
+    return () => { delete document.body.dataset.practiceFocus; };
+  }, [focusMode]);
+
+  useEffect(() => {
+    setConnection("checking");
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 8_000);
     fetch(`${basePath}/api/playground/run/`, {
@@ -174,7 +227,7 @@ export default function TrainingPlayground({
       window.clearTimeout(timeout);
       window.clearTimeout(fallback);
     };
-  }, []);
+  }, [connectionCheck]);
 
   useEffect(
     () => () => {
@@ -196,19 +249,36 @@ export default function TrainingPlayground({
     setRun({ phase: "idle" });
   }
 
+  function syncSelectionUrl(challengeId: string, languageId: LanguageId) {
+    if (isNotFound) return;
+    const url = new URL(window.location.href);
+    url.searchParams.set("language", languageId);
+    url.searchParams.set("challenge", challengeId);
+    window.history.replaceState(window.history.state, "", url);
+  }
+
   function choose(challengeId: string, languageId: LanguageId = language.id) {
+    if (!getChallenge(challengeId) || !getLanguage(languageId)) return;
     cancelRun();
     setShowSolution(false);
+    setUndo(null);
     setSelectedResult(0);
     setProgress((current) => ({
       ...current,
       challengeId,
       language: languageId,
     }));
+    syncSelectionUrl(challengeId, languageId);
   }
 
   const changeCode = useCallback(
     (value: string) => {
+      if (!isDraftWithinLimit(value)) {
+        announce("That edit exceeds the 32,768-character draft limit. Your previous draft is unchanged; shorten the pasted code and try again.");
+        return false;
+      }
+      if (value === currentCode.current) return true;
+      setUndo(null);
       setProgress((current) => ({
         ...current,
         drafts: { ...current.drafts, [key]: value },
@@ -216,9 +286,27 @@ export default function TrainingPlayground({
       setRun((current) =>
         current.phase === "running" ? current : { phase: "idle" },
       );
+      return true;
     },
     [key, setProgress],
   );
+
+  function replaceCode(value: string, message: string) {
+    if (value === code) {
+      announce("Your editor already contains that code.");
+      return;
+    }
+    const previous = code;
+    changeCode(value);
+    setUndo({ key, code: previous, message });
+  }
+
+  function undoReplacement() {
+    if (!undo || undo.key !== key || isRunning) return;
+    changeCode(undo.code);
+    setUndo(null);
+    announce("Your previous draft has been restored.");
+  }
 
   async function runTests() {
     if (!canRun || runRef.current) return;
@@ -345,6 +433,8 @@ export default function TrainingPlayground({
   }
 
   function openAnswer(answer: CollectedAnswer) {
+    const targetKey = answerKey(answer.language, answer.challengeId);
+    const previous = progress.drafts[targetKey] ?? getChallenge(answer.challengeId)!.starter[answer.language];
     choose(answer.challengeId, answer.language);
     setProgress((current) => ({
       ...current,
@@ -353,6 +443,7 @@ export default function TrainingPlayground({
         [answerKey(answer.language, answer.challengeId)]: answer.sourceCode,
       },
     }));
+    if (previous !== answer.sourceCode) setUndo({ key: targetKey, code: previous, message: "Saved answer opened." });
     workbenchRef.current?.scrollIntoView({ behavior: "auto", block: "start" });
     announce("Saved answer opened in the editor.");
   }
@@ -382,6 +473,57 @@ export default function TrainingPlayground({
     window.setTimeout(() => URL.revokeObjectURL(url), 1_000);
   }
 
+  function downloadPractice() {
+    try {
+      const raw = serializePracticeBackup(progress);
+      const url = URL.createObjectURL(new Blob([raw], { type: "application/json" }));
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = "alexender-practice-backup.json";
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1_000);
+      announce("Practice backup downloaded, including your unfinished drafts.");
+    } catch (error) {
+      setBackupError(error instanceof Error ? error.message : "This backup could not be created. Your local work is unchanged.");
+    }
+  }
+
+  async function readBackup(file: File | undefined) {
+    if (!file) return;
+    setBackupError(null);
+    setPendingBackup(null);
+    setReadingBackup(true);
+    try {
+      if (file.size > MAX_BACKUP_BYTES) throw new Error("Choose a practice backup smaller than 8 MB.");
+      const backup = parsePracticeBackup(await file.text());
+      setRestoreMode("merge");
+      setReplaceConfirmed(false);
+      setPendingBackup({ name: file.name, backup });
+      requestAnimationFrame(() => importPanelRef.current?.focus());
+    } catch (error) {
+      setBackupError(error instanceof Error ? error.message : "This file could not be read. Your local work is unchanged.");
+    } finally {
+      setReadingBackup(false);
+      if (importInputRef.current) importInputRef.current.value = "";
+    }
+  }
+
+  function confirmRestore() {
+    if (!pendingBackup || isRunning || (restoreMode === "replace" && !replaceConfirmed)) return;
+    cancelRun();
+    setShowSolution(false);
+    setUndo(null);
+    setSelectedResult(0);
+    const incoming = pendingBackup.backup.progress;
+    setProgress((current) => restorePractice(current, incoming, restoreMode));
+    if (restoreMode === "replace") syncSelectionUrl(incoming.challengeId, incoming.language);
+    setPendingBackup(null);
+    setReplaceConfirmed(false);
+    announce(restoreMode === "merge" ? "Backup merged. Your existing drafts and answers were kept where they overlap." : "Practice restored from your selected backup.");
+  }
+
   const report = run.phase === "done" ? run.report : null;
   const result = report?.tests[selectedResult];
 
@@ -389,12 +531,13 @@ export default function TrainingPlayground({
     <main
       id="main"
       data-detour-theme={themeReady ? resolvedTheme : "auto"}
+      data-focus-mode={focusMode ? "true" : undefined}
       className="detour-playground min-h-dvh bg-[var(--pg-bg)] pb-12 font-sans text-[var(--pg-fg)] antialiased"
     >
       <div className="shell">
         <nav
           aria-label="Playground navigation"
-          className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--pg-border)] py-3"
+          className="practice-navigation flex flex-wrap items-center justify-between gap-2 border-b border-[var(--pg-border)] py-3"
         >
           <div className="flex flex-wrap items-center gap-1">
             <Link href="/" className={smallButton}>
@@ -413,14 +556,28 @@ export default function TrainingPlayground({
               </button>
             )}
           </div>
-          <Link href="/learn/" className={smallButton}>
-            More ways to learn <ArrowUpRight size={13} aria-hidden="true" />
-          </Link>
+          <div className="flex flex-wrap items-center gap-1">
+            <Link href="/learn/" className={`${smallButton} practice-more-lessons`}>
+              More ways to learn <ArrowUpRight size={13} aria-hidden="true" />
+            </Link>
+            <button
+              type="button"
+              aria-pressed={focusMode}
+              className={`${smallButton} border border-[var(--pg-border)] bg-[var(--pg-panel)]`}
+              onClick={() => {
+                setFocusMode((current) => !current);
+                if (!focusMode) requestAnimationFrame(() => workbenchRef.current?.scrollIntoView({ behavior: "auto", block: "start" }));
+              }}
+            >
+              {focusMode ? <Minimize2 size={14} aria-hidden="true" /> : <Maximize2 size={14} aria-hidden="true" />}
+              {focusMode ? "Exit focus mode" : "Focus on coding"}
+            </button>
+          </div>
         </nav>
 
         <section
           aria-labelledby="playground-title"
-          className="grid items-center gap-6 py-8 md:grid-cols-[1fr_auto] md:py-10"
+          className="practice-intro grid items-center gap-6 py-7 md:grid-cols-[1fr_auto] md:py-10"
         >
           <div>
             <div className="mb-3 flex flex-wrap items-center gap-2.5 text-[10px] font-semibold uppercase tracking-[0.14em]">
@@ -437,8 +594,8 @@ export default function TrainingPlayground({
               id="playground-title"
               className="text-balance text-3xl font-semibold leading-tight tracking-[-0.045em] sm:text-4xl lg:text-[42px]"
             >
-              Make this detour{" "}
-              <span className="text-[var(--pg-accent)]">count.</span>
+              {isNotFound ? "Make this detour " : "A little practice. "}
+              <span className="text-[var(--pg-accent)]">{isNotFound ? "count." : "Real progress."}</span>
             </h1>
             <p className="mt-3 max-w-xl text-sm leading-6 text-[var(--pg-muted)]">
               {isNotFound
@@ -473,9 +630,7 @@ export default function TrainingPlayground({
               aria-hidden="true"
               className="relative flex h-36 items-center justify-center gap-2 select-none"
             >
-              <span className="text-[98px] font-semibold tracking-tighter text-[var(--pg-border)]">
-                4
-              </span>
+              {isNotFound && <span className="text-[98px] font-semibold tracking-tighter text-[var(--pg-border)]">4</span>}
               <div className="relative h-20 w-20 shrink-0">
                 <div
                   className={`absolute top-0 h-6 w-full animate-bounce [animation-duration:6s] motion-reduce:animate-none ${motionState}`}
@@ -490,12 +645,10 @@ export default function TrainingPlayground({
                   </div>
                 </div>
               </div>
-              <span className="text-[98px] font-semibold tracking-tighter text-[var(--pg-border)]">
-                4
-              </span>
+              {isNotFound && <span className="text-[98px] font-semibold tracking-tighter text-[var(--pg-border)]">4</span>}
               <Sparkles className="absolute right-4 top-1 h-4 w-4 text-[var(--pg-accent)]" />
               <span className="absolute bottom-0 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-[var(--pg-border)] bg-[var(--pg-panel)] px-3 py-1 font-mono text-[9px] tracking-wider text-[var(--pg-muted)]">
-                YOU’RE IN A GOOD PLACE
+                {isNotFound ? "YOU’RE IN A GOOD PLACE" : "SMALL STEPS. KEEP BUILDING."}
               </span>
             </div>
             <button
@@ -536,7 +689,7 @@ export default function TrainingPlayground({
               </button>
             ))}
           </div>
-          <span className="flex items-center gap-2 text-[11px] text-[var(--pg-muted)]">
+          <div className="flex flex-wrap items-center gap-2 text-[11px] text-[var(--pg-muted)]">
             <span
               className={`h-1.5 w-1.5 rounded-full ${connection === "configured" ? "bg-[var(--pg-success)]" : "bg-[var(--pg-warning)]"}`}
             />
@@ -547,7 +700,12 @@ export default function TrainingPlayground({
                 : connection === "unavailable"
                   ? "Runner not connected"
                   : "Runner status unavailable"}
-          </span>
+            {connection !== "configured" && (
+              <button type="button" disabled={connection === "checking"} onClick={() => setConnectionCheck((attempt) => attempt + 1)} className={`${smallButton} px-2`}>
+                <RotateCcw size={12} aria-hidden="true" /> Check connection
+              </button>
+            )}
+          </div>
         </div>
 
         {storageNote && (
@@ -572,13 +730,31 @@ export default function TrainingPlayground({
           </p>
         )}
 
+        <div className={`practice-mobile-selector ${panel} mb-4 p-4`}>
+          <label htmlFor="practice-challenge" className="mb-2 block text-xs font-semibold">Choose a challenge</label>
+          <select
+            id="practice-challenge"
+            value={challenge.id}
+            disabled={!ready}
+            onChange={(event) => choose(event.target.value)}
+            className="min-h-11 w-full rounded-lg border border-[var(--pg-border)] bg-[var(--pg-soft)] px-3 py-2 text-sm text-[var(--pg-fg)]"
+          >
+            {CHALLENGES.map((item, index) => (
+              <option key={item.id} value={item.id}>
+                {String(index + 1).padStart(2, "0")} · {item.title}{progress.answers.some((answer) => answer.language === language.id && answer.challengeId === item.id) ? " · Completed" : ""}
+              </option>
+            ))}
+          </select>
+          <p className="mb-0 mt-2 text-xs text-[var(--pg-muted)]">{language.label} progress · {solvedInLanguage} of {CHALLENGES.length} collected</p>
+        </div>
+
         <div
           ref={workbenchRef}
-          className="grid scroll-mt-28 items-start gap-5 lg:grid-cols-[260px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(0,1fr)]"
+          className="practice-workbench grid scroll-mt-28 items-start gap-5 lg:grid-cols-[260px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(0,1fr)]"
         >
           <aside
             aria-labelledby="challenge-list-title"
-            className={`${panel} overflow-hidden lg:sticky lg:top-28`}
+            className={`practice-challenge-sidebar ${panel} overflow-hidden lg:sticky lg:top-28`}
           >
             <div className="border-b border-[var(--pg-border)] px-5 py-4">
               <div className="flex items-center justify-between">
@@ -771,7 +947,7 @@ export default function TrainingPlayground({
                 <button
                   type="button"
                   disabled={isRunning || !ready}
-                  onClick={() => changeCode(challenge.starter[language.id])}
+                  onClick={() => replaceCode(challenge.starter[language.id], "Starter code restored.")}
                   className={smallButton}
                 >
                   <RotateCcw size={13} aria-hidden="true" />
@@ -821,6 +997,15 @@ export default function TrainingPlayground({
               </div>
             </div>
 
+            {undo?.key === key && (
+              <div role="status" className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[var(--pg-border)] bg-[var(--pg-accent-soft)] px-4 py-2 text-xs">
+                <span>{undo.message} Your previous draft is available until your next edit.</span>
+                <button type="button" onClick={undoReplacement} disabled={isRunning} className={smallButton}>
+                  <Undo2 size={14} aria-hidden="true" /> Undo replacement
+                </button>
+              </div>
+            )}
+
             {showSolution && (
               <section
                 className={`${panel} overflow-hidden`}
@@ -862,10 +1047,7 @@ export default function TrainingPlayground({
                     type="button"
                     disabled={isRunning}
                     onClick={() => {
-                      changeCode(challenge.solution[language.id]);
-                      announce(
-                        "Reference solution loaded. Run the tests to check it.",
-                      );
+                      replaceCode(challenge.solution[language.id], "Reference solution loaded. Run the tests to check it.");
                     }}
                     className={smallButton}
                   >
@@ -996,6 +1178,67 @@ export default function TrainingPlayground({
             </p>
           </div>
         </div>
+
+        <section aria-labelledby="practice-backup-title" className={`${panel} mt-8 p-5 sm:p-6`}>
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="max-w-xl">
+              <h2 id="practice-backup-title" className="text-lg font-semibold tracking-tight">Take your practice with you.</h2>
+              <p className="mb-0 mt-2 text-xs leading-6 text-[var(--pg-muted)]">
+                Export your drafts, saved solutions, and progress. Restore them in another browser whenever you are ready. No account needed.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <button type="button" disabled={!ready || isRunning} onClick={downloadPractice} className={`${smallButton} border border-[var(--pg-border)]`}>
+                <Download size={14} aria-hidden="true" /> Export practice backup
+              </button>
+              <button type="button" disabled={!ready || isRunning || readingBackup} onClick={() => importInputRef.current?.click()} className={`${smallButton} border border-[var(--pg-border)]`}>
+                <Upload size={14} aria-hidden="true" /> {readingBackup ? "Reading backup…" : "Restore backup"}
+              </button>
+              <input
+                ref={importInputRef}
+                type="file"
+                accept="application/json,.json"
+                aria-label="Choose a practice backup file"
+                className="hidden"
+                disabled={!ready || isRunning || readingBackup}
+                onChange={(event) => void readBackup(event.target.files?.[0])}
+              />
+            </div>
+          </div>
+          {backupError && <p role="alert" className="mb-0 mt-4 rounded-lg bg-[var(--pg-error-bg)] px-4 py-3 text-xs leading-6 text-[var(--pg-error)]">{backupError}</p>}
+          {pendingBackup && (
+            <section ref={importPanelRef} tabIndex={-1} aria-labelledby="restore-backup-title" className="mt-5 rounded-xl border border-[var(--pg-border)] bg-[var(--pg-soft)] p-4 sm:p-5">
+              <h3 id="restore-backup-title" className="text-sm font-semibold">Review your backup</h3>
+              <p className="mt-2 break-words text-xs leading-6 text-[var(--pg-muted)]">
+                {pendingBackup.name} · {Object.keys(pendingBackup.backup.progress.drafts).length} drafts · {pendingBackup.backup.progress.answers.length} saved solutions
+              </p>
+              <fieldset className="space-y-3">
+                <legend className="mb-3 text-xs font-semibold">How would you like to restore it?</legend>
+                <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-[var(--pg-border)] bg-[var(--pg-panel)] p-3">
+                  <input type="radio" name="practice-restore-mode" value="merge" checked={restoreMode === "merge"} onChange={() => { setRestoreMode("merge"); setReplaceConfirmed(false); }} className="mt-1 h-4 w-4 accent-[var(--pg-accent)]" />
+                  <span className="text-xs leading-6"><strong className="block">Merge and keep my current work</strong><span className="text-[var(--pg-muted)]">Add missing drafts and solutions. Where both copies have work for the same exercise and language, this browser’s copy stays.</span></span>
+                </label>
+                <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-[var(--pg-border)] bg-[var(--pg-panel)] p-3">
+                  <input type="radio" name="practice-restore-mode" value="replace" checked={restoreMode === "replace"} onChange={() => { setRestoreMode("replace"); setReplaceConfirmed(false); }} className="mt-1 h-4 w-4 accent-[var(--pg-accent)]" />
+                  <span className="text-xs leading-6"><strong className="block">Replace this browser’s practice</strong><span className="text-[var(--pg-muted)]">Restore only the backup, including its selected language and exercise. Export your current work first if you want to keep a separate copy.</span></span>
+                </label>
+              </fieldset>
+              {restoreMode === "replace" && (
+                <label className="mt-4 flex cursor-pointer items-start gap-3 text-xs leading-6">
+                  <input type="checkbox" checked={replaceConfirmed} onChange={(event) => setReplaceConfirmed(event.target.checked)} className="mt-1 h-4 w-4 shrink-0 accent-[var(--pg-accent)]" />
+                  <span>I understand that this replaces all practice currently saved in this browser.</span>
+                </label>
+              )}
+              <p className="mt-4 text-xs leading-6 text-[var(--pg-muted)]">Restoring a backup brings back saved pass records; it does not run the imported code. You can run tests again in the editor.</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <button type="button" onClick={confirmRestore} disabled={isRunning || (restoreMode === "replace" && !replaceConfirmed)} className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-[var(--pg-accent)] px-4 text-xs font-semibold text-[var(--pg-accent-ink)] disabled:opacity-50">
+                  <Upload size={14} aria-hidden="true" /> {restoreMode === "merge" ? "Merge backup" : "Replace local practice"}
+                </button>
+                <button type="button" onClick={() => { setPendingBackup(null); setReplaceConfirmed(false); }} className={smallButton}>Cancel restore</button>
+              </div>
+            </section>
+          )}
+        </section>
 
         <section
           ref={collectionRef}
@@ -1139,7 +1382,7 @@ export default function TrainingPlayground({
         </section>
 
         <footer className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--pg-border)] pt-5 text-[10px] leading-5 text-[var(--pg-muted)]">
-          <span>Some wrong turns lead to good things. Keep going.</span>
+          <span>{isNotFound ? "Some wrong turns lead to good things. Keep going." : "One small exercise at a time. Keep building."}</span>
           <Link
             href="/"
             className="inline-flex min-h-10 items-center gap-1.5 rounded font-medium"

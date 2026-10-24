@@ -1,6 +1,10 @@
 import { siteConfig } from "../config/site";
 import {
+  createEmailDraftUrl,
+  validateContactEmail,
+  validateCvUrl,
   validateGitHubUrl,
+  validateLinkedInUrl,
   validatePaystackUrl,
   validateSiteUrl,
   validateTikTokUrl,
@@ -28,4 +32,23 @@ export function getGitHubUrl(): string | null {
 
 export function getSiteUrl(): string | null {
   return validateSiteUrl(siteConfig.url);
+}
+
+export function getContactEmail(): string | null {
+  return validateContactEmail(siteConfig.contact.email);
+}
+
+export function getEmailDraftUrl(
+  message = defaultEnquiry,
+  subject = "Project enquiry from your website",
+): string | null {
+  return createEmailDraftUrl(siteConfig.contact.email, subject, message);
+}
+
+export function getLinkedInUrl(): string | null {
+  return validateLinkedInUrl(siteConfig.socials.linkedinUrl);
+}
+
+export function getCvUrl(): string | null {
+  return validateCvUrl(siteConfig.profile.cvUrl);
 }

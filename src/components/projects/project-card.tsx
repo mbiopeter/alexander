@@ -4,6 +4,7 @@ import {
   Braces,
   Check,
   Database,
+  FileCode2,
   ListTodo,
   Terminal,
 } from "lucide-react";
@@ -13,7 +14,7 @@ function ProjectArtwork({ slug }: { slug: string }) {
   if (slug === "focusboard") {
     return (
       <div
-        className="flex h-full flex-col gap-3 rounded-xl border border-[#203c1420] bg-white/85 p-5 text-[#263a28]"
+        className="flex h-full flex-col gap-2 rounded-xl border border-[#203c1420] bg-white/85 p-4 text-[#263a28]"
         aria-hidden="true"
       >
         <div className="mb-1 flex items-center justify-between">
@@ -50,7 +51,7 @@ function ProjectArtwork({ slug }: { slug: string }) {
   if (slug === "django-api-lab") {
     return (
       <div
-        className="h-full overflow-hidden rounded-xl border border-white/15 bg-[#282334] p-5 text-[#e5ddec]"
+        className="h-full overflow-hidden rounded-xl border border-white/15 bg-[#282334] p-4 text-[#e5ddec]"
         aria-hidden="true"
       >
         <div className="flex items-center justify-between border-b border-white/10 pb-3">
@@ -62,7 +63,7 @@ function ProjectArtwork({ slug }: { slug: string }) {
             200 OK
           </span>
         </div>
-        <pre className="mt-4 font-mono text-[11px] leading-[1.9] text-[#cbbddc]">
+        <pre className="mt-3 font-mono text-[11px] leading-[1.6] text-[#cbbddc]">
           {
             '{\n  "count": 3,\n  "results": [\n    { "id": 1, "title": "Build an idea" }\n  ]\n}'
           }
@@ -72,10 +73,10 @@ function ProjectArtwork({ slug }: { slug: string }) {
   }
   return (
     <div
-      className="h-full overflow-hidden rounded-xl border border-[#57361b1c] bg-white/85 p-5 text-[#684933]"
+      className="h-full overflow-hidden rounded-xl border border-[#57361b1c] bg-white/85 p-4 text-[#684933]"
       aria-hidden="true"
     >
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-3 flex items-center justify-between">
         <span className="flex items-center gap-2 text-xs font-semibold">
           <Database size={16} /> A cleaner kind of data
         </span>
@@ -94,7 +95,7 @@ function ProjectArtwork({ slug }: { slug: string }) {
         ].map((row) => (
           <div
             key={row[0]}
-            className="grid grid-cols-3 border-t border-[#71523112] px-3 py-3"
+            className="grid grid-cols-3 border-t border-[#71523112] px-3 py-2"
           >
             {row.map((cell) => (
               <span key={cell}>{cell}</span>
@@ -102,7 +103,7 @@ function ProjectArtwork({ slug }: { slug: string }) {
           </div>
         ))}
       </div>
-      <p className="mb-0 mt-3 text-[9px] text-[#8b7158]">
+      <p className="mb-0 mt-2 text-[9px] text-[#8b7158]">
         Sample data · Clean. Preview. Download.
       </p>
     </div>
@@ -126,7 +127,7 @@ export function ProjectCard({ project }: { project: Project }) {
         <ProjectArtwork slug={project.slug} />
       </Link>
       <div className="flex flex-1 flex-col p-6">
-        <p className="mb-3 flex items-center justify-between gap-3 text-[10px] font-medium uppercase tracking-[.12em] text-[var(--muted)]">
+        <p className="mb-3 flex flex-wrap items-center justify-between gap-3 text-xs font-medium uppercase tracking-[.1em] text-[var(--muted)]">
           <span>{project.category}</span>
           <span className="flex items-center gap-1.5 normal-case tracking-normal">
             <Braces size={12} />
@@ -143,22 +144,30 @@ export function ProjectCard({ project }: { project: Project }) {
           {project.stack.map((item) => (
             <li
               key={item}
-              className="rounded border border-[var(--line)] px-2 py-1 text-[10px] text-[var(--muted)]"
+              className="rounded border border-[var(--line)] px-2 py-1 text-xs text-[var(--muted)]"
             >
               {item}
             </li>
           ))}
         </ul>
-        <Link
-          href={`/projects/${project.slug}/`}
-          className="flex items-center justify-between border-t border-[var(--line)] pt-4 text-xs font-semibold"
-        >
-          Try the demo
-          <ArrowUpRight
-            size={18}
-            className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-          />
-        </Link>
+        <div className="space-y-4 border-t border-[var(--line)] pt-4">
+          <Link
+            href={`/projects/${project.slug}/#project-demo`}
+            className="flex items-center justify-between text-sm font-semibold"
+          >
+            Try the demo
+            <ArrowUpRight
+              size={18}
+              className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+            />
+          </Link>
+          <Link
+            href={`/projects/${project.slug}/#behind-the-build`}
+            className="inline-flex min-h-6 items-center gap-2 text-xs font-medium text-[var(--muted)] hover:text-[var(--green)]"
+          >
+            <FileCode2 size={14} aria-hidden="true" /> Behind the build
+          </Link>
+        </div>
       </div>
     </article>
   );

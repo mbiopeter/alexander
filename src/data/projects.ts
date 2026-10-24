@@ -8,6 +8,8 @@ export type Project = {
   kind: "Interactive demo" | "API design demo";
   accent: "green" | "violet" | "orange";
   features: string[];
+  sourceDownload: string;
+  buildNote: string;
 };
 
 /** Original, working demonstration projects. These are not client case studies. */
@@ -22,6 +24,8 @@ export const projects: Project[] = [
       "A practical task board built with React state and browser storage. Add a task, make a plan, and pick up where you left off on this device.",
     stack: ["React", "TypeScript", "Local storage"],
     kind: "Interactive demo",
+    sourceDownload: "/downloads/focusboard-source.zip",
+    buildNote: "Explore the choices behind a task board that remembers your work in this browser.",
     accent: "green",
     features: [
       "Add, edit, complete, and remove tasks",
@@ -39,6 +43,8 @@ export const projects: Project[] = [
       "An interactive guide to a Django REST-style API. Explore GET requests, query parameters, validation, and status codes using a clearly labelled browser simulation.",
     stack: ["API design", "Django concepts", "TypeScript"],
     kind: "API design demo",
+    sourceDownload: "/downloads/django-api-lab-source.zip",
+    buildNote: "See how a clearly labelled browser simulation makes API behaviour easier to understand.",
     accent: "violet",
     features: [
       "Explore list, detail, and missing-resource responses",
@@ -56,6 +62,8 @@ export const projects: Project[] = [
       "A small browser tool for everyday CSV cleanup. Trim extra spaces, remove blank rows and duplicates, then preview and download the result without uploading your data.",
     stack: ["TypeScript", "CSV parsing", "Browser APIs"],
     kind: "Interactive demo",
+    sourceDownload: "/downloads/data-tidy-source.zip",
+    buildNote: "Look inside the parsing, cleanup rules, and export decisions behind this browser tool.",
     accent: "orange",
     features: [
       "Parse quoted fields, commas, and embedded line breaks",

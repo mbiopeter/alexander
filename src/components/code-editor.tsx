@@ -15,7 +15,7 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from "react";
-import type { IDisposable } from "monaco-editor";
+import type { IDisposable, editor as MonacoEditor } from "monaco-editor";
 
 import type { LanguageId } from "@/lib/challenges";
 
@@ -23,7 +23,8 @@ export type CodeLanguage = LanguageId;
 
 export type CodeEditorProps = {
   value: string;
-  onChange: (value: string) => void;
+  /** Return false to reject an edit and retain the previous accepted draft. */
+  onChange: (value: string) => boolean;
   language: CodeLanguage;
   theme: "light" | "dark";
   filename: string;
@@ -121,6 +122,10 @@ export default function CodeEditor({
   const [cursor, setCursor] = useState({ line: 1, column: 1 });
   const instructionsId = useId();
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const editorRef = useRef<MonacoEditor.IStandaloneCodeEditor | null>(null);
+  const acceptedValueRef = useRef(value);
+  const revertingRejectedEdit = useRef(false);
+  acceptedValueRef.current = value;
   const runRef = useRef(onRun);
   const disabledRef = useRef(disabled);
   const disposablesRef = useRef<IDisposable[]>([]);
@@ -193,11 +198,13 @@ export default function CodeEditor({
     () => () => {
       for (const disposable of disposablesRef.current) disposable.dispose();
       disposablesRef.current = [];
+      editorRef.current = null;
     },
     [],
   );
 
   const onMount = useCallback<OnMount>((editor, monaco) => {
+    editorRef.current = editor;
     for (const disposable of disposablesRef.current) disposable.dispose();
     const runAction = editor.addAction({
       id: "detour.run-code",
@@ -250,7 +257,11 @@ export default function CodeEditor({
     <textarea
       ref={textareaRef}
       value={value}
-      onChange={(event) => onChange(event.target.value)}
+      onChange={(event) => {
+        const next = event.target.value;
+        if (onChange(next)) acceptedValueRef.current = next;
+        else event.target.value = acceptedValueRef.current;
+      }}
       onKeyDown={handleFallbackShortcut}
       onSelect={(event) => {
         const beforeCursor = value
@@ -336,7 +347,25 @@ export default function CodeEditor({
               beforeMount={defineEditorThemes}
               path={`file:///detour/${modelId}`}
               value={value}
-              onChange={(nextValue) => onChange(nextValue ?? "")}
+              onChange={(nextValue) => {
+                if (revertingRejectedEdit.current) return;
+                const next = nextValue ?? "";
+                if (onChange(next)) {
+                  acceptedValueRef.current = next;
+                  return;
+                }
+                // Monaco owns its text model. A rejected controlled value must
+                // also be restored in that model; otherwise it would display
+                // text that browser storage and exports never accepted.
+                const editor = editorRef.current;
+                if (!editor || editor.getValue() === acceptedValueRef.current) return;
+                revertingRejectedEdit.current = true;
+                try {
+                  editor.setValue(acceptedValueRef.current);
+                } finally {
+                  revertingRejectedEdit.current = false;
+                }
+              }}
               onMount={onMount}
               loading={fallback}
               keepCurrentModel={false}

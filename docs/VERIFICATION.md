@@ -1,51 +1,98 @@
-# Integration verification
+# Version 2.1.0 verification
 
-Prepared on 23 October 2026 for the uploaded Alexender project with its coding playground integrated.
+Prepared on 24 October 2026 for the updated Alexender source ZIP.
 
 ## Automated checks
 
 - `npm run check` passed TypeScript checking.
-- `npm test` passed **52 tests**, with zero failures and zero skipped tests.
-- These tests cover the original CSV/task-board utilities, destination validation and theme resolution, new WhatsApp username/private-redirect behavior, playground storage, provider integration, request validation and resource bounds.
-- All **30 reference programs** passed their **120 published cases** across Python, JavaScript, Java, C and C++. All 30 starter programs compile or run and remain incomplete exercises.
-- The reference tests run only trusted programs bundled with the project. The application does not run visitor source in a local web-server subprocess.
-- `npm run check:config` accepted the retained contact, support and social settings. The optional final site URL remains unset.
-- `npm run build:ready` and the final production build passed, including Next.js compilation and TypeScript. The output contains the prerendered portfolio routes plus dynamic execution/contact APIs.
+- `npm test` passed **64 tests**, with zero failures and zero skipped tests.
+- `npm run check:config` accepted the retained contact, tutorial and payment
+  settings. The optional final site origin remains blank.
+- The production Next.js webpack build passed compilation, TypeScript,
+  prerendering and build tracing. It includes the new Notes routes and the
+  existing dynamic execution/contact APIs.
 
-## Browser checks
+The tests cover CSV/task-board utilities, theme and destination validation,
+WhatsApp redirect behavior, enquiry draft validation/recovery, Unicode-safe
+email encoding, playground persistence, strict backup import, merge/replace
+behavior, exercise deep-link validation, draft-size boundaries, execution
+provider integration and request/resource limits.
 
-Chromium checks covered the integrated site and its existing interactions:
+All **30 bundled reference programs** passed their **120 published cases**
+across Python, JavaScript, Java, C and C++. All 30 starters compile or run and
+remain incomplete exercises. These checks execute trusted bundled programs;
+the website does not execute visitor source in a local web-server subprocess.
+Provider-integration tests use controlled fixtures, not a live provider.
 
-- All **18 public pages** returned 200 with one main landmark and one first-level heading.
-- Nested missing paths returned 404, displayed the playground and used a 404-specific browser title.
-- Main/mobile navigation, footer and Learn-page links reach `/playground/`.
-- `Ctrl + .` and `Cmd + .` navigate from ordinary content, while editable fields and an already open playground retain their own keyboard behavior.
-- Recovery links and the original history-based Go back behavior work on missing pages.
-- Site Light/Dark/Device preferences update the playground and editor together and persist after reload.
-- The editor loads Monaco assets from the same origin; syntax highlighting and an actual JavaScript language-worker diagnostics request succeed.
-- Reduced motion and the illustration pause control work.
-- No document overflow was found at 320, 375, 1000, 1024, 1150 or 1151 pixels.
-- Original project search/category filters, Focusboard editing/completion/persistence, Data Tidy cleanup/download, Django API Lab responses and the React mini-lesson counter work.
-- Hire service preselection, validation, message preview, clipboard and encoded draft handoff work.
-- The contact redirect returns an allowlisted WhatsApp URL with `no-store` and `no-referrer`. Tests stopped before following that external destination.
+## Generated-page and download checks
 
-Playground grading UI was checked using **intercepted browser fixtures**, not a live execution provider. The checks confirmed incorrect answers are not collected, passing answers are saved, drafts remain separate, guided answers are labelled, service errors are not graded, repeated successful answers replace the matching saved entry, export includes full source, and view/copy/reopen/delete actions work. Ctrl+Enter produced exactly one request.
+- All **22 generated public HTML pages** have one main landmark and one
+  first-level heading.
+- Their internal page, resource and fragment links resolve against the
+  generated routes and included public assets. API links are excluded from
+  this static target check and covered by the route tests.
+- All three downloadable project source ZIPs pass archive integrity checks.
+  Their checksum manifests match, and their included implementation files are
+  byte-for-byte identical to the corresponding files in the full project.
+- The source extracts use an explicit allowlist and include no environment or
+  contact configuration files.
+- The five new 1200 × 630 sharing images and editable SVG sources are included.
+  Complete public sharing/canonical URLs require the final site origin.
 
-The actual unintercepted readiness endpoint returned `configured: false` for the supplied placeholder endpoint, and the page disabled Run. A production smoke check covered navigation, local Monaco assets, nested 404 handling, recovery, mobile layout, same-origin enforcement and the contact redirect. It reported zero uncaught browser exceptions and zero React console errors.
+## Browser review and its limit
 
-## Preservation and privacy checks
+The managed browser preview rendered the updated homepage and the regular
+Playground welcome with the retained palette, layout and illustrations. The
+preview browser blocked development JavaScript assets with
+`net::ERR_BLOCKED_BY_CLIENT`, leaving client controls unhydrated in that
+environment. Full browser click-through testing, editor interaction checks and
+a fresh cross-viewport regression pass therefore remain **unverified for this
+release**. The successful production build, static checks and unit/integration
+tests above do not substitute for those browser checks.
 
-- All original public asset bytes were preserved.
-- Original service/project content, homepage content, demos and site theme implementation were retained.
-- Supplied environment values were preserved. The phone key moved from `NEXT_PUBLIC_WHATSAPP_NUMBER` to the private `WHATSAPP_NUMBER` key, and an empty `WHATSAPP_USERNAME` setting was added.
-- A production asset/HTML scan found **zero occurrences** of the configured WhatsApp number, runner URL or runner authentication value in browser JavaScript and rendered HTML.
-- A number-based WhatsApp redirect still exposes its number to the person opening it. Username mode requires the owner's real, active username.
-- The source ZIP includes the supplied local configuration, source, assets, lockfile, tests and guides. It excludes dependencies, build output, temporary browser test scripts and screenshots.
+The build environment also initially suppressed captured compiler subprocess
+output. Running the same build in the approved unrestricted process context
+resolved that environment issue. TypeScript checking was kept enabled, and no
+application configuration was weakened to bypass it.
 
-## Verification limits
+Before publishing, exercise these flows in a normal local or hosted preview:
 
-No real code-execution provider was contacted, no WhatsApp chat was opened, no messages or payments were sent, and the project was not deployed. The supplied runner URL is a documentation placeholder. A real compatible service and authentication value are still required to execute visitor programs.
+1. Check navigation, all three demos, lessons, themes and narrow-screen layouts.
+2. Open normal and missing-page Playground views, switch language/challenge,
+   enter a draft, refresh, and test focus mode and replacement undo.
+3. Export practice, restore a valid backup using merge, and inspect the explicit
+   replacement acknowledgement. Reject a malformed backup without losing work.
+4. In both editors, attempt an oversized paste after a recognisable valid draft;
+   confirm that the old draft remains visible with the limit notice.
+5. Fill an enquiry, refresh and follow a new service link, then test the clear
+   confirmation and preview/copy actions. Opening a messaging draft is not a
+   sent enquiry.
 
-WhatsApp username activation, ownership, username-key behavior and actual app-specific message prefilling require the owner's account. A copy-message fallback is provided. Paystack and social recipient ownership were not verified by these tests.
+## Preservation and privacy
 
-Browser checks used Chromium, not every browser or mobile webview. Provider quotas, concurrency across multiple server instances and hosting-function timeouts must be configured for the actual deployment. See DEPLOYMENT.md and PLAYGROUND.md.
+- All **108 original public asset files** are byte-for-byte preserved.
+- The supplied `.env.local` is byte-for-byte preserved.
+- A scan of **64 generated HTML/JavaScript browser artifacts** found no
+  occurrences of the configured private contact/runner values that were
+  present in the supplied environment file.
+- The retained service pages, demos, lessons, coding catalogue and theme
+  features remain in the source. New case studies distinguish demonstrations
+  and simulations from deployed client work.
+- The delivery excludes installed dependencies, generated build output,
+  compiler caches, temporary review files and screenshots. It includes the
+  owner's supplied local configuration; keep that file private as described
+  in the README.
+
+## Configuration and external-service limits
+
+The supplied `JUDGE0_BASE_URL`, `JUDGE0_AUTH_TOKEN`, and
+`NEXT_PUBLIC_SITE_URL` are blank. Real learner execution needs a compatible
+provider and valid server-side authentication. Complete public metadata needs
+the actual HTTPS site origin and a rebuild. Optional email, LinkedIn and CV
+links need real values before those controls appear.
+
+No live execution provider was contacted, no enquiry or email was sent, no
+payment was made, and the website was not published. Account ownership,
+messaging-app prefilling, provider quotas/health and hosting timeouts were not
+verified. See [PLAYGROUND.md](PLAYGROUND.md) and
+[DEPLOYMENT.md](DEPLOYMENT.md) for configuration and runtime limits.

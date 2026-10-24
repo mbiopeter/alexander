@@ -1,9 +1,10 @@
 # Coding playground
 
-The website has a dedicated playground at `/playground/`. The same workbench is
-also the custom 404 page, so a missing address gives visitors a useful place to
-practice. Both views share drafts, saved solutions, and the site's existing
-Light, Dark, and Device theme preference.
+The website has a dedicated playground at `/playground/` with its own normal
+welcome. Genuine missing addresses use the same workbench with the 404 detour
+heading, artwork and recovery navigation, and retain HTTP 404 status. Both views
+share local drafts, saved solutions, and the site's Light, Dark, and Device
+theme preference.
 
 ## Open and use it
 
@@ -17,6 +18,10 @@ Light, Dark, and Device theme preference.
 - Inspect each test's input, expected output, actual output, and any compiler or
   runtime diagnostic. Use hints or reveal the reference solution when needed.
 - Passing all four tests adds that source code to **Your solution collection**.
+- On smaller screens, choose the exercise from the compact challenge selector.
+  The desktop sidebar remains available on wider screens.
+- **Focus on coding** hides the surrounding site shell while you practise.
+  **Exit focus mode** restores it; this does not change saved work.
 
 The workbench uses Monaco, the editor component used by VS Code. It is a browser
 code editor with syntax highlighting, line numbers, and language-specific files;
@@ -24,6 +29,31 @@ it does not include VS Code extensions, a terminal, a filesystem, or a debugger.
 Monaco assets are served by this site from `/monaco/vs/`. If they cannot load,
 the plain editor remains available. Visitors can also switch to the plain editor
 manually. Animation can be paused, and reduced-motion preferences are respected.
+
+### Link to a particular exercise
+
+Use the known language and challenge IDs in the URL, for example:
+
+```text
+/playground/?language=python&challenge=sum-two
+```
+
+Valid parameters select that exercise after local progress has loaded; unknown
+values are ignored. Changing the selection updates the regular Playground URL
+without clearing other drafts. The true 404 view leaves the missing URL alone.
+
+### Replace a draft without losing your place
+
+Resetting to the starter, choosing **Use in editor** for a reference solution,
+or opening a saved answer offers **Undo replacement** when it changes the
+draft. Undo restores the previous draft until the next manual edit or exercise
+switch. It is a single replacement recovery step, not an unlimited edit history.
+
+Each local draft may contain up to 32,768 JavaScript string characters (UTF-16
+code units). An edit above that limit is rejected as a whole, the previously
+accepted text remains, and a notice explains the limit. Code execution has a
+separate limit of 32,768 UTF-8 bytes, so some non-ASCII programs may reach the
+execution limit before the draft limit.
 
 ## Included exercises
 
@@ -128,10 +158,10 @@ placeholders ending in `.example` or `.invalid`, and `example.com`,
 `example.net`, `example.org` or their subdomains, are also rejected. Development
 domains ending in `.test` remain supported over HTTPS.
 
-The supplied project configuration contains a template `.example` execution URL.
-It has been preserved for you to edit, but it cannot execute code. Replace it
-with your real service URL and matching credential before expecting **Run tests**
-to become available.
+The supplied `JUDGE0_BASE_URL` and `JUDGE0_AUTH_TOKEN` values are blank. The
+configuration is preserved; add a real service URL and exactly one matching
+authentication method before expecting **Run tests** to become available.
+No live execution account is included with the project.
 
 Automatic runtime discovery selects active Python 3, Node.js JavaScript, Java,
 C, and C++ entries from the service's language list. It compares version numbers
@@ -143,6 +173,8 @@ do not assume IDs from another deployment are valid.
 
 Restart the development server after changing settings. On a hosted deployment,
 apply the host's environment update/restart procedure. Then reload the page.
+The workbench's **Check connection** action repeats its configuration check
+without discarding the current draft.
 
 ### What “Runner configured” means
 
@@ -150,6 +182,8 @@ apply the host's environment update/restart procedure. Then reload the page.
 `{ "configured": false }`, with caching disabled. This checks the format and
 presence of server configuration. It does **not** contact the provider or verify
 credentials, account quota, runtime availability, or service health.
+**Check connection** repeats this same local configuration request; it does not
+submit code or perform a live provider-health check.
 
 After configuration, run a bundled reference solution to check your actual
 provider. Confirm that all four cases pass, then try an incomplete starter to
@@ -258,15 +292,57 @@ labels describe local practice history, not a verified assessment.
 
 The collection supports viewing, copying, reopening, removing, and downloading
 answers as JSON. Removing a collected answer does not clear the separate draft
-or reference-reveal history. Downloaded JSON is an export; this version has no
-import or account synchronization feature.
+or reference-reveal history. The answers-only export is still available. Use
+the whole-practice backup below when you want to restore work later.
 
 Storage belongs to the visitor's browser and origin. Clearing site data,
 switching browsers/devices/origins, or browser storage restrictions can remove
 or prevent persistence. A visible notice appears when a write cannot be saved;
-copy code or download the collection before leaving. Source sent for execution
+copy code or export a practice backup before leaving. Source sent for execution
 also reaches the configured provider; keep credentials and private data out of
 practice submissions.
+
+## Back up and restore practice
+
+The backup controls export a local `alexender-practice-backup.json` containing
+unfinished drafts, collected answers, the selected exercise and language, and
+reference-reveal history. Import reads the selected file in the browser; it
+does not upload it or run its code. This is a manual way to move your work
+between browsers, with no account or automatic cloud sync.
+
+The file has this versioned shape:
+
+```text
+format: "alexender-playground-backup"
+version: 1
+exportedAt: a date string
+progress: { version, language, challengeId, drafts, answers, revealed }
+```
+
+Validation rejects malformed JSON, unsupported versions, unknown exercise or
+language IDs, invalid dates, duplicate solution/reveal records, oversized
+source, and inconsistent pass counts. Files are limited to 8 MiB (8,388,608
+bytes), with at most 30 language/exercise pairs. Every imported pass record must
+match the published test count for its exercise, but this structural check is
+not proof that its code passed. Imported records are not re-executed or
+independently verified. An answers-only export is not a full practice backup
+and cannot be restored through this importer.
+
+After a valid file is selected, review its draft and saved-solution counts and
+choose a restore mode:
+
+- **Merge and keep my current work** is the default. Missing drafts and answers
+  are added. When both copies contain the same exercise/language pair, this
+  browser's existing draft or answer wins. Its current selection stays, and
+  reference-reveal histories are combined.
+- **Replace local practice** takes the backup's complete practice state. It
+  requires selecting replacement, checking the acknowledgement, and clicking
+  the explicit replacement button. Export the current work first if you want
+  to retain it separately.
+
+Invalid files leave local practice unchanged. Import and replacement are
+disabled during a run. The browser still needs working local storage to retain
+the restored state after leaving the page.
 
 ## Verification and maintenance
 
@@ -284,13 +360,10 @@ they require Python, Node.js, a Java compiler/runtime, GCC, and G++ for full
 coverage. An unavailable language toolchain is reported as a skipped test.
 These tests are not a runtime path for visitor-submitted code.
 
-During this integration, the playground tests passed, including all 30 reference
-programs across 120 cases, checks that all 30 starters remain incomplete
-exercises, and the runner's placeholder-configuration check. **No live Judge0
-deployment or real provider credentials were verified.** Perform the live
-provider check after supplying your own configuration. Broader website
-verification is recorded in
-[VERIFICATION.md](VERIFICATION.md).
+Current verification results and their scope are recorded in
+[VERIFICATION.md](VERIFICATION.md). Automated provider tests use controlled
+responses and do not establish that a real account is configured or working.
+Perform the live provider check after supplying your own configuration.
 
 To add a question, update `src/lib/challenges.ts` with all five starters and
 solutions, clear input/output requirements, and up to four tests. Keep existing

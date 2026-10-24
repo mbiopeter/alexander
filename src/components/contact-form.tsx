@@ -1,104 +1,56 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type FormEvent } from "react";
-import { ArrowUpRight, ChevronDown, Copy, MessageCircle } from "lucide-react";
+import { Suspense, useId, useRef, useState, type FormEvent } from "react";
+import { useSearchParams } from "next/navigation";
+import { ArrowUpRight, ChevronDown, Copy, Mail, MessageCircle, Trash2 } from "lucide-react";
 import { useToast } from "@/context/toast-context";
 import { services } from "@/data/services";
-import { getWhatsAppUrl } from "@/lib/links";
+import { getContactEmail, getEmailDraftUrl, getWhatsAppUrl } from "@/lib/links";
+import { useContactDraft } from "@/hooks/use-contact-draft";
+import {
+  buildContactMessage,
+  hasContactBrief,
+  validateContactBrief,
+  type ContactField,
+  type ContactErrors,
+} from "@/lib/contact-draft";
 
 const serviceOptions = [
   ...services.map(({ slug, title }) => ({ slug, title })),
   { slug: "something-else", title: "Something else / not sure yet" },
 ];
-
-type FieldName =
-  "service" | "name" | "project" | "budget" | "timeline" | "message";
-type FieldErrors = Partial<Record<FieldName, string>>;
+const serviceSlugs = serviceOptions.map((option) => option.slug);
 
 const fieldClass =
   "w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-3.5 text-sm text-[var(--text)] transition-colors placeholder:text-[var(--muted)] hover:border-[var(--muted)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--green)]";
 
-export function ContactForm() {
+function ContactFormFields({ requestedService }: { requestedService: string | null }) {
   const id = useId();
-  const [service, setService] = useState("");
-  const [name, setName] = useState("");
-  const [project, setProject] = useState("");
-  const [budget, setBudget] = useState("");
-  const [timeline, setTimeline] = useState("");
-  const [message, setMessage] = useState("");
-  const [errors, setErrors] = useState<FieldErrors>({});
+  const { brief, updateField, clearDraft, ready, storageNote } = useContactDraft(serviceSlugs, requestedService);
+  const { service, name, project, budget, timeline, message } = brief;
+  const [errors, setErrors] = useState<ContactErrors>({});
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [confirmClear, setConfirmClear] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const previewRef = useRef<HTMLTextAreaElement>(null);
   const { notify } = useToast();
+  const emailAvailable = Boolean(getContactEmail());
+  const whatsappAvailable = Boolean(getWhatsAppUrl());
 
-  useEffect(() => {
-    const requested = new URLSearchParams(window.location.search).get(
-      "service",
-    );
-    if (
-      requested &&
-      serviceOptions.some((option) => option.slug === requested)
-    ) {
-      setService(requested);
-    }
-  }, []);
-
-  function clearError(field: FieldName) {
+  function clearError(field: ContactField) {
     setErrors((current) => ({ ...current, [field]: undefined }));
+    setConfirmClear(false);
   }
 
   function buildDraft() {
     const selectedService = serviceOptions.find(
       (option) => option.slug === service,
     );
-    return [
-      "Hi Alexender! I'd like to discuss a project.",
-      "",
-      ...(name.trim() ? [`Name: ${name.trim()}`] : []),
-      `Service: ${selectedService?.title ?? "Not selected yet"}`,
-      ...(project.trim() ? [`Project: ${project.trim()}`] : []),
-      ...(budget.trim() ? [`Budget: ${budget.trim()}`] : []),
-      ...(timeline.trim() ? [`Timeline: ${timeline.trim()}`] : []),
-      "",
-      "Project details:",
-      message.trim(),
-      "",
-      "I found you through your website.",
-    ].join("\n");
+    return buildContactMessage(brief, selectedService?.title);
   }
 
   function prepareDraft(): string | null {
-    const selectedService = serviceOptions.find(
-      (option) => option.slug === service,
-    );
-    const values = {
-      name: name.trim(),
-      project: project.trim(),
-      budget: budget.trim(),
-      timeline: timeline.trim(),
-      message: message.trim(),
-    };
-    const nextErrors: FieldErrors = {};
-
-    if (!selectedService)
-      nextErrors.service = "Please choose a service so I can help.";
-    if (values.name.length > 80)
-      nextErrors.name = "Please keep your name to 80 characters or fewer.";
-    if (values.project.length > 120)
-      nextErrors.project =
-        "Please keep the project name to 120 characters or fewer.";
-    if (values.budget.length > 80)
-      nextErrors.budget =
-        "Please keep the budget note to 80 characters or fewer.";
-    if (values.timeline.length > 80)
-      nextErrors.timeline =
-        "Please keep the timeline note to 80 characters or fewer.";
-    if (values.message.length < 15)
-      nextErrors.message = "Tell me a little more—at least 15 characters.";
-    else if (values.message.length > 2000)
-      nextErrors.message =
-        "Please keep your message to 2,000 characters or fewer.";
+    const nextErrors = validateContactBrief(brief, serviceSlugs);
 
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) {
@@ -115,12 +67,18 @@ export function ContactForm() {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!ready) return;
+    if (!whatsappAvailable) {
+      if (emailAvailable) openEmailDraft();
+      else void copyDraft();
+      return;
+    }
     const draft = prepareDraft();
     if (!draft) return;
     const url = getWhatsAppUrl(draft);
     if (!url) {
       notify(
-        "WhatsApp enquiries will be available soon. Please check back shortly.",
+        "WhatsApp is unavailable right now. You can copy your project brief below.",
       );
       return;
     }
@@ -128,19 +86,42 @@ export function ContactForm() {
     window.location.assign(url);
   }
 
+  function openEmailDraft() {
+    const draft = prepareDraft();
+    if (!draft) return;
+    const subject = project.trim()
+      ? `Project enquiry — ${project.trim()}`
+      : "Project enquiry from your website";
+    const url = getEmailDraftUrl(draft, subject);
+    if (url) window.location.assign(url);
+  }
+
+  function clearBrief() {
+    const cleared = clearDraft();
+    setErrors({});
+    setConfirmClear(false);
+    notify(
+      cleared
+        ? "Brief cleared from this tab."
+        : "Fields cleared. Your browser blocked access to the saved draft.",
+      cleared ? "success" : "info",
+    );
+    requestAnimationFrame(() => formRef.current?.querySelector("select")?.focus());
+  }
+
   async function copyDraft() {
     const draft = prepareDraft();
     if (!draft) return;
     try {
       await navigator.clipboard.writeText(draft);
-      notify("Message copied. Paste it into your WhatsApp chat.", "success");
+      notify("Brief copied. Paste it into your message.", "success");
     } catch {
       setPreviewOpen(true);
       requestAnimationFrame(() => {
         previewRef.current?.focus();
         previewRef.current?.select();
       });
-      notify("Select and copy the message preview, then paste it in WhatsApp.");
+      notify("Select and copy the preview, then paste it into your message.");
     }
   }
 
@@ -149,7 +130,7 @@ export function ContactForm() {
       field: "name" as const,
       label: "Your name",
       value: name,
-      setValue: setName,
+      setValue: (value: string) => updateField("name", value),
       maxLength: 80,
       placeholder: "What should I call you?",
       autoComplete: "name",
@@ -158,7 +139,7 @@ export function ContactForm() {
       field: "project" as const,
       label: "Project or business name",
       value: project,
-      setValue: setProject,
+      setValue: (value: string) => updateField("project", value),
       maxLength: 120,
       placeholder: "A name for your idea",
       autoComplete: "off",
@@ -167,7 +148,7 @@ export function ContactForm() {
       field: "budget" as const,
       label: "Budget",
       value: budget,
-      setValue: setBudget,
+      setValue: (value: string) => updateField("budget", value),
       maxLength: 80,
       placeholder: "A range, or let’s discuss",
       autoComplete: "off",
@@ -176,7 +157,7 @@ export function ContactForm() {
       field: "timeline" as const,
       label: "Timeline",
       value: timeline,
-      setValue: setTimeline,
+      setValue: (value: string) => updateField("timeline", value),
       maxLength: 80,
       placeholder: "A target date, or flexible",
       autoComplete: "off",
@@ -188,6 +169,7 @@ export function ContactForm() {
       ref={formRef}
       className="contact-form space-y-5"
       onSubmit={handleSubmit}
+      aria-busy={!ready}
       noValidate
     >
       <div>
@@ -202,8 +184,9 @@ export function ContactForm() {
             id={`${id}-service`}
             name="service"
             value={service}
+            disabled={!ready}
             onChange={(event) => {
-              setService(event.target.value);
+              updateField("service", event.target.value);
               clearError("service");
             }}
             className={`${fieldClass} appearance-none pr-12`}
@@ -266,6 +249,7 @@ export function ContactForm() {
                 type="text"
                 autoComplete={autoComplete}
                 value={value}
+                disabled={!ready}
                 onChange={(event) => {
                   setValue(event.target.value);
                   clearError(field);
@@ -303,8 +287,10 @@ export function ContactForm() {
           id={`${id}-message`}
           name="message"
           value={message}
+          disabled={!ready}
           onChange={(event) => {
-            setMessage(event.target.value);
+            updateField("message", event.target.value);
+            setConfirmClear(false);
             if (event.target.value.trim().length >= 15) clearError("message");
           }}
           minLength={15}
@@ -334,6 +320,40 @@ export function ContactForm() {
         )}
       </div>
 
+      <div className="rounded-xl bg-[var(--surface-soft)] px-4 py-3">
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+          <p className="mb-0 text-xs leading-6 text-[var(--muted)]" role="status">
+            {storageNote}
+          </p>
+          {hasContactBrief(brief) && !confirmClear && (
+            <button
+              type="button"
+              className="inline-flex min-h-10 items-center gap-2 text-xs font-medium text-[var(--muted)] hover:text-[var(--text)]"
+              onClick={() => setConfirmClear(true)}
+              disabled={!ready}
+            >
+              <Trash2 size={14} aria-hidden="true" />
+              Clear draft
+            </button>
+          )}
+        </div>
+        {confirmClear && (
+          <div className="mt-3 border-t border-[var(--line)] pt-3">
+            <p className="mb-2 text-xs leading-6 text-[var(--text)]">
+              Clear all fields and this tab’s saved brief?
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <button type="button" className="button button-outline" onClick={clearBrief}>
+                Clear brief
+              </button>
+              <button type="button" className="button button-quiet" onClick={() => setConfirmClear(false)}>
+                Keep editing
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
       <details
         open={previewOpen}
         onToggle={(event) => setPreviewOpen(event.currentTarget.open)}
@@ -344,7 +364,7 @@ export function ContactForm() {
         </summary>
         <div className="space-y-3 px-4 pb-4">
           <label htmlFor={`${id}-preview`} className="sr-only">
-            Your WhatsApp message preview
+            Your project brief preview
           </label>
           <textarea
             ref={previewRef}
@@ -363,20 +383,49 @@ export function ContactForm() {
             Copy message
           </button>
           <p className="text-xs leading-relaxed text-[var(--muted)]">
-            If WhatsApp opens without your draft, copy it here and paste it into
-            the chat.
+            If your messaging or email app opens without the brief, copy it here
+            and paste it into your draft.
           </p>
         </div>
       </details>
 
-      <button type="submit" className="button button-accent w-full">
-        <MessageCircle size={18} aria-hidden="true" />
-        Continue on WhatsApp
+      <button type="submit" className="button button-accent w-full" disabled={!ready}>
+        {whatsappAvailable ? <MessageCircle size={18} aria-hidden="true" /> : emailAvailable ? <Mail size={18} aria-hidden="true" /> : <Copy size={18} aria-hidden="true" />}
+        {whatsappAvailable ? "Continue on WhatsApp" : emailAvailable ? "Open email draft" : "Copy project brief"}
         <ArrowUpRight size={18} aria-hidden="true" />
       </button>
+      {(whatsappAvailable || emailAvailable) && (
+        <div className={`grid gap-3 ${whatsappAvailable && emailAvailable ? "sm:grid-cols-2" : ""}`}>
+          {whatsappAvailable && emailAvailable && (
+            <button type="button" className="button button-outline w-full" onClick={openEmailDraft} disabled={!ready}>
+              <Mail size={17} aria-hidden="true" />
+              Use email instead
+            </button>
+          )}
+          <button type="button" className="button button-quiet w-full" onClick={copyDraft} disabled={!ready}>
+            <Copy size={17} aria-hidden="true" />
+            Copy project brief
+          </button>
+        </div>
+      )}
       <p className="text-center text-xs leading-relaxed text-[var(--muted)]">
-        This opens a WhatsApp draft. You choose when to send it.
+        {whatsappAvailable || emailAvailable
+          ? "You review and send the draft in your chosen app. Opening it does not send your enquiry."
+          : "Copy your brief and send it through your preferred contact channel."}
       </p>
     </form>
+  );
+}
+
+function ContactFormWithQuery() {
+  const searchParams = useSearchParams();
+  return <ContactFormFields requestedService={searchParams.get("service") ?? ""} />;
+}
+
+export function ContactForm() {
+  return (
+    <Suspense fallback={<ContactFormFields requestedService={null} />}>
+      <ContactFormWithQuery />
+    </Suspense>
   );
 }

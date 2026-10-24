@@ -11,6 +11,8 @@ import { DestinationLink } from "@/components/destination-link";
 import { LearningPlayground } from "@/components/learning-playground";
 import { ActionBanner, PageIntro, SectionHeading } from "@/components/page-ui";
 import { makeMetadata } from "@/lib/metadata";
+import { NoteCard } from "@/components/note-card";
+import { notes } from "@/data/notes";
 
 export const metadata = makeMetadata(
   "Learn with Alexender",
@@ -30,6 +32,8 @@ const practiceIdeas = [
       "Keep the input unchanged; return a cleaned list.",
       "Check the result against the output you expected.",
     ],
+    href: "/playground/?language=python&challenge=count-vowels",
+    action: "Practise Python strings",
   },
   {
     icon: Database,
@@ -42,6 +46,8 @@ const practiceIdeas = [
       "Include the app’s URLs in your project.",
       "Visit the endpoint and inspect the response.",
     ],
+    href: "/projects/django-api-lab/",
+    action: "Explore the API simulation",
   },
   {
     icon: Braces,
@@ -54,6 +60,8 @@ const practiceIdeas = [
       "Try a second button that decreases the count.",
       "Decide whether negative values make sense.",
     ],
+    href: "/projects/focusboard/",
+    action: "Explore state in Focusboard",
   },
 ];
 
@@ -94,7 +102,7 @@ export default function LearnPage() {
         />
         <div className="mt-9 grid gap-5 lg:grid-cols-3">
           {practiceIdeas.map(
-            ({ icon: Icon, eyebrow, title, description, steps }) => (
+            ({ icon: Icon, eyebrow, title, description, steps, href, action }) => (
               <article
                 key={eyebrow}
                 className="flex flex-col rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-7"
@@ -128,6 +136,7 @@ export default function LearnPage() {
                     </li>
                   ))}
                 </ul>
+                <Link href={href} className="text-link mt-6 min-h-11">{action}<ArrowUpRight size={17} /></Link>
               </article>
             ),
           )}
@@ -179,6 +188,12 @@ export default function LearnPage() {
             </p>
           </div>
         </div>
+      </section>
+
+      <section className="shell py-16 md:py-20" aria-labelledby="learning-notes-title">
+        <SectionHeading eyebrow="TAKE AN IDEA WITH YOU" title={<span id="learning-notes-title">A few notes from the workbench.</span>} description="Short explanations you can come back to. Each one ends with something useful to try." />
+        <div className="mt-8 grid gap-5 md:grid-cols-3">{notes.map((note) => <NoteCard key={note.slug} note={note} />)}</div>
+        <Link href="/notes/" className="text-link mt-7">All notes &amp; resources<ArrowUpRight size={17} /></Link>
       </section>
 
       <ActionBanner

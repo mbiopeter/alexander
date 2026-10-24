@@ -102,7 +102,7 @@ export function HomePage() {
                   Ideas you can interact with.
                 </span>
               }
-              description="Three small demonstration projects to explore. Try a task planner, investigate an API, or tidy a CSV right in your browser."
+              description="Try a task planner, explore an API simulation, or tidy a CSV. Then follow the decisions, edge cases, and source code behind each demo."
             />
 
           </Reveal>
@@ -118,8 +118,8 @@ export function HomePage() {
           <div className="section-endnote">
 
             <p>
-              Original demos built for this site. Explore the code and the
-              possibilities.
+              Original demos built for this site. Read the build notes and
+              download the source.
             </p>
             <Link href="/projects/" className="text-link">
               View the project gallery <ArrowRight size={17} />
@@ -221,7 +221,7 @@ export function HomePage() {
             </p>
             <div className="intro-actions">
 
-              <Link href="/learn/" className="button button-primary">
+              <Link href="/playground/" className="button button-primary">
                 Try the playground <ArrowUpRight size={18} />
               </Link>
               <DestinationLink destination="tiktok" className="text-link">

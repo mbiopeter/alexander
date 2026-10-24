@@ -3,13 +3,16 @@
 import { useEffect, useRef, useState } from "react";
 import {
   CHALLENGES,
+  LANGUAGES,
   getChallenge,
   isLanguageId,
   type LanguageId,
 } from "./challenges";
 
 export const PROGRESS_KEY = "detour-playground:progress:v1";
-const MAX_SOURCE_CHARS = 32_768;
+export const MAX_SOURCE_CHARS = 32_768;
+export const MAX_BACKUP_BYTES = 8 * 1024 * 1024;
+const MAX_PAIRS = CHALLENGES.length * LANGUAGES.length;
 
 export interface CollectedAnswer {
   language: LanguageId;
@@ -28,6 +31,20 @@ export interface Progress {
   drafts: Record<string, string>;
   answers: CollectedAnswer[];
   revealed: string[];
+}
+
+export interface PracticeBackup {
+  format: "alexender-playground-backup";
+  version: 1;
+  exportedAt: string;
+  progress: Progress;
+}
+
+export type RestoreMode = "merge" | "replace";
+
+/** The editor, browser persistence, and backup format share this draft limit. */
+export function isDraftWithinLimit(source: string): boolean {
+  return source.length <= MAX_SOURCE_CHARS;
 }
 
 export function answerKey(
@@ -92,7 +109,7 @@ export function collectAnswer(
 export function readProgress(raw: string | null): Progress {
   const initial = emptyProgress();
 
-  if (!raw || raw.length > 2_000_000) return initial;
+  if (!raw || raw.length > MAX_BACKUP_BYTES) return initial;
 
   let value: unknown;
 
@@ -120,7 +137,7 @@ export function readProgress(raw: string | null): Progress {
       if (
         validKey(key) &&
         typeof draft === "string" &&
-        draft.length <= MAX_SOURCE_CHARS
+        isDraftWithinLimit(draft)
       ) {
         initial.drafts[key] = draft;
       }
@@ -139,7 +156,7 @@ export function readProgress(raw: string | null): Progress {
   }
 
   if (Array.isArray(value.answers)) {
-    for (const candidate of value.answers.slice(0, 100)) {
+    for (const candidate of value.answers.slice(0, 100).reverse()) {
       if (
         !isRecord(candidate) ||
         !isLanguageId(candidate.language) ||
@@ -153,7 +170,7 @@ export function readProgress(raw: string | null): Progress {
       if (
         !challenge ||
         typeof candidate.sourceCode !== "string" ||
-        candidate.sourceCode.length > MAX_SOURCE_CHARS ||
+        !isDraftWithinLimit(candidate.sourceCode) ||
         typeof candidate.savedAt !== "string" ||
         !Number.isFinite(Date.parse(candidate.savedAt)) ||
         candidate.total !== challenge.tests.length ||
@@ -176,6 +193,112 @@ export function readProgress(raw: string | null): Progress {
   }
 
   return initial;
+}
+
+/** Import is strict: malformed backups never silently erase or trim work. */
+export function parsePracticeBackup(raw: string): PracticeBackup {
+  if (new TextEncoder().encode(raw).length > MAX_BACKUP_BYTES) {
+    throw new Error("Choose a practice backup smaller than 8 MB.");
+  }
+  let value: unknown;
+  try {
+    value = JSON.parse(raw);
+  } catch {
+    throw new Error("This file is not valid JSON. Choose an exported practice backup.");
+  }
+  if (
+    !isRecord(value) ||
+    value.format !== "alexender-playground-backup" ||
+    value.version !== 1 ||
+    typeof value.exportedAt !== "string" ||
+    !Number.isFinite(Date.parse(value.exportedAt)) ||
+    !isRecord(value.progress)
+  ) {
+    throw new Error("Choose a full Alexender practice backup. An answers-only export cannot restore drafts.");
+  }
+  const state = value.progress;
+  if (
+    state.version !== 1 ||
+    !isLanguageId(state.language) ||
+    typeof state.challengeId !== "string" ||
+    !getChallenge(state.challengeId) ||
+    !isRecord(state.drafts) ||
+    !Array.isArray(state.answers) ||
+    !Array.isArray(state.revealed) ||
+    Object.keys(state.drafts).length > MAX_PAIRS ||
+    state.answers.length > MAX_PAIRS ||
+    state.revealed.length > MAX_PAIRS
+  ) {
+    throw new Error("The backup contains unsupported practice data. Nothing has been changed.");
+  }
+  if (Object.entries(state.drafts).some(([key, draft]) =>
+    !validKey(key) || typeof draft !== "string" || !isDraftWithinLimit(draft),
+  )) {
+    throw new Error("The backup contains an invalid or oversized draft. Nothing has been changed.");
+  }
+  if (
+    state.revealed.some((key) => typeof key !== "string" || !validKey(key)) ||
+    new Set(state.revealed).size !== state.revealed.length
+  ) {
+    throw new Error("The backup contains invalid guided-practice records. Nothing has been changed.");
+  }
+  const answerKeys = new Set<string>();
+  for (const answer of state.answers) {
+    if (
+      !isRecord(answer) || !isLanguageId(answer.language) ||
+      typeof answer.challengeId !== "string" ||
+      typeof answer.sourceCode !== "string" || !isDraftWithinLimit(answer.sourceCode) ||
+      typeof answer.savedAt !== "string" || !Number.isFinite(Date.parse(answer.savedAt)) ||
+      typeof answer.guided !== "boolean"
+    ) {
+      throw new Error("The backup contains an invalid saved solution. Nothing has been changed.");
+    }
+    const challenge = getChallenge(answer.challengeId);
+    const key = answerKey(answer.language, answer.challengeId);
+    if (!challenge || answer.total !== challenge.tests.length || answer.passed !== answer.total || answerKeys.has(key)) {
+      throw new Error("The backup contains an invalid or duplicate pass record. Nothing has been changed.");
+    }
+    answerKeys.add(key);
+  }
+  // Rebuild known fields rather than adopting arbitrary properties from a file.
+  const progress = readProgress(JSON.stringify(state));
+  return { format: "alexender-playground-backup", version: 1, exportedAt: value.exportedAt, progress };
+}
+
+export function serializePracticeBackup(progress: Progress): string {
+  const raw = JSON.stringify({
+    format: "alexender-playground-backup",
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    progress,
+  }, null, 2);
+  parsePracticeBackup(raw);
+  return raw;
+}
+
+/** Merge keeps this browser's drafts, answers, and selection on conflicts. */
+export function restorePractice(current: Progress, incoming: Progress, mode: RestoreMode): Progress {
+  if (mode === "replace") return readProgress(JSON.stringify(incoming));
+  const existing = new Set(current.answers.map((answer) => answerKey(answer.language, answer.challengeId)));
+  return {
+    ...current,
+    drafts: { ...incoming.drafts, ...current.drafts },
+    answers: [
+      ...current.answers,
+      ...incoming.answers.filter((answer) => !existing.has(answerKey(answer.language, answer.challengeId))),
+    ],
+    revealed: [...new Set([...current.revealed, ...incoming.revealed])],
+  };
+}
+
+export function selectionFromSearch(search: string): Partial<Pick<Progress, "language" | "challengeId">> {
+  const params = new URLSearchParams(search);
+  const language = params.get("language");
+  const challengeId = params.get("challenge");
+  return {
+    ...(isLanguageId(language) ? { language } : {}),
+    ...(challengeId && getChallenge(challengeId) ? { challengeId } : {}),
+  };
 }
 
 export function useProgress() {
@@ -201,7 +324,7 @@ export function useProgress() {
       setProgress(restored);
     } catch {
       setStorageNote(
-        "Browser storage is unavailable. Download your answers before leaving.",
+        "Browser storage is unavailable. Export a practice backup before leaving.",
       );
     }
 
@@ -225,7 +348,7 @@ export function useProgress() {
         setStorageNote(null);
       } catch {
         setStorageNote(
-          "Your browser could not save this draft. Copy your code or download your answers before leaving.",
+          "Your browser could not save this draft. Copy your code or export a practice backup before leaving.",
         );
       }
     }, 250);

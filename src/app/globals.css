@@ -3419,3 +3419,44 @@ svg {
     font-size: 13px;
   }
 }
+
+/* Portfolio refinements: preserve the palette and give the active task room. */
+.art-caption {
+  bottom: -48px;
+  font-size: 8px;
+  line-height: 1.5;
+}
+.learning-contact { display: none; }
+.note-reading-width { max-width: 48rem; }
+
+body[data-practice-focus="true"] .site-header,
+body[data-practice-focus="true"] .site-footer,
+body[data-practice-focus="true"] .mobile-action-dock,
+body[data-practice-focus="true"] .floating-contact {
+  display: none !important;
+}
+body[data-practice-focus="true"] {
+  padding-bottom: 0 !important;
+}
+body[data-practice-focus="true"] { scroll-padding-top: 16px; }
+
+@media (max-width: 1000px) {
+  body[data-learning-page="true"] { padding-bottom: 0; }
+  .mobile-action-dock.learning-dock {
+    position: static;
+    box-shadow: none;
+    background: var(--bg);
+    padding-block: 16px max(16px, env(safe-area-inset-bottom));
+  }
+}
+@media (max-width: 680px) {
+  .hero { padding-top: 38px; padding-bottom: 68px; }
+  .hero-footnote { margin-top: 20px; }
+  .hero-footnote p { font-size: 11px; }
+  .hero-art { margin-top: 18px; height: 350px; }
+  .art-caption { bottom: -43px; font-size: 8px; }
+  .hero-actions { flex-wrap: wrap; row-gap: 12px; }
+}
+@media (max-width: 375px) {
+  .hero-art { height: 335px; }
+}

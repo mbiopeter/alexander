@@ -7,10 +7,17 @@ import "@/styles/playground.css";
 import { Providers } from "@/components/providers";
 import { SiteShell } from "@/components/site-shell";
 import { siteConfig } from "@/config/site";
-import { getSiteUrl } from "@/lib/links";
+import { getSiteUrl, getGitHubUrl, getLinkedInUrl, getTikTokUrl } from "@/lib/links";
 import { THEME_INIT_SCRIPT } from "@/lib/theme";
 
 const siteUrl = getSiteUrl();
+const structuredProfile = siteUrl ? {
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "WebSite", "@id": `${siteUrl}/#website`, url: siteUrl, name: "Alexender", description: siteConfig.description, publisher: { "@id": `${siteUrl}/#person` } },
+    { "@type": "Person", "@id": `${siteUrl}/#person`, name: "Alexender", url: `${siteUrl}/about/`, description: "Developer and creator building websites, useful software and practical coding examples.", sameAs: [getGitHubUrl(), getLinkedInUrl(), getTikTokUrl()].filter(Boolean) },
+  ],
+} : null;
 
 export const metadata: Metadata = {
   title: "Alexender : Developer",
@@ -62,6 +69,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        {structuredProfile && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredProfile).replace(/</g, "\\u003c") }} />}
       </head>
       <body>
         <a href="#main" className="skip-link">

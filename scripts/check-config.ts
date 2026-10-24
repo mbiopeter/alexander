@@ -1,6 +1,11 @@
 import { loadEnvConfig } from "@next/env";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import {
+  validateContactEmail,
+  validateCvUrl,
   validateGitHubUrl,
+  validateLinkedInUrl,
   validatePaystackUrl,
   validateSiteUrl,
   validateTikTokUrl,
@@ -42,6 +47,24 @@ const checks: Check[] = [
     validate: validateSiteUrl,
     help: "Use your deployed HTTPS origin, with no subfolder, query string, or fragment.",
   },
+  {
+    key: "NEXT_PUBLIC_CONTACT_EMAIL",
+    required: false,
+    validate: validateContactEmail,
+    help: "Use one public email address you own, without a mailto: prefix, or leave empty.",
+  },
+  {
+    key: "NEXT_PUBLIC_LINKEDIN_URL",
+    required: false,
+    validate: validateLinkedInUrl,
+    help: "Use https://www.linkedin.com/in/YOUR-PROFILE/ without tracking parameters, or leave empty.",
+  },
+  {
+    key: "NEXT_PUBLIC_CV_URL",
+    required: false,
+    validate: validateCvUrl,
+    help: "Use a public HTTPS document URL or a local PDF path such as /files/cv.pdf, or leave empty.",
+  },
 ];
 
 let failures = 0;
@@ -81,6 +104,12 @@ for (const check of checks) {
     console.error(`\n${value ? "Invalid" : "Missing"} ${check.key}`);
     console.error(`  ${check.help}`);
   }
+}
+
+const cvPath = process.env.NEXT_PUBLIC_CV_URL?.trim();
+if (cvPath?.startsWith("/") && validateCvUrl(cvPath) && !existsSync(join(process.cwd(), "public", cvPath.slice(1)))) {
+  failures += 1;
+  console.error("\nThe configured local CV PDF is missing from public/. Add the file or leave NEXT_PUBLIC_CV_URL empty.");
 }
 
 if (failures > 0) {

@@ -2,9 +2,13 @@ import Link from "next/link";
 import {
   ArrowUpRight,
   Braces,
+  BriefcaseBusiness,
   Check,
   Code2,
+  Download,
+  GitBranch,
   Heart,
+  Mail,
   MessageCircle,
   Play,
 } from "lucide-react";
@@ -16,6 +20,7 @@ import {
   SectionHeading,
 } from "@/components/page-ui";
 import { DestinationLink } from "@/components/destination-link";
+import { getCvUrl, getEmailDraftUrl, getGitHubUrl, getLinkedInUrl } from "@/lib/links";
 
 export const metadata = makeMetadata(
   "About Alexender",
@@ -42,6 +47,11 @@ const principles = [
 ];
 
 export default function AboutPage() {
+  const githubUrl = getGitHubUrl();
+  const linkedinUrl = getLinkedInUrl();
+  const cvUrl = getCvUrl();
+  const emailUrl = getEmailDraftUrl();
+  const hasProfileLinks = Boolean(githubUrl || linkedinUrl || cvUrl || emailUrl);
   return (
     <main id="main" className="page-main">
       <PageIntro
@@ -77,10 +87,10 @@ export default function AboutPage() {
                 script that takes a repetitive task off someone’s hands.
               </p>
               <p>
-                My services cover the interface, the application logic, and the
-                work of getting existing code moving again. I like to start with
-                the goal, work through the details, and keep the next step
-                clear.
+                I like small, understandable steps: make the main interaction
+                work, try the awkward inputs, and explain the decisions along
+                the way. The projects on this site give you a way to explore
+                that approach for yourself.
               </p>
               <p>
                 I also create short tutorials for people learning to code. The
@@ -94,6 +104,30 @@ export default function AboutPage() {
             >
               Find me on TikTok <ArrowUpRight size={17} />
             </DestinationLink>
+            {hasProfileLinks && (
+              <nav className="mt-7 flex flex-wrap gap-x-6 gap-y-4 border-t border-[var(--line)] pt-6" aria-label="Alexender’s profiles and contact">
+                {githubUrl && (
+                  <a href={githubUrl} target="_blank" rel="noopener noreferrer" className="text-link">
+                    <GitBranch size={16} aria-hidden="true" /> GitHub <ArrowUpRight size={14} aria-hidden="true" />
+                  </a>
+                )}
+                {linkedinUrl && (
+                  <a href={linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-link">
+                    <BriefcaseBusiness size={16} aria-hidden="true" /> LinkedIn <ArrowUpRight size={14} aria-hidden="true" />
+                  </a>
+                )}
+                {cvUrl && (
+                  <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="text-link">
+                    <Download size={16} aria-hidden="true" /> View my CV <ArrowUpRight size={14} aria-hidden="true" />
+                  </a>
+                )}
+                {emailUrl && (
+                  <a href={emailUrl} className="text-link">
+                    <Mail size={16} aria-hidden="true" /> Send an email
+                  </a>
+                )}
+              </nav>
+            )}
           </div>
 
           <div className="overflow-hidden rounded-3xl border border-[var(--line)] bg-[#141c19] text-[#e8eee9]">
@@ -141,6 +175,46 @@ export default function AboutPage() {
             </div>
           </div>
         </Reveal>
+      </section>
+
+      <section className="tinted-section" aria-labelledby="about-work-title">
+        <div className="shell page-section">
+          <SectionHeading
+            eyebrow="A SMALL WINDOW INTO MY WORK"
+            title={<span id="about-work-title">Build it. Try it. Explain it.</span>}
+            description="I want this site to be useful while you get to know my work. The demos are small on purpose: you can try an interaction, read the reasoning, and look at the source."
+          />
+          <div className="grid gap-5 md:grid-cols-3">
+            {[
+              {
+                title: "Make a useful first version",
+                text: "Focusboard starts with a task, a note, and a clear next step. It keeps the scope small enough to understand from the first visit.",
+                href: "/projects/focusboard/#behind-the-build",
+                label: "Inside Focusboard",
+              },
+              {
+                title: "Pay attention to the edges",
+                text: "Data Tidy has to handle more than neat rows. Its build notes cover quotes, duplicate records, uneven columns, and export choices.",
+                href: "/projects/data-tidy/#behind-the-build",
+                label: "Inside Data Tidy",
+              },
+              {
+                title: "Leave room to explore",
+                text: "The API lab makes responses visible. The lessons and coding playground let you change something, check the result, and ask why it happened.",
+                href: "/notes/",
+                label: "Read the practical notes",
+              },
+            ].map((item) => (
+              <article key={item.title} className="info-card flex flex-col">
+                <h3 className="mb-4 text-xl font-semibold tracking-tight">{item.title}</h3>
+                <p className="mb-6 text-sm leading-7 text-[var(--muted)]">{item.text}</p>
+                <Link href={item.href} className="text-link mt-auto">
+                  {item.label} <ArrowUpRight size={16} aria-hidden="true" />
+                </Link>
+              </article>
+            ))}
+          </div>
+        </div>
       </section>
 
       <section className="page-section shell" aria-label="My approach">

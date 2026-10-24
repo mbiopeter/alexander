@@ -1,8 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  createEmailDraftUrl,
   createWhatsAppUrl,
+  validateContactEmail,
+  validateCvUrl,
   validateGitHubUrl,
+  validateLinkedInUrl,
   validatePaystackUrl,
   validateSiteUrl,
   validateTikTokUrl,
@@ -129,4 +133,50 @@ test("theme follows the device only while the preference is system", () => {
   assert.equal(resolveTheme("dark", false), "dark");
   assert.equal(isTheme("system"), true);
   assert.equal(isTheme("unknown"), false);
+});
+
+test("email drafts preserve the brief without introducing recipients or headers", () => {
+  const link = createEmailDraftUrl(
+    "owner+projects@example.test",
+    "Project & enquiry?\nA second line",
+    "A café website & a booking flow?\nBudget: let’s discuss.\nThanks!",
+  );
+  assert.ok(link);
+  const url = new URL(link);
+  assert.equal(url.protocol, "mailto:");
+  assert.equal(decodeURIComponent(url.pathname), "owner+projects@example.test");
+  assert.equal(url.searchParams.get("subject"), "Project & enquiry? A second line");
+  assert.equal(url.searchParams.get("body"), "A café website & a booking flow?\r\nBudget: let’s discuss.\r\nThanks!");
+  assert.deepEqual([...url.searchParams.keys()], ["subject", "body"]);
+  const special = createEmailDraftUrl("owner?cc=someone@example.test", "Hello", "A normal brief");
+  assert.ok(special);
+  assert.equal(new URL(special).searchParams.has("cc"), false);
+  const unicodeBoundary = createEmailDraftUrl("owner@example.test", "a".repeat(159) + "😀", "A normal brief");
+  assert.ok(unicodeBoundary);
+  assert.equal(new URL(unicodeBoundary).searchParams.get("subject"), "a".repeat(159));
+});
+
+test("optional email destinations reject lists, display names, and injected headers", () => {
+  assert.equal(validateContactEmail(" owner+work@example.test "), "owner+work@example.test");
+  for (const value of [
+    "", "mailto:owner@example.test", "Name <owner@example.test>",
+    "one@example.test,two@example.test", "one@example.test;two@example.test",
+    "one@example.test\r\nBcc: two@example.test", "owner@example.test\n",
+    "owner@localhost", "owner@-example.test", ".owner@example.test", "owner..name@example.test",
+  ]) {
+    assert.equal(validateContactEmail(value), null);
+    assert.equal(createEmailDraftUrl(value, "Hello", "Test"), null);
+  }
+});
+
+test("optional professional links accept real destinations and reject unsafe alternatives", () => {
+  assert.equal(validateLinkedInUrl("https://www.linkedin.com/in/alexender-profile/"), "https://www.linkedin.com/in/alexender-profile/");
+  for (const value of ["", "https://linkedin.com.evil.test/in/name", "https://www.linkedin.com/in/name?tracking=1", "https://www.linkedin.com/company/name", "javascript:alert(1)"]) {
+    assert.equal(validateLinkedInUrl(value), null);
+  }
+  assert.equal(validateCvUrl("/files/alexender-cv.pdf"), "/files/alexender-cv.pdf");
+  assert.equal(validateCvUrl("https://documents.example.test/cv.pdf"), "https://documents.example.test/cv.pdf");
+  for (const value of ["", "//evil.test/cv.pdf", "/../private/cv.pdf", "/files/cv.pdf?redirect=1", "javascript:alert(1)", "http://example.test/cv.pdf", "https://user:password@example.test/cv.pdf"]) {
+    assert.equal(validateCvUrl(value), null);
+  }
 });

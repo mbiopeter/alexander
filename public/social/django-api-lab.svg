@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f8f9f5"/>
+  <rect x="55" y="49" width="45" height="45" rx="12" fill="#d3f76b"/><text x="63" y="82" font-family="sans-serif" font-size="32" font-weight="700" fill="#1d2621">a.</text>
+  <text x="114" y="81" font-family="sans-serif" font-size="24" font-weight="700" fill="#1d2621">alexender.</text>
+  <text x="60" y="177" font-family="sans-serif" font-size="14" font-weight="600" letter-spacing="2" fill="#3a632c">API DESIGN DEMONSTRATION</text>
+  <text x="55" y="264" font-family="sans-serif" font-size="61" letter-spacing="-2" font-weight="600" fill="#1d2621">Make the request.</text><text x="55" y="342" font-family="sans-serif" font-size="61" letter-spacing="-2" font-weight="600" fill="#3a632c">Understand the reply.</text>
+  <path d="M60 362 Q290 350 641 360" fill="none" stroke="#bfdc8f" stroke-width="6" stroke-linecap="round"/>
+  <text x="60" y="412" font-family="sans-serif" font-size="23" fill="#657066">Explore a browser-based API simulation</text><text x="60" y="447" font-family="sans-serif" font-size="23" fill="#657066">and the thinking behind its responses.</text>
+  <rect x="785" y="157" width="350" height="344" rx="25" fill="#eae3f1"/>
+  <rect x="802" y="196" width="316" height="275" rx="15" fill="#1d2921"/>
+  <circle cx="822" cy="218" r="4" fill="#d78e80"/><circle cx="838" cy="218" r="4" fill="#d3bd6c"/><circle cx="854" cy="218" r="4" fill="#94b779"/>
+  <rect x="818" y="270" width="282" height="47" rx="9" fill="#27382d"/><text x="838" y="300" font-size="17" font-family="monospace" fill="#d3f76b">GET /api/tasks/</text><rect x="818" y="333" width="282" height="47" rx="9" fill="#27382d"/><text x="838" y="363" font-size="17" font-family="monospace" fill="#d3f76b">&quot;status&quot;: 200</text><rect x="818" y="396" width="282" height="47" rx="9" fill="#27382d"/><text x="838" y="426" font-size="17" font-family="monospace" fill="#d3f76b">&quot;results&quot;: [...]</text>
+  <line x1="60" y1="535" x2="1140" y2="535" stroke="#e1e5dd"/>
+  <text x="60" y="577" font-family="sans-serif" font-size="19" font-weight="600" fill="#1d2621">Django API Lab</text>
+  <text x="1140" y="577" text-anchor="end" font-family="sans-serif" font-size="16" fill="#657066">Thoughtfully built. Simply explained.</text>
+  </svg>

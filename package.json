@@ -1,6 +1,6 @@
 {
   "name": "alexender-dev",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
   "description": "Alexender's developer portfolio, services, creator hub, and coding playground.",
   "engines": {
@@ -17,7 +17,9 @@
     "build:ready": "npm run check:config && npm run build",
     "setup:editor": "node scripts/copy-monaco.mjs",
     "postinstall": "node scripts/copy-monaco.mjs",
-    "start": "next start"
+    "start": "next start",
+    "assets:social": "node scripts/generate-share-cards.mjs",
+    "assets:sources": "python3 scripts/export-project-sources.py"
   },
   "dependencies": {
     "@fontsource-variable/dm-sans": "^5.2.0",

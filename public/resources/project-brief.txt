@@ -1,0 +1,34 @@
+ALEXENDER — A SMALL PROJECT BRIEF
+
+A few notes are enough to start. Fill in what you know and leave the rest open.
+
+1. THE GOAL
+What should the website, app, script or fix help you do?
+Who will use it?
+
+2. THE STARTING POINT
+Is this a new idea or an existing project?
+Which tools or technologies are already involved?
+Is there a public link or an example you can share?
+
+3. THE ESSENTIALS
+Which three things must the first version do?
+What can wait until later?
+
+4. THE RESULT
+How will we know the work is useful and complete?
+For a bug: what did you expect, what happened, and how can it be reproduced?
+
+5. PRACTICAL DETAILS (OPTIONAL)
+Project or business name:
+Your preferred way to communicate:
+Target date, or flexible:
+Budget range, or let's discuss:
+
+6. HANDOVER
+Who will use or maintain the finished work?
+What instructions or training would help?
+
+Do not include passwords, API keys or private customer data in this brief.
+Bring these notes to the Hire page and choose your preferred contact method.
+Opening a message draft does not send it or commit you to a project.

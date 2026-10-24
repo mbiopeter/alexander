@@ -230,8 +230,8 @@ export function Hero() {
         </h1>
         <p className="hero-description">
           Hey, I’m Alexender. I build thoughtful websites, Python backends, and
-          useful software. I also make tricky code click. Have something in
-          mind? Let’s bring it to life.
+          practical tools for businesses and creators. Have a new idea or a
+          stubborn bug? Let’s make the next step clear.
         </p>
         <div className="hero-actions">
 
@@ -260,9 +260,11 @@ export function Hero() {
           </span>
           <p>
 
-            Thoughtfully built.
+            <Link href="/projects/" className="hero-project-link inline-flex items-center gap-1.5 font-semibold hover:text-[var(--green)]">
+              Explore my projects <ArrowUpRight size={14} aria-hidden="true" />
+            </Link>
             <br />
-            <span>Simply explained.</span>
+            <span>Try the demos. See how they’re built.</span>
 
           </p>
 

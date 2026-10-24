@@ -58,6 +58,13 @@ export default function PrivacyPage() {
               practice.
             </p>
             <p>
+              A practice backup includes your unfinished drafts and saved answers.
+              Export creates a file on your device. Restore reads a file locally
+              and lets you merge it with your current practice or deliberately
+              replace it. The backup is not uploaded to this website. Anyone
+              you share the file with can read the code it contains.
+            </p>
+            <p>
               When you choose Run, your program and the exercise identifier are
               sent to this website’s server. The server sends your program and
               exercise test inputs to the configured code execution service,
@@ -67,7 +74,15 @@ export default function PrivacyPage() {
               practice code. Viewing a question or editing a draft does not run
               or upload your code.
             </p>
-            <h2>Contacting me on WhatsApp</h2>
+            <h2>Your project brief</h2>
+            <p>
+              The Hire page keeps an unfinished brief in this tab’s session
+              storage so you can return to it after navigating or refreshing.
+              Use Clear draft on the form to remove it, or close the tab
+              to end the browser session. If browser storage is unavailable,
+              you can still prepare and copy a brief without saving it.
+            </p>
+            <h2>Choosing a contact method</h2>
             <p>
               The Hire Me form prepares a WhatsApp draft from the details you
               enter. When you continue, this website’s contact endpoint receives
@@ -77,6 +92,13 @@ export default function PrivacyPage() {
               WhatsApp username when available, with a phone link as a fallback.
               Review the message in WhatsApp before sending it. WhatsApp handles
               the conversation under its own terms and privacy policy.
+            </p>
+            <p>
+              When email contact is available, Email this brief opens a draft in
+              your email application using the same details. The website does
+              not send that email. Review and send it yourself; your email
+              provider handles the resulting message. Copy brief places the
+              prepared text on your clipboard only when you choose that action.
             </p>
             <p>
               For an initial enquiry, please leave out passwords, private keys,
@@ -93,7 +115,7 @@ export default function PrivacyPage() {
             </p>
             <h2>Links to other services</h2>
             <p>
-              TikTok, GitHub, WhatsApp, and Paystack are separate services.
+              TikTok, GitHub, LinkedIn, WhatsApp, email providers, and Paystack are separate services.
               Their own privacy policies apply after you open them. This site
               loads its fonts and illustrations from its own files.
             </p>
@@ -118,7 +140,8 @@ export default function PrivacyPage() {
               <li>Choose your theme.</li>
               <li>Keep demo data on your device.</li>
               <li>Run code only when you choose.</li>
-              <li>Review your WhatsApp draft.</li>
+              <li>Restore or clear your unfinished brief.</li>
+              <li>Review a contact draft before sending.</li>
               <li>Pay through Paystack’s hosted page.</li>
             </ul>
             <Link href="/" className="text-link mt-7">

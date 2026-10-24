@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import Link from "next/link";
 import {
   ArrowUpRight,
   Braces,
@@ -92,6 +93,14 @@ const pythonExamples = [
   },
 ];
 
+const nextSteps = [
+  { label: "Explore state in Focusboard", href: "/projects/focusboard/" },
+  { label: "Read the debugging checklist", href: "/notes/a-useful-bug-report/" },
+  { label: "Explore the interactive project designs", href: "/projects/" },
+  { label: "Practise Python strings", href: "/playground/?language=python&challenge=count-vowels" },
+  { label: "Explore the API simulation", href: "/projects/django-api-lab/" },
+];
+
 export function LearningPlayground() {
   const [active, setActive] = useState(0);
   const [count, setCount] = useState(0);
@@ -153,7 +162,7 @@ export function LearningPlayground() {
       <div className="shell section">
         <Reveal className="learn-grid">
           <div className="learn-copy">
-            <p className="eyebrow">THE MINI PLAYGROUND</p>
+            <p className="eyebrow">GUIDED MINI LESSONS</p>
             <h2 id="playground-title">
               See the idea.
               <br />
@@ -387,6 +396,7 @@ export function LearningPlayground() {
             <div className="lesson-summary">
               <p className="mb-3">{lesson.summary}</p>
               <p className="mb-0 text-[var(--muted)]">{lesson.setup}</p>
+              <Link href={nextSteps[active].href} className="text-link mt-5 min-h-11">{nextSteps[active].label}<ArrowUpRight size={17} /></Link>
             </div>
           </div>
         </Reveal>

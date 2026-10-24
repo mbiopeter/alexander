@@ -11,11 +11,12 @@ import {
   Heart,
   Menu,
   MessageCircle,
+  Mail,
   X,
 } from "lucide-react";
 import { ThemeMenu } from "@/components/theme-menu";
 import { DestinationLink, TikTokIcon } from "@/components/destination-link";
-import { getGitHubUrl } from "@/lib/links";
+import { getGitHubUrl, getEmailDraftUrl, getLinkedInUrl } from "@/lib/links";
 
 const links = [
   { href: "/", label: "Home" },
@@ -48,6 +49,7 @@ function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const trigger = useRef<HTMLButtonElement>(null);
+  const header = useRef<HTMLElement>(null);
   useEffect(() => {
     setOpen(false);
   }, [pathname]);
@@ -60,10 +62,17 @@ function Header() {
       }
     };
     document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
+    const onPointer = (event: PointerEvent) => {
+      if (event.target instanceof Node && !header.current?.contains(event.target)) setOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointer);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onPointer);
+    };
   }, [open]);
   return (
-    <header className="site-header multi-header">
+    <header ref={header} className="site-header multi-header">
       <div className="shell header-inner">
         <Logo />
         <nav aria-label="Main navigation" className="desktop-nav">
@@ -144,6 +153,8 @@ function Header() {
 }
 
 function Footer() {
+  const emailUrl = getEmailDraftUrl();
+  const linkedInUrl = getLinkedInUrl();
   return (
     <footer className="site-footer multi-footer">
       <div className="shell">
@@ -172,6 +183,7 @@ function Footer() {
                   <GitBranch size={17} />
                 </DestinationLink>
               )}
+              {emailUrl && <a href={emailUrl} className="icon-button" aria-label="Email Alexender"><Mail size={18} /></a>}
               <DestinationLink
                 destination="whatsapp"
                 className="icon-button"
@@ -189,6 +201,7 @@ function Footer() {
                   {link.label}
                 </Link>
               ))}
+              <Link href="/notes/">Notes &amp; resources</Link>
             </nav>
           </div>
           <div>
@@ -200,6 +213,8 @@ function Footer() {
               <Link href="/support/">
                 Support my work <Heart size={13} />
               </Link>
+              {emailUrl && <a href={emailUrl}>Email <Mail size={13} /></a>}
+              {linkedInUrl && <a href={linkedInUrl} target="_blank" rel="noopener noreferrer">LinkedIn <ArrowUpRight size={13} /><span className="sr-only"> (opens in a new tab)</span></a>}
               <DestinationLink destination="whatsapp">
                 WhatsApp <ArrowUpRight size={13} />
               </DestinationLink>
@@ -242,6 +257,12 @@ function Footer() {
 export function SiteShell({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
+  const learningPage = ["/learn/", "/playground/", "/notes/"].some((path) => activePath(pathname, path));
+
+  useEffect(() => {
+    document.body.dataset.learningPage = String(learningPage);
+    return () => { delete document.body.dataset.learningPage; };
+  }, [learningPage]);
 
   useEffect(() => {
     function openPlayground(event: KeyboardEvent) {
@@ -280,7 +301,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
       <Header />
       {children}
       <Footer />
-      <nav className="mobile-action-dock" aria-label="Quick actions">
+      <nav className={`mobile-action-dock${learningPage ? " learning-dock" : ""}`} aria-label="Quick actions">
         <Link href="/hire/" className="button button-primary">
           <BriefcaseBusiness size={17} />
           Hire me <ArrowUpRight size={15} />
@@ -288,7 +309,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
         <DestinationLink
           destination="paystack"
           fallbackHref="/support/"
-          className="button button-accent"
+          className="button button-outline"
         >
           <Coffee size={18} />
           Buy me a coffee
@@ -296,7 +317,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
       </nav>
       <DestinationLink
         destination="whatsapp"
-        className="floating-contact desktop-whatsapp"
+        className={`floating-contact desktop-whatsapp${learningPage ? " learning-contact" : ""}`}
         label="Start a WhatsApp conversation"
       >
         <MessageCircle size={22} />
