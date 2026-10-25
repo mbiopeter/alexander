@@ -49,15 +49,23 @@ const done = (token: string, stdout: string, status = 3) => ({
   time: "0.012",
 });
 
-test("configuration fails closed without a server endpoint and secret", () => {
-  assert.throws(
-    () => loadRunnerConfig({}),
-    (error) => error instanceof RunnerError && error.code === "not_configured",
-  );
-  assert.throws(
-    () => loadRunnerConfig({ JUDGE0_BASE_URL: "https://runner.test" }),
-    RunnerError,
-  );
+test("configuration defaults to the free Judge0 CE community runner", () => {
+  const free = loadRunnerConfig({});
+  assert.equal(free.baseUrl, "https://ce.judge0.com");
+  assert.deepEqual(free.headers, { "Content-Type": "application/json" });
+  assert.deepEqual(free.languageIds, {
+    python: 71,
+    javascript: 63,
+    java: 62,
+    c: 50,
+    cpp: 54,
+  });
+
+  const unauthenticatedCustom = loadRunnerConfig({
+    JUDGE0_BASE_URL: "https://runner.test",
+  });
+  assert.equal(unauthenticatedCustom.baseUrl, "https://runner.test");
+
   assert.throws(
     () =>
       loadRunnerConfig({

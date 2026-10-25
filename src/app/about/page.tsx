@@ -23,8 +23,8 @@ import { DestinationLink } from "@/components/destination-link";
 import { getCvUrl, getEmailDraftUrl, getGitHubUrl, getLinkedInUrl } from "@/lib/links";
 
 export const metadata = makeMetadata(
-  "About Alexender",
-  "Meet Alexender: a developer and creator building websites, Python and Django software, and short coding tutorials for TikTok.",
+  "About Mbiopeter",
+  "Meet Mbiopeter: a developer and creator building websites, Python and Django software, and short coding tutorials for TikTok.",
   "/about/",
 );
 
@@ -57,7 +57,7 @@ export default function AboutPage() {
       <PageIntro
         eyebrow="ABOUT / THE PERSON BEHIND THE CODE"
         title="A developer’s mind. A creator’s heart."
-        description="I’m Alexender. I build websites and software, help untangle tricky code, and share short coding tutorials on TikTok."
+        description="I’m Mbiopeter. I build websites and software, help untangle tricky code, and share short coding tutorials on TikTok."
       >
         <Link href="/hire/" className="button button-primary">
           Let’s work together <ArrowUpRight size={18} />
@@ -105,7 +105,7 @@ export default function AboutPage() {
               Find me on TikTok <ArrowUpRight size={17} />
             </DestinationLink>
             {hasProfileLinks && (
-              <nav className="mt-7 flex flex-wrap gap-x-6 gap-y-4 border-t border-[var(--line)] pt-6" aria-label="Alexender’s profiles and contact">
+              <nav className="mt-7 flex flex-wrap gap-x-6 gap-y-4 border-t border-[var(--line)] pt-6" aria-label="Mbiopeter’s profiles and contact">
                 {githubUrl && (
                   <a href={githubUrl} target="_blank" rel="noopener noreferrer" className="text-link">
                     <GitBranch size={16} aria-hidden="true" /> GitHub <ArrowUpRight size={14} aria-hidden="true" />
@@ -151,7 +151,7 @@ export default function AboutPage() {
                 <div>
                   <dt className="mb-1 text-[#a5b7ae]">name</dt>
                   <dd className="font-medium text-[#c8ee72]">
-                    &quot;Alexender&quot;
+                    &quot;Mbiopeter&quot;
                   </dd>
                 </div>
                 <div>

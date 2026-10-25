@@ -125,19 +125,14 @@ function isDocumentationHostname(hostname: string): boolean {
 }
 
 export function loadRunnerConfig(env: Environment = process.env): RunnerConfig {
-  const base = env.JUDGE0_BASE_URL?.trim();
+  // Judge0 CE exposes a public community instance that does not require an API
+  // key for basic use. A custom endpoint can still be supplied when deploying.
+  const base = env.JUDGE0_BASE_URL?.trim() || "https://ce.judge0.com";
   const authToken = env.JUDGE0_AUTH_TOKEN?.trim();
   const bearer = env.JUDGE0_BEARER_TOKEN?.trim();
   const rapidKey = env.JUDGE0_RAPIDAPI_KEY?.trim();
 
-  if (!base || ![authToken, bearer, rapidKey].some(Boolean)) {
-    throw new RunnerError(
-      "not_configured",
-      "The code runner is not connected yet. Your draft remains in the editor.",
-    );
-  }
-
-  if ([authToken, bearer, rapidKey].filter(Boolean).length !== 1) {
+  if ([authToken, bearer, rapidKey].filter(Boolean).length > 1) {
     throw invalidConfiguration();
   }
 
@@ -181,7 +176,10 @@ export function loadRunnerConfig(env: Environment = process.env): RunnerConfig {
     headers["X-RapidAPI-Host"] = host;
   }
 
-  let languageIds: Partial<Record<LanguageId, number>> = {};
+  let languageIds: Partial<Record<LanguageId, number>> =
+    url.origin === "https://ce.judge0.com"
+      ? { python: 71, javascript: 63, java: 62, c: 50, cpp: 54 }
+      : {};
 
   if (env.JUDGE0_LANGUAGE_IDS?.trim()) {
     try {

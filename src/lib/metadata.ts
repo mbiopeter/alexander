@@ -7,9 +7,9 @@ export function makeMetadata(
   path: string,
 ): Metadata {
   const origin = getSiteUrl();
-  const fullTitle = title.includes("Alexender")
+  const fullTitle = title.includes("Mbiopeter")
     ? title
-    : `${title} — Alexender`;
+    : `${title} — Mbiopeter`;
   const pageUrl = origin ? new URL(path, origin).toString() : undefined;
   const project = ["focusboard", "django-api-lab", "data-tidy"].find((slug) => path === `/projects/${slug}/`);
   const shareImage = project ? `/social/${project}.png` : path.startsWith("/playground/") ? "/social/playground.png" : path.startsWith("/notes/") ? "/social/notes.png" : "/social-card.png";
@@ -24,7 +24,7 @@ export function makeMetadata(
       title: fullTitle,
       description,
       type: "website",
-      siteName: "Alexender",
+      siteName: "Mbiopeter",
       ...(pageUrl ? { url: pageUrl } : {}),
       ...(imageUrl
         ? {

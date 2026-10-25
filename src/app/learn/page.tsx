@@ -15,8 +15,8 @@ import { NoteCard } from "@/components/note-card";
 import { notes } from "@/data/notes";
 
 export const metadata = makeMetadata(
-  "Learn with Alexender",
-  "Explore short, practical coding lessons from Alexender. Try React, debugging, and Tailwind demos, and learn from Python and Django examples.",
+  "Learn with Mbiopeter",
+  "Explore short, practical coding lessons from Mbiopeter. Try React, debugging, and Tailwind demos, and learn from Python and Django examples.",
   "/learn/",
 );
 
@@ -171,7 +171,7 @@ export default function LearnPage() {
               Have an idea for a tutorial?{" "}
               <DestinationLink
                 destination="whatsapp"
-                message="Hi Alexender! Could you make a short tutorial about: "
+                message="Hi Mbiopeter! Could you make a short tutorial about: "
                 className="inline-flex items-center gap-1 font-semibold text-[var(--green)] underline underline-offset-4"
               >
                 Send me a topic

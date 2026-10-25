@@ -16,7 +16,7 @@ import {
 import { isTheme, resolveTheme } from "./theme";
 
 test("WhatsApp uses an international number and preserves the exact message", () => {
-  const message = "Hi Alexender! Debugging: a & b?\nCan we talk?";
+  const message = "Hi Mbiopeter! Debugging: a & b?\nCan we talk?";
   const link = createWhatsAppUrl("254700123456", message);
   assert.ok(link);
   const url = new URL(link);

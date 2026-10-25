@@ -101,7 +101,7 @@ test("full backups preserve empty drafts, selection, guidance, answers, and answ
 test("backup import rejects malformed, unknown, duplicated, and oversized data without returning partial state", () => {
   const base = JSON.parse(serializePracticeBackup(emptyProgress()));
   assert.throws(() => parsePracticeBackup("{broken"), /valid JSON/);
-  assert.throws(() => parsePracticeBackup('{"version":1,"answers":[]}'), /full Alexender practice backup/);
+  assert.throws(() => parsePracticeBackup('{"version":1,"answers":[]}'), /full Mbiopeter practice backup/);
   assert.throws(() => parsePracticeBackup(" ".repeat(MAX_BACKUP_BYTES + 1)), /8 MB/);
   for (const progress of [
     { ...base.progress, language: "ruby" },

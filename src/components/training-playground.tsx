@@ -7,6 +7,7 @@ import {
   ArrowLeft,
   ArrowUpRight,
   Bookmark,
+  BookOpen,
   Check,
   CheckCheck,
   ChevronRight,
@@ -26,6 +27,7 @@ import {
   Terminal,
   Trash2,
   Trophy,
+  ListChecks,
   Undo2,
   Upload,
   X,
@@ -35,6 +37,7 @@ import {
   LANGUAGES,
   getChallenge,
   getLanguage,
+  pickPracticeChallenges,
   type LanguageId,
 } from "@/lib/challenges";
 import {
@@ -53,6 +56,7 @@ import {
 } from "@/lib/progress";
 import { useTheme } from "@/context/theme-context";
 import type { RunReport, TestResult } from "@/lib/runner";
+import { TheoryQuiz } from "@/components/theory-quiz";
 
 const CodeEditor = dynamic(() => import("./code-editor"), {
   ssr: false,
@@ -119,6 +123,8 @@ export default function TrainingPlayground({
 }) {
   const { resolvedTheme, mounted: themeReady } = useTheme();
   const { progress, setProgress, ready, storageNote } = useProgress();
+  const [section, setSection] = useState<"theory" | "practice">("practice");
+  const [practiceChallengeIds, setPracticeChallengeIds] = useState<string[]>([]);
   const [run, setRun] = useState<RunView>({ phase: "idle" });
   const [connection, setConnection] = useState<Connection>("checking");
   const [showSolution, setShowSolution] = useState(false);
@@ -136,6 +142,7 @@ export default function TrainingPlayground({
   const importInputRef = useRef<HTMLInputElement | null>(null);
   const importPanelRef = useRef<HTMLElement | null>(null);
   const linkApplied = useRef(false);
+  const practiceSessionInitialized = useRef(false);
   const runRef = useRef<{ controller: AbortController; key: string } | null>(
     null,
   );
@@ -143,7 +150,17 @@ export default function TrainingPlayground({
   const collectionRef = useRef<HTMLElement | null>(null);
   const noticeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const challenge = getChallenge(progress.challengeId) ?? CHALLENGES[0];
+  const sessionChallenges = practiceChallengeIds.length
+    ? practiceChallengeIds
+        .map((id) => getChallenge(id))
+        .filter((item): item is (typeof CHALLENGES)[number] => Boolean(item))
+    : CHALLENGES.slice(0, 10);
+  const progressChallenge = getChallenge(progress.challengeId);
+  const challenge =
+    progressChallenge &&
+    (!practiceChallengeIds.length || practiceChallengeIds.includes(progressChallenge.id))
+      ? progressChallenge
+      : sessionChallenges[0] ?? CHALLENGES[0];
   const language = getLanguage(progress.language)!;
   const key = answerKey(language.id, challenge.id);
   const code = progress.drafts[key] ?? challenge.starter[language.id];
@@ -151,9 +168,12 @@ export default function TrainingPlayground({
   currentCode.current = code;
   const isRunning = run.phase === "running";
   const solvedInLanguage = progress.answers.filter(
-    (answer) => answer.language === language.id,
+    (answer) =>
+      answer.language === language.id &&
+      sessionChallenges.some((item) => item.id === answer.challengeId),
   ).length;
   const totalPairs = CHALLENGES.length * LANGUAGES.length;
+  const practiceScore = Math.round((solvedInLanguage / Math.max(1, sessionChallenges.length)) * 100);
   const motionState = motionPaused
     ? "[animation-play-state:paused]"
     : "[animation-play-state:running]";
@@ -183,6 +203,23 @@ export default function TrainingPlayground({
     window.addEventListener("popstate", applyLink);
     return () => window.removeEventListener("popstate", applyLink);
   }, [ready, setProgress]);
+
+  useEffect(() => {
+    if (!ready || practiceSessionInitialized.current) return;
+    practiceSessionInitialized.current = true;
+
+    const linked = selectionFromSearch(window.location.search).challengeId;
+    const preferredId = linked ?? progress.challengeId;
+    const selected = pickPracticeChallenges(10, preferredId);
+    const targetId = selected.some((item) => item.id === preferredId)
+      ? preferredId
+      : selected[0]?.id;
+
+    setPracticeChallengeIds(selected.map((item) => item.id));
+    if (targetId && targetId !== progress.challengeId) {
+      setProgress((current) => ({ ...current, challengeId: targetId }));
+    }
+  }, [ready, progress.challengeId, setProgress]);
 
   useEffect(() => {
     if (focusMode) document.body.dataset.practiceFocus = "true";
@@ -269,6 +306,13 @@ export default function TrainingPlayground({
       language: languageId,
     }));
     syncSelectionUrl(challengeId, languageId);
+  }
+
+  function newPracticeTest() {
+    const selected = pickPracticeChallenges(10);
+    setPracticeChallengeIds(selected.map((item) => item.id));
+    if (selected[0]) choose(selected[0].id);
+    announce("New practice test ready: 10 mixed-difficulty coding questions.");
   }
 
   const changeCode = useCallback(
@@ -466,7 +510,7 @@ export default function TrainingPlayground({
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = "alexender-playground-answers.json";
+    anchor.download = "mbiopeter-playground-answers.json";
     document.body.appendChild(anchor);
     anchor.click();
     anchor.remove();
@@ -479,7 +523,7 @@ export default function TrainingPlayground({
       const url = URL.createObjectURL(new Blob([raw], { type: "application/json" }));
       const anchor = document.createElement("a");
       anchor.href = url;
-      anchor.download = "alexender-practice-backup.json";
+      anchor.download = "mbiopeter-practice-backup.json";
       document.body.appendChild(anchor);
       anchor.click();
       anchor.remove();
@@ -575,6 +619,33 @@ export default function TrainingPlayground({
           </div>
         </nav>
 
+        <div className="mt-5 flex flex-wrap items-center gap-2 rounded-2xl border border-[var(--pg-border)] bg-[var(--pg-panel)] p-2" role="tablist" aria-label="Playground section">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={section === "theory"}
+            onClick={() => { setSection("theory"); setFocusMode(false); cancelRun(); }}
+            className={`inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold transition-colors ${section === "theory" ? "bg-[var(--pg-accent)] text-[var(--pg-accent-ink)]" : "text-[var(--pg-muted)] hover:bg-[var(--pg-soft)]"}`}
+          >
+            <BookOpen size={16} aria-hidden="true" /> Theory
+            <span className="rounded-full bg-black/10 px-2 py-0.5 text-[10px]">100 questions</span>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={section === "practice"}
+            onClick={() => setSection("practice")}
+            className={`inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold transition-colors ${section === "practice" ? "bg-[var(--pg-accent)] text-[var(--pg-accent-ink)]" : "text-[var(--pg-muted)] hover:bg-[var(--pg-soft)]"}`}
+          >
+            <ListChecks size={16} aria-hidden="true" /> Practice
+            <span className="rounded-full bg-black/10 px-2 py-0.5 text-[10px]">{CHALLENGES.length} questions</span>
+          </button>
+        </div>
+
+        {section === "theory" ? (
+          <TheoryQuiz />
+        ) : (
+          <>
         <section
           aria-labelledby="playground-title"
           className="practice-intro grid items-center gap-6 py-7 md:grid-cols-[1fr_auto] md:py-10"
@@ -605,8 +676,7 @@ export default function TrainingPlayground({
             </p>
             <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-[var(--pg-muted)]">
               <span className="flex items-center gap-1.5">
-                <FileCode2 size={14} aria-hidden="true" /> {CHALLENGES.length}{" "}
-                quick challenges
+                <FileCode2 size={14} aria-hidden="true" /> {sessionChallenges.length} random questions from {CHALLENGES.length}
               </span>
               <span className="flex items-center gap-1.5">
                 <Code2 size={14} aria-hidden="true" /> {LANGUAGES.length}{" "}
@@ -696,15 +766,21 @@ export default function TrainingPlayground({
             {connection === "checking"
               ? "Checking runner…"
               : connection === "configured"
-                ? "Runner configured"
+                ? "Free runner ready"
                 : connection === "unavailable"
-                  ? "Runner not connected"
+                  ? "Runner temporarily unavailable"
                   : "Runner status unavailable"}
             {connection !== "configured" && (
               <button type="button" disabled={connection === "checking"} onClick={() => setConnectionCheck((attempt) => attempt + 1)} className={`${smallButton} px-2`}>
                 <RotateCcw size={12} aria-hidden="true" /> Check connection
               </button>
             )}
+            <span className="rounded-lg bg-[var(--pg-accent-soft)] px-2.5 py-1.5 font-semibold text-[var(--pg-accent)]">
+              Score {solvedInLanguage}/{sessionChallenges.length} · {practiceScore}%
+            </span>
+            <button type="button" onClick={newPracticeTest} disabled={!ready || isRunning} className={`${smallButton} border border-[var(--pg-border)] bg-[var(--pg-panel)]`}>
+              <RotateCcw size={12} aria-hidden="true" /> New random 10
+            </button>
           </div>
         </div>
 
@@ -724,9 +800,9 @@ export default function TrainingPlayground({
             <span className="font-semibold text-[var(--pg-fg)]">
               Practice space is ready.
             </span>{" "}
-            Code execution isn’t connected on this site yet. You can write code,
-            explore hints, and read reference solutions. Your drafts stay in
-            this browser.
+            The free public code runner is temporarily unavailable. You can still write code,
+            explore hints, and read reference solutions. Your drafts stay in this browser;
+            try the runner again shortly.
           </p>
         )}
 
@@ -739,13 +815,13 @@ export default function TrainingPlayground({
             onChange={(event) => choose(event.target.value)}
             className="min-h-11 w-full rounded-lg border border-[var(--pg-border)] bg-[var(--pg-soft)] px-3 py-2 text-sm text-[var(--pg-fg)]"
           >
-            {CHALLENGES.map((item, index) => (
+            {sessionChallenges.map((item, index) => (
               <option key={item.id} value={item.id}>
                 {String(index + 1).padStart(2, "0")} · {item.title}{progress.answers.some((answer) => answer.language === language.id && answer.challengeId === item.id) ? " · Completed" : ""}
               </option>
             ))}
           </select>
-          <p className="mb-0 mt-2 text-xs text-[var(--pg-muted)]">{language.label} progress · {solvedInLanguage} of {CHALLENGES.length} collected</p>
+          <p className="mb-0 mt-2 text-xs text-[var(--pg-muted)]">{language.label} test score · {solvedInLanguage}/{sessionChallenges.length} solved · {practiceScore}%</p>
         </div>
 
         <div
@@ -775,7 +851,7 @@ export default function TrainingPlayground({
               </p>
             </div>
             <ol className="grid gap-1 p-2 sm:grid-cols-2 lg:grid-cols-1">
-              {CHALLENGES.map((item, index) => {
+              {sessionChallenges.map((item, index) => {
                 const solved = progress.answers.some(
                   (answer) =>
                     answer.language === language.id &&
@@ -828,13 +904,13 @@ export default function TrainingPlayground({
               <div className="mb-2 flex items-center justify-between text-[10px] text-[var(--pg-muted)]">
                 <span>{language.label} progress</span>
                 <span>
-                  {solvedInLanguage}/{CHALLENGES.length}
+                  {solvedInLanguage}/{sessionChallenges.length}
                 </span>
               </div>
               <progress
                 className="block h-1.5 w-full overflow-hidden rounded-full [&::-webkit-progress-bar]:bg-[var(--pg-soft)] [&::-webkit-progress-value]:bg-[var(--pg-accent)] [&::-moz-progress-bar]:bg-[var(--pg-accent)]"
                 value={solvedInLanguage}
-                max={CHALLENGES.length}
+                max={sessionChallenges.length}
                 aria-label={`${language.label} completed challenges`}
               />
               <p className="mt-3 text-[11px] leading-5 text-[var(--pg-muted)]">
@@ -854,7 +930,7 @@ export default function TrainingPlayground({
                     <span>
                       Challenge{" "}
                       {String(
-                        CHALLENGES.findIndex(
+                        sessionChallenges.findIndex(
                           (item) => item.id === challenge.id,
                         ) + 1,
                       ).padStart(2, "0")}
@@ -1072,7 +1148,7 @@ export default function TrainingPlayground({
                 </h3>
                 <span className="font-mono text-[10px] text-[var(--pg-muted)]">
                   {report
-                    ? `${report.passed}/${report.total} passed`
+                    ? `${report.passed}/${report.total} passed · ${Math.round((report.passed / report.total) * 100)}%`
                     : `${challenge.tests.length} test cases`}
                 </span>
               </div>
@@ -1127,7 +1203,7 @@ export default function TrainingPlayground({
                           : "Not quite yet. You’ve got another try."}
                       </p>
                       <p className="mt-1 text-xs leading-5">
-                        {report.passed} of {report.total} cases passed.
+                        {report.passed} of {report.total} cases passed · score {Math.round((report.passed / report.total) * 100)}%.
                         {report.verdict === "incorrect"
                           ? " Compare the expected and actual output below."
                           : " Your passing code has been collected on this device."}
@@ -1380,6 +1456,8 @@ export default function TrainingPlayground({
             </div>
           )}
         </section>
+          </>
+        )}
 
         <footer className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--pg-border)] pt-5 text-[10px] leading-5 text-[var(--pg-muted)]">
           <span>{isNotFound ? "Some wrong turns lead to good things. Keep going." : "One small exercise at a time. Keep building."}</span>

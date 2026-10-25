@@ -102,9 +102,9 @@ version. Its editor assets and API requests use root-based paths, so they also
 work when the missing address has several path segments.
 
 The question list, editor, themes, hints, reference answers, and local drafts
-work before a runner is connected. Real execution requires the configuration
-below. Until then, the interface explains that the runner is unavailable and
-disables **Run tests**.
+work independently of the execution service. By default, real execution uses the
+public Judge0 CE community endpoint with no API key. The optional configuration
+below is only needed when you want to use a different compatible service.
 
 ## Connect real code execution
 
@@ -120,12 +120,13 @@ Choose a service you control or have access to. It must support:
 - `GET /submissions/batch` with token polling and Base64-encoded results;
 - the execution resource limits used by this integration.
 
-Add these **server-only** variables to `.env.local` for development and to the
-runtime environment on your host. Fill in `JUDGE0_BASE_URL` and **exactly one**
-authentication value. Keep the two unused authentication values blank.
+No runner variables are required for the default public Judge0 CE endpoint. To
+use a custom service, add these **server-only** variables to `.env.local` for
+development and to the runtime environment on your host. Authentication is
+optional; if your provider requires it, set **at most one** authentication value.
 
 ```dotenv
-# Base URL from your execution provider, without /submissions or /languages.
+# Optional custom base URL. Blank uses https://ce.judge0.com.
 JUDGE0_BASE_URL=
 
 # Option A: a service using X-Auth-Token.
@@ -158,10 +159,10 @@ placeholders ending in `.example` or `.invalid`, and `example.com`,
 `example.net`, `example.org` or their subdomains, are also rejected. Development
 domains ending in `.test` remain supported over HTTPS.
 
-The supplied `JUDGE0_BASE_URL` and `JUDGE0_AUTH_TOKEN` values are blank. The
-configuration is preserved; add a real service URL and exactly one matching
-authentication method before expecting **Run tests** to become available.
-No live execution account is included with the project.
+The supplied `JUDGE0_BASE_URL` and authentication values may remain blank. In
+that case the app uses `https://ce.judge0.com` with built-in IDs for the five
+supported languages. A custom service can override this default and can provide
+its own authentication and language IDs when required.
 
 Automatic runtime discovery selects active Python 3, Node.js JavaScript, Java,
 C, and C++ entries from the service's language list. It compares version numbers
@@ -304,7 +305,7 @@ practice submissions.
 
 ## Back up and restore practice
 
-The backup controls export a local `alexender-practice-backup.json` containing
+The backup controls export a local `mbiopeter-practice-backup.json` containing
 unfinished drafts, collected answers, the selected exercise and language, and
 reference-reveal history. Import reads the selected file in the browser; it
 does not upload it or run its code. This is a manual way to move your work

@@ -55,7 +55,7 @@ test("refresh keeps an edited service, while a new service link can preselect an
 test("email, WhatsApp, and copied briefs share the same required content", () => {
   assert.deepEqual(validateContactBrief(brief, services), {});
   assert.equal(buildContactMessage(brief, "Web development"), [
-    "Hi Alexender! I'd like to discuss a project.",
+    "Hi Mbiopeter! I'd like to discuss a project.",
     "", "Name: A visitor", "Service: Web development", "Project: Café & booking",
     "", "Project details:", brief.message,
     "", "I found you through your website.",

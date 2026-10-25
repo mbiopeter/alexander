@@ -1,8 +1,8 @@
 export const siteConfig = {
-  name: "Alexender",
+  name: "Mbiopeter",
   title: "Developer & creator",
   description:
-    "Websites, Python and Django development, custom software, automation, and debugging by Alexender. Practical projects and short coding tutorials that make things click.",
+    "Websites, Python and Django development, custom software, automation, and debugging by Mbiopeter. Practical projects and short coding tutorials that make things click.",
   url: process.env.NEXT_PUBLIC_SITE_URL?.trim() ?? "",
   contact: {
     // Only availability is exposed to the browser. The server resolves the

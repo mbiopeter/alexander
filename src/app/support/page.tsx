@@ -16,7 +16,7 @@ import { makeMetadata } from "@/lib/metadata";
 
 export const metadata = makeMetadata(
   "Support the developer",
-  "Support Alexender’s short coding tutorials and development work with an optional contribution through Paystack. Choose an amount on the hosted payment page.",
+  "Support Mbiopeter’s short coding tutorials and development work with an optional contribution through Paystack. Choose an amount on the hosted payment page.",
   "/support/",
 );
 
@@ -218,7 +218,7 @@ export default function SupportPage() {
               </DestinationLink>
               <DestinationLink
                 destination="whatsapp"
-                message="Hi Alexender! I have an idea for a coding tutorial: "
+                message="Hi Mbiopeter! I have an idea for a coding tutorial: "
                 className="button button-quiet"
               >
                 <MessageCircle size={17} aria-hidden="true" />

@@ -214,7 +214,7 @@ export function parsePracticeBackup(raw: string): PracticeBackup {
     !Number.isFinite(Date.parse(value.exportedAt)) ||
     !isRecord(value.progress)
   ) {
-    throw new Error("Choose a full Alexender practice backup. An answers-only export cannot restore drafts.");
+    throw new Error("Choose a full Mbiopeter practice backup. An answers-only export cannot restore drafts.");
   }
   const state = value.progress;
   if (

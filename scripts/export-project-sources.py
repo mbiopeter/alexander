@@ -82,7 +82,7 @@ def build_readme(slug: str, project: dict) -> bytes:
     return f"""# {project['title']} — source extract
 
 These are the actual implementation files used by the {project['title']} demo
-on Alexender's portfolio. The download is for reading the code and adapting the
+on Mbiopeter's portfolio. The download is for reading the code and adapting the
 component within a suitable React project. It is not a standalone application
 or a published npm package.
 

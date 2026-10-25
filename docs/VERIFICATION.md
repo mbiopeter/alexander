@@ -1,6 +1,6 @@
 # Version 2.1.0 verification
 
-Prepared on 24 October 2026 for the updated Alexender source ZIP.
+Prepared on 24 October 2026 for the updated Mbiopeter source ZIP.
 
 ## Automated checks
 
@@ -85,13 +85,13 @@ Before publishing, exercise these flows in a normal local or hosted preview:
 
 ## Configuration and external-service limits
 
-The supplied `JUDGE0_BASE_URL`, `JUDGE0_AUTH_TOKEN`, and
-`NEXT_PUBLIC_SITE_URL` are blank. Real learner execution needs a compatible
-provider and valid server-side authentication. Complete public metadata needs
+The supplied optional Judge0 overrides and `NEXT_PUBLIC_SITE_URL` may be blank.
+Real learner execution then uses the public Judge0 CE community endpoint without
+an API key. Complete public metadata still needs
 the actual HTTPS site origin and a rebuild. Optional email, LinkedIn and CV
 links need real values before those controls appear.
 
-No live execution provider was contacted, no enquiry or email was sent, no
+No live execution provider was contacted during offline verification, no enquiry or email was sent, no
 payment was made, and the website was not published. Account ownership,
 messaging-app prefilling, provider quotas/health and hosting timeouts were not
 verified. See [PLAYGROUND.md](PLAYGROUND.md) and

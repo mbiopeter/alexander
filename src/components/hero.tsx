@@ -128,7 +128,7 @@ function HeroArtwork() {
               <div>
 
                 <em>9</em> developer=
-                <span className="code-orange">&quot;Alexender&quot;</span>
+                <span className="code-orange">&quot;Mbiopeter&quot;</span>
 
               </div>
               <div>
@@ -229,7 +229,7 @@ export function Hero() {
 
         </h1>
         <p className="hero-description">
-          Hey, I’m Alexender. I build thoughtful websites, Python backends, and
+          Hey, I’m Mbiopeter. I build thoughtful websites, Python backends, and
           practical tools for businesses and creators. Have a new idea or a
           stubborn bug? Let’s make the next step clear.
         </p>

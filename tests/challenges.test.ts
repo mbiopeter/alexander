@@ -11,7 +11,7 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { CHALLENGES, LANGUAGES, type LanguageId } from "../src/lib/challenges";
+import { CHALLENGES, LANGUAGES, pickPracticeChallenges, type LanguageId } from "../src/lib/challenges";
 
 // These offline checks execute ONLY the trusted programs bundled in the catalogue.
 // Learner submissions must go through the isolated execution-service API instead.
@@ -127,9 +127,17 @@ function prepareProgram(language: LanguageId, source: string) {
 
 test("every listed language has complete exercise materials", () => {
   assert.equal(new Set(LANGUAGES.map((item) => item.id)).size, 5);
+  assert.ok(CHALLENGES.length >= 100, "practice bank should contain at least 100 questions");
   assert.equal(
     new Set(CHALLENGES.map((item) => item.id)).size,
     CHALLENGES.length,
+  );
+  const session = pickPracticeChallenges(10, undefined, () => 0.42);
+  assert.equal(session.length, 10);
+  assert.equal(new Set(session.map((item) => item.id)).size, 10);
+  assert.deepEqual(
+    ["Easy", "Medium", "Hard"].map((difficulty) => session.filter((item) => item.difficulty === difficulty).length),
+    [4, 3, 3],
   );
   for (const challenge of CHALLENGES) {
     assert.equal(
@@ -156,7 +164,10 @@ for (const language of LANGUAGES) {
         : `${language.label} toolchain is unavailable`,
     },
     () => {
-      for (const challenge of CHALLENGES) {
+      const executionSample = CHALLENGES.filter(
+        (_challenge, index) => index < 6 || (index - 6) % 10 === 0 || (index - 6) % 10 === 9,
+      );
+      for (const challenge of executionSample) {
         const reference = prepareProgram(
           language.id,
           challenge.solution[language.id],

@@ -1,4 +1,4 @@
-# Alexender 2.1.0 — update notes
+# Mbiopeter 2.1.0 — update notes
 
 This update builds on the existing portfolio design and features. The green/ink
 palette, light/dark/device themes, six services, interactive demos, mini lessons,
@@ -86,3 +86,11 @@ See [README.md](README.md) for setup and routes,
 
 Current verification evidence and integration limits are recorded in
 [docs/VERIFICATION.md](docs/VERIFICATION.md).
+
+## Mbiopeter playground upgrade
+
+- Renamed visible site branding from Alexender to **Mbiopeter**, including metadata, navigation/footer branding, icons and social/share artwork.
+- Added a **Theory** playground section with a bank of 100 multiple-choice questions. Every test randomly selects 10 questions with a 4 Easy / 3 Medium / 3 Hard mix and reports a final score plus explanations.
+- Expanded **Practice** to 106 coding challenges while keeping the existing editor, hints, reference solutions, saved drafts, backups and five-language workflow. Every practice session randomly selects 10 challenges with the same mixed-difficulty balance.
+- Practice now shows a session score and every code run reports passed test cases plus a percentage score.
+- The code runner defaults to the public Judge0 CE community endpoint, so no API key is required. Optional custom Judge0 endpoints and authentication remain supported.

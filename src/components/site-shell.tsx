@@ -34,12 +34,12 @@ function activePath(current: string, href: string) {
 
 export function Logo() {
   return (
-    <Link href="/" aria-label="Alexender home" className="brand">
+    <Link href="/" aria-label="Mbiopeter home" className="brand">
       <span className="brand-symbol" aria-hidden="true">
-        a<span>.</span>
+        m<span>.</span>
       </span>
       <span>
-        alexender<span className="brand-period">.</span>
+        mbiopeter<span className="brand-period">.</span>
       </span>
     </Link>
   );
@@ -170,7 +170,7 @@ function Footer() {
               <DestinationLink
                 destination="tiktok"
                 className="icon-button"
-                label="Alexender on TikTok"
+                label="Mbiopeter on TikTok"
               >
                 <TikTokIcon className="h-4 w-4" />
               </DestinationLink>
@@ -178,16 +178,16 @@ function Footer() {
                 <DestinationLink
                   destination="github"
                   className="icon-button"
-                  label="Alexender on GitHub"
+                  label="Mbiopeter on GitHub"
                 >
                   <GitBranch size={17} />
                 </DestinationLink>
               )}
-              {emailUrl && <a href={emailUrl} className="icon-button" aria-label="Email Alexender"><Mail size={18} /></a>}
+              {emailUrl && <a href={emailUrl} className="icon-button" aria-label="Email Mbiopeter"><Mail size={18} /></a>}
               <DestinationLink
                 destination="whatsapp"
                 className="icon-button"
-                label="Message Alexender on WhatsApp"
+                label="Message Mbiopeter on WhatsApp"
               >
                 <MessageCircle size={18} />
               </DestinationLink>
@@ -236,7 +236,7 @@ function Footer() {
           </div>
         </div>
         <div className="footer-bottom">
-          <span>© {new Date().getFullYear()} Alexender. Made with care.</span>
+          <span>© {new Date().getFullYear()} Mbiopeter. Made with care.</span>
           <Link
             href="/playground/"
             aria-keyshortcuts="Control+. Meta+."

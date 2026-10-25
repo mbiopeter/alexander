@@ -13,7 +13,7 @@ import { DestinationLink } from "@/components/destination-link";
 
 export const metadata = makeMetadata(
   "Development services",
-  "Web development, Python and Django applications, custom software, automation, debugging, and maintenance by Alexender.",
+  "Web development, Python and Django applications, custom software, automation, debugging, and maintenance by Mbiopeter.",
   "/services/",
 );
 
@@ -70,7 +70,7 @@ export default function ServicesPage() {
             </p>
             <DestinationLink
               destination="whatsapp"
-              message="Hi Alexender! I’m not sure which service I need. Can I tell you about my project?"
+              message="Hi Mbiopeter! I’m not sure which service I need. Can I tell you about my project?"
               className="button button-outline mt-7"
             >
               <MessageCircle size={18} /> Ask on WhatsApp{" "}

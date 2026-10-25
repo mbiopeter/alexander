@@ -94,7 +94,7 @@ test("missing or malformed server configuration never redirects", async () => {
 });
 
 test("username redirect keeps Unicode, whitespace, and special characters in the draft", () => {
-  const message = "Hi Alexender! 👋\nPython + Django & C++?\n  Tell me more.  ";
+  const message = "Hi Mbiopeter! 👋\nPython + Django & C++?\n  Tell me more.  ";
   const response = createWhatsAppRedirect(request(message), {
     WHATSAPP_USERNAME: "alexender.dev",
   });

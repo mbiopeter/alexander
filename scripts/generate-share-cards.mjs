@@ -11,7 +11,7 @@ const cards = [
   { slug: "focusboard", eyebrow: "INTERACTIVE PROJECT", title: ["A little structure.", "More room to focus."], subtitle: ["Plan tasks. Track progress.", "Explore the decisions behind the build."], label: "Focusboard", fill: "#e5edda", lines: ["Make a little plan", "Build something useful", "Share it with the world"], kind: "tasks" },
   { slug: "django-api-lab", eyebrow: "API DESIGN DEMONSTRATION", title: ["Make the request.", "Understand the reply."], subtitle: ["Explore a browser-based API simulation", "and the thinking behind its responses."], label: "Django API Lab", fill: "#eae3f1", lines: ["GET /api/tasks/", '"status": 200', '"results": [...]'], kind: "code" },
   { slug: "data-tidy", eyebrow: "INTERACTIVE PROJECT", title: ["Messy CSV.", "A clearer next step."], subtitle: ["Clean, inspect and download your data.", "See how the browser demo is built."], label: "Data Tidy", fill: "#f5e8d8", lines: ["NAME        ROLE", "Ada         Developer", "Mina        Creator"], kind: "table" },
-  { slug: "playground", eyebrow: "THE CODING PLAYGROUND", title: ["A little practice.", "A new possibility."], subtitle: ["Five languages. Small challenges.", "Your own space to try, learn and build."], label: "Coding playground", fill: "#e5edda", lines: ["def next_step():", "    try_something()", "    keep_learning()"], kind: "code" },
+  { slug: "playground", eyebrow: "THE CODING PLAYGROUND", title: ["A little practice.", "A new possibility."], subtitle: ["Five languages. 100+ coding challenges.", "Your own space to try, learn and build."], label: "Coding playground", fill: "#e5edda", lines: ["def next_step():", "    try_something()", "    keep_learning()"], kind: "code" },
   { slug: "notes", eyebrow: "NOTES & RESOURCES", title: ["Small ideas", "worth keeping."], subtitle: ["Practical notes on debugging, data", "and learning one concept at a time."], label: "Notes from the workbench", fill: "#f0eddb", lines: ["Understand the problem", "Try one small change", "Keep what you learn"], kind: "tasks" },
 ];
 
@@ -19,8 +19,8 @@ for (const card of cards) {
   const rows = card.lines.map((line, i) => `<rect x="818" y="${270 + i * 63}" width="282" height="47" rx="9" fill="${card.kind === "code" ? "#27382d" : "#ffffff"}"/><text x="838" y="${300 + i * 63}" font-size="${card.kind === "code" ? "17" : "15"}" font-family="${card.kind === "tasks" ? "sans-serif" : "monospace"}" fill="${card.kind === "code" ? "#d3f76b" : "#314031"}">${escape(line)}</text>`).join("");
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <rect width="1200" height="630" fill="#f8f9f5"/>
-  <rect x="55" y="49" width="45" height="45" rx="12" fill="#d3f76b"/><text x="63" y="82" font-family="sans-serif" font-size="32" font-weight="700" fill="#1d2621">a.</text>
-  <text x="114" y="81" font-family="sans-serif" font-size="24" font-weight="700" fill="#1d2621">alexender.</text>
+  <rect x="55" y="49" width="45" height="45" rx="12" fill="#d3f76b"/><text x="63" y="82" font-family="sans-serif" font-size="32" font-weight="700" fill="#1d2621">m.</text>
+  <text x="114" y="81" font-family="sans-serif" font-size="24" font-weight="700" fill="#1d2621">mbiopeter.</text>
   <text x="60" y="177" font-family="sans-serif" font-size="14" font-weight="600" letter-spacing="2" fill="#3a632c">${escape(card.eyebrow)}</text>
   ${card.title.map((line, i) => `<text x="55" y="${264 + i * 78}" font-family="sans-serif" font-size="61" letter-spacing="-2" font-weight="600" fill="${i === 1 ? "#3a632c" : "#1d2621"}">${escape(line)}</text>`).join("")}
   <path d="M60 362 Q290 350 641 360" fill="none" stroke="#bfdc8f" stroke-width="6" stroke-linecap="round"/>

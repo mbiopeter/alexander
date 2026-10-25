@@ -195,7 +195,7 @@ export function ServiceDetail({ service }: { service: Service }) {
               </Link>
               <DestinationLink
                 destination="whatsapp"
-                message={`Hi Alexender! I’m interested in ${service.title.toLowerCase()}. Can we discuss my project?`}
+                message={`Hi Mbiopeter! I’m interested in ${service.title.toLowerCase()}. Can we discuss my project?`}
                 className="mt-5 flex items-center justify-center gap-2 text-sm font-medium"
               >
                 <MessageCircle size={16} /> Or ask on WhatsApp{" "}

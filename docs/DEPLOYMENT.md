@@ -1,4 +1,4 @@
-# Deploy Alexender 2.1.0
+# Deploy Mbiopeter 2.1.0
 
 This version uses the Next.js server runtime. Existing portfolio routes are still prerendered where possible; the code runner and private WhatsApp redirect are dynamic API routes. `output: "export"` and static `out/` hosting have been removed.
 
@@ -19,9 +19,9 @@ Configure your real values:
 - `NEXT_PUBLIC_PAYSTACK_PAYMENT_URL`, `NEXT_PUBLIC_TIKTOK_URL` and optional `NEXT_PUBLIC_GITHUB_URL`.
 - Optional `NEXT_PUBLIC_CONTACT_EMAIL`, `NEXT_PUBLIC_LINKEDIN_URL` and `NEXT_PUBLIC_CV_URL`; leave any unused value blank.
 - `NEXT_PUBLIC_SITE_URL` for your final HTTPS origin.
-- `JUDGE0_BASE_URL` and exactly one supported authentication variable for code execution.
+- No code-runner secret is required by default; optionally set `JUDGE0_BASE_URL` and at most one supported authentication variable for a custom Judge0 service.
 
-Read [PLAYGROUND.md](PLAYGROUND.md) for provider-specific authentication and optional language IDs. The supplied `JUDGE0_BASE_URL` and `JUDGE0_AUTH_TOKEN` are blank, so code execution needs your provider configuration. `NEXT_PUBLIC_SITE_URL` is also blank; set the final HTTPS origin to enable complete canonical, sitemap and sharing URLs. No paid execution account or email-delivery service is provisioned by this project.
+Read [PLAYGROUND.md](PLAYGROUND.md) for the free default runner, optional custom-provider authentication, and language IDs. Blank Judge0 variables use the public Judge0 CE community endpoint without an API key. `NEXT_PUBLIC_SITE_URL` can remain blank locally; set the final HTTPS origin to enable complete canonical, sitemap and sharing URLs.
 
 Contact availability is derived during the build and exposed only as a boolean. Supply WhatsApp settings during both build and runtime. Public URLs and metadata also require a rebuild after changes. Runner secrets stay server-side and must be available at runtime.
 
@@ -61,7 +61,7 @@ npm run preview -- --hostname 127.0.0.1 --port 3001
 
 Import the project using the **Next.js** framework preset. The included `vercel.json` uses `npm ci` and `npm run build:ready`, with the default Next.js output directory. Remove any old dashboard override that publishes `out` or selects the “Other” framework.
 
-Set the environment variables for the intended Preview/Production environments, including the server-only runner credentials and WhatsApp settings. Redeploy after configuration changes. The runner route declares a 60-second maximum duration; your platform plan must allow the request to remain active for its execution deadline.
+Set the environment variables for the intended Preview/Production environments, including any optional custom-runner settings and the WhatsApp settings. Redeploy after configuration changes. The runner route declares a 60-second maximum duration; your platform plan must allow the request to remain active for its execution deadline.
 
 ### Netlify
 
@@ -90,7 +90,7 @@ This package is not a static export. Cloudflare Pages static HTML export, GitHub
 After deployment:
 
 1. Visit `/playground/`, use the navigation link and `Ctrl + .`, and try a deliberately missing URL. Confirm the normal welcome and 404 detour remain distinct.
-2. Confirm a correct and an incorrect solution against your configured execution service. Check compiler errors and time limits too.
+2. Confirm a correct and an incorrect solution against the default free runner or your configured custom execution service. Check compiler errors and time limits too.
 3. Check all five language versions are enabled on your provider.
 4. Check the WhatsApp destination belongs to you and the form draft arrives. If using a username, verify it is active, test any username-key prompt, and try the message-copy fallback.
 5. Check your Paystack recipient and payment-page configuration. No payment is necessary to inspect the destination.
@@ -106,8 +106,8 @@ For public traffic, the built-in runner limiter is per Node process, not a globa
 
 | Symptom                                           | Check                                                                                                                                                        |
 | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Run is disabled                                   | Set a real service URL and one valid authentication method; placeholder domains are treated as unconfigured.                                                 |
-| Runner says configured but fails                  | Check provider availability, credits, authentication, batch support and active language versions. No incorrect-answer mark is assigned for service failures. |
+| Run is unavailable                                | Check outbound access to `https://ce.judge0.com`, or verify your optional custom service URL/authentication.                                                   |
+| Runner says ready but fails                       | Check Judge0 availability, outbound networking, batch support, and active language versions. No incorrect-answer mark is assigned for service failures.       |
 | Runner API returns 404                            | Deploy with the Next.js runtime. The route must remain at `src/app/api/playground/run/route.ts`.                                                             |
 | API reports an origin error                       | Check the public host/proxy mapping and optional `PLAYGROUND_ORIGIN`.                                                                                        |
 | Monaco falls back to plain text                   | Run `npm run setup:editor`; ensure `/monaco/vs/loader.js` and worker assets are served from this origin.                                                     |

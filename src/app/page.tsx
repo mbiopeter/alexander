@@ -3,7 +3,7 @@ import { makeMetadata } from "@/lib/metadata";
 import { siteConfig } from "@/config/site";
 
 export const metadata = makeMetadata(
-  "Alexender: Developer",
+  "Mbiopeter: Developer",
   siteConfig.description,
   "/",
 );

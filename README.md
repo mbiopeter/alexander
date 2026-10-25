@@ -1,4 +1,4 @@
-# Alexender — developer, creator & coding playground · 2.1.0
+# Mbiopeter — developer, creator & coding playground · 2.1.0
 
 Your multipage portfolio, practical learning space, and coding playground. Built with Next.js, React, TypeScript and Tailwind CSS. Version 2.1.0 keeps the existing green/ink design, six service pages, three interactive projects, mini lessons, enquiry form, Paystack support, social links and theme controls, with clearer project evidence and more useful learning and contact flows.
 
@@ -6,7 +6,7 @@ The playground is available at **`/playground/`** and on genuinely missing pages
 
 ## Quick start
 
-Use **Node.js 22 or newer**. From the extracted `alexender-site` folder:
+Use **Node.js 22 or newer**. From the extracted `mbiopeter-site` folder:
 
 ```bash
 npm ci
@@ -16,7 +16,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000). `npm ci` also installs the locally hosted Monaco editor assets. `npm run setup` creates `.env.local` only if one does not exist.
 
-This delivery preserves the supplied `.env.local`. Its `JUDGE0_BASE_URL`, `JUDGE0_AUTH_TOKEN`, and `NEXT_PUBLIC_SITE_URL` values are blank. Add your execution-provider settings to enable Run, and your final HTTPS site origin to complete canonical and social-sharing URLs. The editor, hints, reference solutions, local drafts, and backup tools work without a connected runner. No execution account or email-delivery service is provisioned by this project.
+The playground uses the public Judge0 CE community endpoint by default, so **Run tests works without an API key**. You can still provide your own compatible Judge0 endpoint and optional server-side authentication later. Set `NEXT_PUBLIC_SITE_URL` when you know the final HTTPS origin so canonical and social-sharing URLs are complete.
 
 The ZIP contains source, original assets, a dependency lockfile, tests and documentation. Installed dependencies and build output are excluded. Keep `.env.local` private; it is already excluded by `.gitignore`.
 
@@ -39,9 +39,9 @@ See [UPDATE_NOTES.md](UPDATE_NOTES.md) for the change summary and [docs/VERIFICA
 - **A regular playground route:** `/playground/` has a normal welcome and is linked from navigation, the footer and Learn. It does not display 404 artwork.
 - **Keyboard access:** `Ctrl + .` opens the playground; `Cmd + .` also works. The shortcut leaves form fields and code editors alone and does not interrupt an already open playground.
 - **Five languages:** Python, JavaScript, Java, C and C++.
-- **Six challenges:** add two numbers, palindrome, vowel count, array maximum, FizzBuzz and factorial. Each language has starters and reference solutions; each challenge has four published test cases.
+- **Two learning sections:** Theory contains 100 multiple-choice questions; Practice contains 100+ coding challenges across Python, JavaScript, Java, C and C++. Each new section test randomly selects 10 questions with an easy/medium/hard mix.
 - **A VS Code-style editor:** self-hosted Monaco, syntax highlighting, separate drafts, plain-text fallback and `Ctrl/Cmd + Enter` to run.
-- **Real grading:** the server sends code to a configured Judge0 execution service and compares actual results with server-owned expected outputs. Service errors are not graded as wrong answers.
+- **Real grading with scores:** the server sends code to the free Judge0 CE community service by default and compares actual results with server-owned expected outputs. Every run reports passed cases and a percentage score; service errors are not graded as wrong answers.
 - **Collected answers:** passing solutions are saved in the visitor’s browser with language, date and guided/independent labels. They can be reopened, copied, removed or exported as JSON. Viewing a solution alone does not mark an exercise complete.
 - **Whole-practice backups:** export drafts, saved solutions, selection and reference-reveal history. Import is validated locally before a review step. Merge keeps existing work on conflicts; replacing all local practice requires explicit confirmation. Imported pass records are not re-executed or independently verified.
 - **Safer editing:** resetting to a starter, loading a reference, or opening a saved answer offers one-step undo until the next edit or exercise switch. Oversized edits are rejected with a notice, keeping the previous accepted draft.
@@ -122,7 +122,7 @@ The coffee actions still open your hosted Paystack payment page. Configure the r
 | `/privacy/`                    | Updated explanation of local storage, code execution and contact links.                            |
 | Any missing page               | The 404 playground with recovery navigation.                                                       |
 
-The original project examples remain examples, not invented client work. Focusboard and playground drafts/answers are saved locally, without accounts or cloud sync. Data Tidy processes CSV in the browser. Django API Lab and the Learn page’s Python/Django examples remain clearly described simulations or illustrated examples; the separate coding playground performs real execution only when Run is connected.
+The original project examples remain examples, not invented client work. Focusboard and playground drafts/answers are saved locally, without accounts or cloud sync. Data Tidy processes CSV in the browser. Django API Lab and the Learn page’s Python/Django examples remain clearly described simulations or illustrated examples; the separate coding playground performs real execution through the free default runner, or a custom compatible runner when configured.
 
 ## Commands
 

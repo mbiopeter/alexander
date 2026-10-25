@@ -60,7 +60,7 @@ export function serializeContactDraft(brief: ContactBrief, serviceHint = ""): st
 
 export function buildContactMessage(brief: ContactBrief, serviceTitle?: string): string {
   return [
-    "Hi Alexender! I'd like to discuss a project.",
+    "Hi Mbiopeter! I'd like to discuss a project.",
     "",
     ...(brief.name.trim() ? [`Name: ${brief.name.trim()}`] : []),
     `Service: ${serviceTitle ?? "Not selected yet"}`,

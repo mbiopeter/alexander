@@ -32,7 +32,7 @@ export default function PrivacyPage() {
             <p>
               The light or dark theme follows your device by default. If you
               choose a theme, that choice is saved in your browser’s local
-              storage under <code>alexender-theme</code>. You can switch back to
+              storage under a local theme preference key. You can switch back to
               System in the theme menu or clear your browser’s site data.
             </p>
             <h2>Project demos</h2>
@@ -126,7 +126,7 @@ export default function PrivacyPage() {
             </p>
             <DestinationLink
               destination="whatsapp"
-              message="Hi Alexender! I have a question about privacy on your website."
+              message="Hi Mbiopeter! I have a question about privacy on your website."
               className="button button-primary"
             >
               <MessageCircle size={18} /> Ask about privacy{" "}

@@ -14,8 +14,8 @@ import { services } from "@/data/services";
 import { makeMetadata } from "@/lib/metadata";
 
 export const metadata = makeMetadata(
-  "Hire Alexender",
-  "Discuss a website, Python and Django application, automation, or debugging project with Alexender. Start with a short brief you can review before sending.",
+  "Hire Mbiopeter",
+  "Discuss a website, Python and Django application, automation, or debugging project with Mbiopeter. Start with a short brief you can review before sending.",
   "/hire/",
 );
 

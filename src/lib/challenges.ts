@@ -17,7 +17,7 @@ export interface TestCase {
 export interface Challenge {
   id: string;
   title: string;
-  difficulty: "Easy" | "Medium";
+  difficulty: "Easy" | "Medium" | "Hard";
   summary: string;
   prompt: string;
   inputFormat: string;
@@ -118,7 +118,7 @@ ${indent(body, 4)}
 `;
 }
 
-export const CHALLENGES: readonly Challenge[] = [
+const BASE_CHALLENGES: readonly Challenge[] = [
   {
     id: "sum-two",
     title: "A warm-up: add two numbers",
@@ -729,6 +729,428 @@ for (int number = 1; number <= n; number++) {
     },
   },
 ];
+
+
+function generatedTests(values: Array<[string, string, string]>): TestCase[] {
+  return values.map(([id, input, expected], index) => ({
+    id,
+    label: `Check ${index + 1}`,
+    input,
+    expected,
+  }));
+}
+
+function makeAffineChallenge(index: number): Challenge {
+  const factor = 2 + (index % 5);
+  const offset = index - 4;
+  const transform = (n: number) => n * factor + offset;
+  return {
+    id: `affine-${index + 1}`,
+    title: `Number transformer ${index + 1}`,
+    difficulty: "Easy",
+    summary: `Apply ×${factor} and then ${offset >= 0 ? "+" : "−"}${Math.abs(offset)}.`,
+    prompt: `Read one integer n. Multiply it by ${factor}, then ${offset >= 0 ? "add" : "subtract"} ${Math.abs(offset)}, and print the result.`,
+    inputFormat: "One integer n.",
+    outputFormat: "One integer: the transformed value.",
+    constraints: ["−1,000 ≤ n ≤ 1,000"],
+    hints: ["Read n first.", "Apply multiplication before the final offset."],
+    explanation: `Compute n × ${factor} ${offset >= 0 ? "+" : "−"} ${Math.abs(offset)} directly.`,
+    tests: generatedTests([
+      ["positive", "7\n", String(transform(7))],
+      ["zero", "0\n", String(transform(0))],
+      ["negative", "-6\n", String(transform(-6))],
+      ["larger", "123\n", String(transform(123))],
+    ]),
+    starter: {
+      python: python(`n = int(raw.strip())\n# TODO: apply the requested transformation.\nprint(0)`),
+      javascript: javascript(`const n = Number(raw.trim());\n// TODO: apply the requested transformation.\nconsole.log(0);`),
+      java: java(`int n = input.nextInt();\n// TODO: apply the requested transformation.\nSystem.out.println(0);`),
+      c: c(`int n;\nif (scanf("%d", &n) != 1) return 0;\n// TODO: apply the requested transformation.\nprintf("0\\n");`),
+      cpp: cpp(`int n;\ncin >> n;\n// TODO: apply the requested transformation.\ncout << 0 << '\\n';`),
+    },
+    solution: {
+      python: python(`n = int(raw.strip())\nprint(n * ${factor} + (${offset}))`),
+      javascript: javascript(`const n = Number(raw.trim());\nconsole.log(n * ${factor} + (${offset}));`),
+      java: java(`int n = input.nextInt();\nSystem.out.println(n * ${factor} + (${offset}));`),
+      c: c(`int n;\nif (scanf("%d", &n) != 1) return 0;\nprintf("%d\\n", n * ${factor} + (${offset}));`),
+      cpp: cpp(`int n;\ncin >> n;\ncout << n * ${factor} + (${offset}) << '\\n';`),
+    },
+  };
+}
+
+function makeDivisibleChallenge(index: number): Challenge {
+  const divisor = index + 2;
+  const expected = (n: number) => (n % divisor === 0 ? "yes" : "no");
+  return {
+    id: `divisible-${divisor}`,
+    title: `Divisible by ${divisor}?`,
+    difficulty: "Easy",
+    summary: `Check whether one integer is divisible by ${divisor}.`,
+    prompt: `Read one integer n. Print yes if n is divisible by ${divisor}; otherwise print no. Use lowercase exactly.`,
+    inputFormat: "One integer n.",
+    outputFormat: "Exactly yes or no.",
+    constraints: ["−1,000,000 ≤ n ≤ 1,000,000"],
+    hints: ["Use the remainder operator.", `A remainder of zero means divisible by ${divisor}.`],
+    explanation: `Check n % ${divisor}. Zero means the division has no remainder.`,
+    tests: generatedTests([
+      ["multiple", `${divisor * 4}\n`, expected(divisor * 4)],
+      ["not-multiple", `${divisor * 4 + 1}\n`, expected(divisor * 4 + 1)],
+      ["zero", "0\n", "yes"],
+      ["negative", `${-divisor * 3}\n`, "yes"],
+    ]),
+    starter: {
+      python: python(`n = int(raw.strip())\n# TODO: print yes or no.\nprint("no")`),
+      javascript: javascript(`const n = Number(raw.trim());\n// TODO: print yes or no.\nconsole.log("no");`),
+      java: java(`int n = input.nextInt();\n// TODO: print yes or no.\nSystem.out.println("no");`),
+      c: c(`int n;\nif (scanf("%d", &n) != 1) return 0;\n// TODO: print yes or no.\nprintf("no\\n");`),
+      cpp: cpp(`int n;\ncin >> n;\n// TODO: print yes or no.\ncout << "no\\n";`),
+    },
+    solution: {
+      python: python(`n = int(raw.strip())\nprint("yes" if n % ${divisor} == 0 else "no")`),
+      javascript: javascript(`const n = Number(raw.trim());\nconsole.log(n % ${divisor} === 0 ? "yes" : "no");`),
+      java: java(`int n = input.nextInt();\nSystem.out.println(n % ${divisor} == 0 ? "yes" : "no");`),
+      c: c(`int n;\nif (scanf("%d", &n) != 1) return 0;\nprintf("%s\\n", n % ${divisor} == 0 ? "yes" : "no");`),
+      cpp: cpp(`int n;\ncin >> n;\ncout << (n % ${divisor} == 0 ? "yes" : "no") << '\\n';`),
+    },
+  };
+}
+
+function makeCountMultiplesChallenge(index: number): Challenge {
+  const divisor = index + 2;
+  return {
+    id: `count-multiples-${divisor}`,
+    title: `Count multiples of ${divisor}`,
+    difficulty: "Easy",
+    summary: `Count multiples of ${divisor} from 1 through n.`,
+    prompt: `Read a positive integer n. Print how many integers from 1 through n are divisible by ${divisor}.`,
+    inputFormat: "One positive integer n.",
+    outputFormat: "One integer count.",
+    constraints: ["1 ≤ n ≤ 1,000,000"],
+    hints: ["You do not need to loop over every number.", `Integer division by ${divisor} gives the count.`],
+    explanation: `There is one multiple of ${divisor} for every complete block of ${divisor}, so the answer is floor(n / ${divisor}).`,
+    tests: generatedTests([
+      ["small", `${divisor - 1}\n`, "0"],
+      ["exact", `${divisor * 5}\n`, "5"],
+      ["between", `${divisor * 7 + 2}\n`, "7"],
+      ["large", "999\n", String(Math.floor(999 / divisor))],
+    ]),
+    starter: {
+      python: python(`n = int(raw.strip())\n# TODO: count the multiples.\nprint(0)`),
+      javascript: javascript(`const n = Number(raw.trim());\n// TODO: count the multiples.\nconsole.log(0);`),
+      java: java(`int n = input.nextInt();\n// TODO: count the multiples.\nSystem.out.println(0);`),
+      c: c(`int n;\nif (scanf("%d", &n) != 1) return 0;\n// TODO: count the multiples.\nprintf("0\\n");`),
+      cpp: cpp(`int n;\ncin >> n;\n// TODO: count the multiples.\ncout << 0 << '\\n';`),
+    },
+    solution: {
+      python: python(`n = int(raw.strip())\nprint(n // ${divisor})`),
+      javascript: javascript(`const n = Number(raw.trim());\nconsole.log(Math.floor(n / ${divisor}));`),
+      java: java(`int n = input.nextInt();\nSystem.out.println(n / ${divisor});`),
+      c: c(`int n;\nif (scanf("%d", &n) != 1) return 0;\nprintf("%d\\n", n / ${divisor});`),
+      cpp: cpp(`int n;\ncin >> n;\ncout << n / ${divisor} << '\\n';`),
+    },
+  };
+}
+
+function makeDigitSumChallenge(index: number): Challenge {
+  const label = index + 1;
+  return {
+    id: `digit-sum-${label}`,
+    title: `Digit sum drill ${label}`,
+    difficulty: "Medium",
+    summary: "Add all decimal digits of a non-negative integer.",
+    prompt: "Read one non-negative integer n and print the sum of its decimal digits. For n = 0, print 0.",
+    inputFormat: "One integer n.",
+    outputFormat: "One integer: the digit sum.",
+    constraints: ["0 ≤ n ≤ 2,000,000,000"],
+    hints: ["Repeatedly use remainder 10 to take the final digit.", "Integer-divide by 10 to remove the final digit."],
+    explanation: "Repeatedly add n % 10 and replace n with floor(n / 10) until no digits remain.",
+    tests: generatedTests([
+      ["sample", "12345\n", "15"],
+      ["zero", "0\n", "0"],
+      ["zeros-inside", "1002003\n", "6"],
+      ["large", `${987654320 + index}\n`, String(String(987654320 + index).split("").reduce((sum, d) => sum + Number(d), 0))],
+    ]),
+    starter: {
+      python: python(`n = int(raw.strip())\n# TODO: add the digits.\nprint(0)`),
+      javascript: javascript(`let n = Number(raw.trim());\n// TODO: add the digits.\nconsole.log(0);`),
+      java: java(`int n = input.nextInt();\n// TODO: add the digits.\nSystem.out.println(0);`),
+      c: c(`int n;\nif (scanf("%d", &n) != 1) return 0;\n// TODO: add the digits.\nprintf("0\\n");`),
+      cpp: cpp(`int n;\ncin >> n;\n// TODO: add the digits.\ncout << 0 << '\\n';`),
+    },
+    solution: {
+      python: python(`n = int(raw.strip())\ntotal = 0\nwhile n > 0:\n    total += n % 10\n    n //= 10\nprint(total)`),
+      javascript: javascript(`let n = Number(raw.trim());\nlet total = 0;\nwhile (n > 0) { total += n % 10; n = Math.floor(n / 10); }\nconsole.log(total);`),
+      java: java(`int n = input.nextInt();\nint total = 0;\nwhile (n > 0) { total += n % 10; n /= 10; }\nSystem.out.println(total);`),
+      c: c(`int n;\nif (scanf("%d", &n) != 1) return 0;\nint total = 0;\nwhile (n > 0) { total += n % 10; n /= 10; }\nprintf("%d\\n", total);`),
+      cpp: cpp(`int n;\ncin >> n;\nint total = 0;\nwhile (n > 0) { total += n % 10; n /= 10; }\ncout << total << '\\n';`),
+    },
+  };
+}
+
+function makeGcdChallenge(index: number): Challenge {
+  const label = index + 1;
+  const gcd = (a: number, b: number) => { while (b) [a, b] = [b, a % b]; return a; };
+  const a = 84 + index * 6;
+  const b = 30 + index * 3;
+  return {
+    id: `gcd-${label}`,
+    title: `Greatest common divisor ${label}`,
+    difficulty: "Medium",
+    summary: "Find the greatest common divisor of two positive integers.",
+    prompt: "Read two positive integers a and b. Print their greatest common divisor using the Euclidean algorithm or another correct method.",
+    inputFormat: "Two positive integers a and b.",
+    outputFormat: "One positive integer: gcd(a, b).",
+    constraints: ["1 ≤ a, b ≤ 1,000,000,000"],
+    hints: ["Replace (a, b) with (b, a % b).", "Stop when b becomes zero."],
+    explanation: "The Euclidean algorithm repeatedly replaces the pair with the divisor and remainder until the remainder is zero.",
+    tests: generatedTests([
+      ["sample", "48 18\n", "6"],
+      ["coprime", "35 64\n", "1"],
+      ["same", "77 77\n", "77"],
+      ["variant", `${a} ${b}\n`, String(gcd(a, b))],
+    ]),
+    starter: {
+      python: python(`a, b = map(int, raw.split())\n# TODO: print gcd(a, b).\nprint(1)`),
+      javascript: javascript(`let [a, b] = raw.trim().split(/\\s+/).map(Number);\n// TODO: print gcd(a, b).\nconsole.log(1);`),
+      java: java(`int a = input.nextInt();\nint b = input.nextInt();\n// TODO: print gcd(a, b).\nSystem.out.println(1);`),
+      c: c(`int a, b;\nif (scanf("%d %d", &a, &b) != 2) return 0;\n// TODO: print gcd(a, b).\nprintf("1\\n");`),
+      cpp: cpp(`int a, b;\ncin >> a >> b;\n// TODO: print gcd(a, b).\ncout << 1 << '\\n';`),
+    },
+    solution: {
+      python: python(`a, b = map(int, raw.split())\nwhile b:\n    a, b = b, a % b\nprint(a)`),
+      javascript: javascript(`let [a, b] = raw.trim().split(/\\s+/).map(Number);\nwhile (b !== 0) { const next = a % b; a = b; b = next; }\nconsole.log(a);`),
+      java: java(`int a = input.nextInt();\nint b = input.nextInt();\nwhile (b != 0) { int next = a % b; a = b; b = next; }\nSystem.out.println(a);`),
+      c: c(`int a, b;\nif (scanf("%d %d", &a, &b) != 2) return 0;\nwhile (b != 0) { int next = a % b; a = b; b = next; }\nprintf("%d\\n", a);`),
+      cpp: cpp(`int a, b;\ncin >> a >> b;\nwhile (b != 0) { int next = a % b; a = b; b = next; }\ncout << a << '\\n';`),
+    },
+  };
+}
+
+function makeThresholdChallenge(index: number): Challenge {
+  const threshold = index + 1;
+  const count = (values: number[]) => values.filter((value) => value >= threshold).length;
+  const values = [index - 2, threshold, threshold + 4, -3, threshold - 1, threshold + 10];
+  return {
+    id: `threshold-${threshold}`,
+    title: `Count values ≥ ${threshold}`,
+    difficulty: "Medium",
+    summary: `Count list values that are at least ${threshold}.`,
+    prompt: `Read n followed by n integers. Print how many of those values are greater than or equal to ${threshold}.`,
+    inputFormat: "First integer n, followed by n integers separated by whitespace.",
+    outputFormat: "One integer count.",
+    constraints: ["1 ≤ n ≤ 200", "Each value is between −1,000,000 and 1,000,000."],
+    hints: ["Scan each value once.", `Increase the counter when value >= ${threshold}.`],
+    explanation: "A single pass is enough: test every value against the threshold and count matches.",
+    tests: generatedTests([
+      ["sample", `6\n${values.join(" ")}\n`, String(count(values))],
+      ["none", "4\n-9 -8 -7 -6\n", "0"],
+      ["all", `3\n${threshold} ${threshold + 1} ${threshold + 2}\n`, "3"],
+      ["mixed", `5\n${threshold - 1} ${threshold} ${threshold + 1} 0 ${threshold + 20}\n`, String([threshold - 1, threshold, threshold + 1, 0, threshold + 20].filter((v) => v >= threshold).length)],
+    ]),
+    starter: {
+      python: python(`tokens = list(map(int, raw.split()))\nn = tokens[0]\nvalues = tokens[1:1+n]\n# TODO: count matching values.\nprint(0)`),
+      javascript: javascript(`const tokens = raw.trim().split(/\\s+/).map(Number);\nconst n = tokens[0];\nconst values = tokens.slice(1, 1 + n);\n// TODO: count matching values.\nconsole.log(0);`),
+      java: java(`int n = input.nextInt();\nint count = 0;\nfor (int i = 0; i < n; i++) { int value = input.nextInt(); /* TODO */ }\nSystem.out.println(count);`),
+      c: c(`int n;\nif (scanf("%d", &n) != 1) return 0;\nint count = 0;\nfor (int i = 0; i < n; i++) { int value; scanf("%d", &value); /* TODO */ }\nprintf("%d\\n", count);`),
+      cpp: cpp(`int n;\ncin >> n;\nint count = 0;\nfor (int i = 0; i < n; i++) { int value; cin >> value; /* TODO */ }\ncout << count << '\\n';`),
+    },
+    solution: {
+      python: python(`tokens = list(map(int, raw.split()))\nn = tokens[0]\nvalues = tokens[1:1+n]\nprint(sum(1 for value in values if value >= ${threshold}))`),
+      javascript: javascript(`const tokens = raw.trim().split(/\\s+/).map(Number);\nconst n = tokens[0];\nconst values = tokens.slice(1, 1 + n);\nconsole.log(values.filter((value) => value >= ${threshold}).length);`),
+      java: java(`int n = input.nextInt();\nint count = 0;\nfor (int i = 0; i < n; i++) { int value = input.nextInt(); if (value >= ${threshold}) count++; }\nSystem.out.println(count);`),
+      c: c(`int n;\nif (scanf("%d", &n) != 1) return 0;\nint count = 0;\nfor (int i = 0; i < n; i++) { int value; if (scanf("%d", &value) != 1) return 0; if (value >= ${threshold}) count++; }\nprintf("%d\\n", count);`),
+      cpp: cpp(`int n;\ncin >> n;\nint count = 0;\nfor (int i = 0; i < n; i++) { int value; cin >> value; if (value >= ${threshold}) count++; }\ncout << count << '\\n';`),
+    },
+  };
+}
+
+function makeFibonacciChallenge(index: number): Challenge {
+  return {
+    id: `fibonacci-${index + 1}`,
+    title: `Fibonacci checkpoint ${index + 1}`,
+    difficulty: "Hard",
+    summary: "Compute the nth Fibonacci number iteratively.",
+    prompt: "Read n and print F(n), where F(0)=0, F(1)=1, and F(n)=F(n−1)+F(n−2).",
+    inputFormat: "One integer n.",
+    outputFormat: "One integer F(n).",
+    constraints: ["0 ≤ n ≤ 40"],
+    hints: ["Keep only the previous two values.", "Handle n=0 naturally by starting from 0 and 1."],
+    explanation: "Advance a pair (a,b) from (0,1) exactly n times; a becomes F(n).",
+    tests: generatedTests([["zero","0\n","0"],["one","1\n","1"],["ten","10\n","55"],["twenty","20\n","6765"]]),
+    starter: {
+      python: python(`n = int(raw.strip())\n# TODO: compute F(n).\nprint(0)`),
+      javascript: javascript(`const n = Number(raw.trim());\n// TODO: compute F(n).\nconsole.log(0);`),
+      java: java(`int n = input.nextInt();\n// TODO: compute F(n).\nSystem.out.println(0);`),
+      c: c(`int n;\nif (scanf("%d", &n) != 1) return 0;\n// TODO: compute F(n).\nprintf("0\\n");`),
+      cpp: cpp(`int n;\ncin >> n;\n// TODO: compute F(n).\ncout << 0 << '\\n';`),
+    },
+    solution: {
+      python: python(`n = int(raw.strip())\na, b = 0, 1\nfor _ in range(n):\n    a, b = b, a + b\nprint(a)`),
+      javascript: javascript(`const n = Number(raw.trim());\nlet a = 0, b = 1;\nfor (let i = 0; i < n; i++) [a, b] = [b, a + b];\nconsole.log(a);`),
+      java: java(`int n = input.nextInt();\nlong a = 0, b = 1;\nfor (int i = 0; i < n; i++) { long next = a + b; a = b; b = next; }\nSystem.out.println(a);`),
+      c: c(`int n;\nif (scanf("%d", &n) != 1) return 0;\nlong long a = 0, b = 1;\nfor (int i = 0; i < n; i++) { long long next = a + b; a = b; b = next; }\nprintf("%lld\\n", a);`),
+      cpp: cpp(`int n;\ncin >> n;\nlong long a = 0, b = 1;\nfor (int i = 0; i < n; i++) { long long next = a + b; a = b; b = next; }\ncout << a << '\\n';`),
+    },
+  };
+}
+
+function makePrimeChallenge(index: number): Challenge {
+  return {
+    id: `prime-${index + 1}`,
+    title: `Prime check ${index + 1}`,
+    difficulty: "Hard",
+    summary: "Decide whether a positive integer is prime.",
+    prompt: "Read n. Print true if n is prime and false otherwise. Numbers smaller than 2 are not prime.",
+    inputFormat: "One integer n.",
+    outputFormat: "Exactly true or false in lowercase.",
+    constraints: ["0 ≤ n ≤ 2,000,000,000"],
+    hints: ["Try divisors only while d*d <= n.", "Stop at the first divisor."],
+    explanation: "A composite number has a factor no larger than its square root, so checking divisors up to sqrt(n) is sufficient.",
+    tests: generatedTests([["small-prime","2\n","true"],["one","1\n","false"],["composite","221\n","false"],["prime","9973\n","true"]]),
+    starter: {
+      python: python(`n = int(raw.strip())\n# TODO: determine primality.\nprint("false")`),
+      javascript: javascript(`const n = Number(raw.trim());\n// TODO: determine primality.\nconsole.log("false");`),
+      java: java(`int n = input.nextInt();\n// TODO: determine primality.\nSystem.out.println("false");`),
+      c: c(`int n;\nif (scanf("%d", &n) != 1) return 0;\n// TODO: determine primality.\nprintf("false\\n");`),
+      cpp: cpp(`int n;\ncin >> n;\n// TODO: determine primality.\ncout << "false\\n";`),
+    },
+    solution: {
+      python: python(`n = int(raw.strip())\nprime = n >= 2\nd = 2\nwhile prime and d * d <= n:\n    if n % d == 0:\n        prime = False\n    d += 1\nprint("true" if prime else "false")`),
+      javascript: javascript(`const n = Number(raw.trim());\nlet prime = n >= 2;\nfor (let d = 2; prime && d * d <= n; d++) if (n % d === 0) prime = false;\nconsole.log(prime ? "true" : "false");`),
+      java: java(`int n = input.nextInt();\nboolean prime = n >= 2;\nfor (int d = 2; prime && (long)d * d <= n; d++) if (n % d == 0) prime = false;\nSystem.out.println(prime ? "true" : "false");`),
+      c: c(`int n;\nif (scanf("%d", &n) != 1) return 0;\nint prime = n >= 2;\nfor (int d = 2; prime && (long long)d * d <= n; d++) if (n % d == 0) prime = 0;\nprintf("%s\\n", prime ? "true" : "false");`),
+      cpp: cpp(`int n;\ncin >> n;\nbool prime = n >= 2;\nfor (int d = 2; prime && 1LL * d * d <= n; d++) if (n % d == 0) prime = false;\ncout << (prime ? "true" : "false") << '\\n';`),
+    },
+  };
+}
+
+function makeSecondLargestChallenge(index: number): Challenge {
+  return {
+    id: `second-largest-${index + 1}`,
+    title: `Second distinct maximum ${index + 1}`,
+    difficulty: "Hard",
+    summary: "Find the second-largest distinct value.",
+    prompt: "Read n and n integers. Print the second-largest distinct value. If fewer than two distinct values exist, print NONE.",
+    inputFormat: "First line n; second line n integers.",
+    outputFormat: "The second-largest distinct integer, or NONE.",
+    constraints: ["1 ≤ n ≤ 200", "Values fit in a 32-bit signed integer."],
+    hints: ["Track the largest and second-largest distinct values.", "Ignore values equal to the current largest."],
+    explanation: "A single pass can maintain the two best distinct values without sorting the whole list.",
+    tests: generatedTests([["sample","5\n4 9 2 9 7\n","7"],["all-same","4\n3 3 3 3\n","NONE"],["negative","5\n-8 -2 -5 -2 -9\n","-5"],["two","2\n10 1\n","1"]]),
+    starter: {
+      python: python(`tokens = list(map(int, raw.split()))\nvalues = tokens[1:1+tokens[0]]\n# TODO: find the second distinct maximum.\nprint("NONE")`),
+      javascript: javascript(`const tokens = raw.trim().split(/\\s+/).map(Number);\nconst values = tokens.slice(1, 1 + tokens[0]);\n// TODO: find the second distinct maximum.\nconsole.log("NONE");`),
+      java: java(`int n = input.nextInt();\nint[] values = new int[n];\nfor (int i = 0; i < n; i++) values[i] = input.nextInt();\n// TODO: find the second distinct maximum.\nSystem.out.println("NONE");`),
+      c: c(`int n;\nif (scanf("%d", &n) != 1) return 0;\nint values[200];\nfor (int i = 0; i < n; i++) scanf("%d", &values[i]);\n// TODO: find the second distinct maximum.\nprintf("NONE\\n");`),
+      cpp: cpp(`int n;\ncin >> n;\nvector<int> values(n);\nfor (int &value : values) cin >> value;\n// TODO: find the second distinct maximum.\ncout << "NONE\\n";`),
+    },
+    solution: {
+      python: python(`tokens = list(map(int, raw.split()))\nvalues = tokens[1:1+tokens[0]]\nunique = sorted(set(values), reverse=True)\nprint(unique[1] if len(unique) >= 2 else "NONE")`),
+      javascript: javascript(`const tokens = raw.trim().split(/\\s+/).map(Number);\nconst values = tokens.slice(1, 1 + tokens[0]);\nconst unique = [...new Set(values)].sort((a, b) => b - a);\nconsole.log(unique.length >= 2 ? unique[1] : "NONE");`),
+      java: java(`int n = input.nextInt();\nInteger first = null, second = null;\nfor (int i = 0; i < n; i++) { int v = input.nextInt(); if (first == null || v > first) { if (first == null || v != first) second = first; first = v; } else if (v != first && (second == null || v > second)) second = v; }\nSystem.out.println(second == null ? "NONE" : second);`),
+      c: c(`int n;\nif (scanf("%d", &n) != 1) return 0;\nint first = 0, second = 0, has_first = 0, has_second = 0;\nfor (int i = 0; i < n; i++) { int v; scanf("%d", &v); if (!has_first || v > first) { if (!has_first || v != first) { if (has_first) { second = first; has_second = 1; } first = v; has_first = 1; } } else if (v != first && (!has_second || v > second)) { second = v; has_second = 1; } }\nif (has_second) printf("%d\\n", second); else printf("NONE\\n");`),
+      cpp: cpp(`int n;\ncin >> n;\nbool hasFirst = false, hasSecond = false;\nint first = 0, second = 0;\nfor (int i = 0; i < n; i++) { int v; cin >> v; if (!hasFirst || v > first) { if (!hasFirst || v != first) { if (hasFirst) { second = first; hasSecond = true; } first = v; hasFirst = true; } } else if (v != first && (!hasSecond || v > second)) { second = v; hasSecond = true; } }\nif (hasSecond) cout << second << '\\n'; else cout << "NONE\\n";`),
+    },
+  };
+}
+
+function makeRotateChallenge(index: number): Challenge {
+  return {
+    id: `rotate-right-${index + 1}`,
+    title: `Rotate right ${index + 1}`,
+    difficulty: "Hard",
+    summary: "Rotate a list to the right by k positions.",
+    prompt: "Read n and k, followed by n integers. Rotate the list to the right by k positions and print the result space-separated. k may be larger than n.",
+    inputFormat: "First line n k; second line n integers.",
+    outputFormat: "The rotated values on one line, separated by single spaces.",
+    constraints: ["1 ≤ n ≤ 200", "0 ≤ k ≤ 1,000,000"],
+    hints: ["Reduce k using k % n.", "The final k elements move to the front."],
+    explanation: "Normalize k, split before the final k elements, then concatenate the suffix with the prefix.",
+    tests: generatedTests([["sample","5 2\n1 2 3 4 5\n","4 5 1 2 3"],["zero","4 0\n7 8 9 10\n","7 8 9 10"],["large-k","3 8\n1 2 3\n","2 3 1"],["single","1 999\n42\n","42"]]),
+    starter: {
+      python: python(`tokens = list(map(int, raw.split()))\nn, k = tokens[0], tokens[1]\nvalues = tokens[2:2+n]\n# TODO: rotate the list.\nprint(*values)`),
+      javascript: javascript(`const tokens = raw.trim().split(/\\s+/).map(Number);\nconst n = tokens[0], k = tokens[1];\nconst values = tokens.slice(2, 2 + n);\n// TODO: rotate the list.\nconsole.log(values.join(" "));`),
+      java: java(`int n = input.nextInt();\nint k = input.nextInt();\nint[] values = new int[n];\nfor (int i = 0; i < n; i++) values[i] = input.nextInt();\n// TODO: rotate the list.\nfor (int i = 0; i < n; i++) { if (i > 0) System.out.print(" "); System.out.print(values[i]); }\nSystem.out.println();`),
+      c: c(`int n, k;\nif (scanf("%d %d", &n, &k) != 2) return 0;\nint values[200];\nfor (int i = 0; i < n; i++) scanf("%d", &values[i]);\n// TODO: rotate the list.\nfor (int i = 0; i < n; i++) printf("%s%d", i ? " " : "", values[i]);\nprintf("\\n");`),
+      cpp: cpp(`int n, k;\ncin >> n >> k;\nvector<int> values(n);\nfor (int &value : values) cin >> value;\n// TODO: rotate the list.\nfor (int i = 0; i < n; i++) cout << (i ? " " : "") << values[i];\ncout << '\\n';`),
+    },
+    solution: {
+      python: python(`tokens = list(map(int, raw.split()))\nn, k = tokens[0], tokens[1]\nvalues = tokens[2:2+n]\nk %= n\nrotated = values[-k:] + values[:-k] if k else values\nprint(*rotated)`),
+      javascript: javascript(`const tokens = raw.trim().split(/\\s+/).map(Number);\nconst n = tokens[0];\nlet k = tokens[1] % n;\nconst values = tokens.slice(2, 2 + n);\nconst rotated = k ? values.slice(n - k).concat(values.slice(0, n - k)) : values;\nconsole.log(rotated.join(" "));`),
+      java: java(`int n = input.nextInt();\nint k = input.nextInt() % n;\nint[] values = new int[n];\nfor (int i = 0; i < n; i++) values[i] = input.nextInt();\nfor (int i = 0; i < n; i++) { int source = (i - k + n) % n; if (i > 0) System.out.print(" "); System.out.print(values[source]); }\nSystem.out.println();`),
+      c: c(`int n, k;\nif (scanf("%d %d", &n, &k) != 2) return 0;\nk %= n;\nint values[200];\nfor (int i = 0; i < n; i++) scanf("%d", &values[i]);\nfor (int i = 0; i < n; i++) { int source = (i - k + n) % n; printf("%s%d", i ? " " : "", values[source]); }\nprintf("\\n");`),
+      cpp: cpp(`int n, k;\ncin >> n >> k;\nk %= n;\nvector<int> values(n);\nfor (int &value : values) cin >> value;\nfor (int i = 0; i < n; i++) { int source = (i - k + n) % n; cout << (i ? " " : "") << values[source]; }\ncout << '\\n';`),
+    },
+  };
+}
+
+const GENERATED_CHALLENGES: readonly Challenge[] = [
+  ...Array.from({ length: 10 }, (_, index) => makeAffineChallenge(index)),
+  ...Array.from({ length: 10 }, (_, index) => makeDivisibleChallenge(index)),
+  ...Array.from({ length: 10 }, (_, index) => makeCountMultiplesChallenge(index)),
+  ...Array.from({ length: 10 }, (_, index) => makeDigitSumChallenge(index)),
+  ...Array.from({ length: 10 }, (_, index) => makeGcdChallenge(index)),
+  ...Array.from({ length: 10 }, (_, index) => makeThresholdChallenge(index)),
+  ...Array.from({ length: 10 }, (_, index) => makeFibonacciChallenge(index)),
+  ...Array.from({ length: 10 }, (_, index) => makePrimeChallenge(index)),
+  ...Array.from({ length: 10 }, (_, index) => makeSecondLargestChallenge(index)),
+  ...Array.from({ length: 10 }, (_, index) => makeRotateChallenge(index)),
+];
+
+export const CHALLENGES: readonly Challenge[] = [
+  ...BASE_CHALLENGES,
+  ...GENERATED_CHALLENGES,
+];
+
+function shuffled<T>(items: readonly T[], random: () => number): T[] {
+  const copy = [...items];
+  for (let index = copy.length - 1; index > 0; index--) {
+    const swap = Math.floor(random() * (index + 1));
+    [copy[index], copy[swap]] = [copy[swap], copy[index]];
+  }
+  return copy;
+}
+
+export function pickPracticeChallenges(
+  count = 10,
+  preferredId?: string,
+  random: () => number = Math.random,
+): Challenge[] {
+  const requested = Math.max(1, Math.min(count, CHALLENGES.length));
+  const base = Math.floor(requested / 3);
+  const remainder = requested % 3;
+  const quotas: Record<Challenge["difficulty"], number> = {
+    Easy: base + (remainder > 0 ? 1 : 0),
+    Medium: base + (remainder > 1 ? 1 : 0),
+    Hard: base,
+  };
+
+  const selected: Challenge[] = [];
+  const preferred = preferredId ? getChallenge(preferredId) : undefined;
+  if (preferred) {
+    selected.push(preferred);
+    quotas[preferred.difficulty] = Math.max(0, quotas[preferred.difficulty] - 1);
+  }
+
+  for (const difficulty of ["Easy", "Medium", "Hard"] as const) {
+    const pool = CHALLENGES.filter(
+      (challenge) => challenge.difficulty === difficulty && challenge.id !== preferred?.id,
+    );
+    selected.push(...shuffled(pool, random).slice(0, quotas[difficulty]));
+  }
+
+  if (selected.length < requested) {
+    const used = new Set(selected.map((challenge) => challenge.id));
+    selected.push(
+      ...shuffled(CHALLENGES.filter((challenge) => !used.has(challenge.id)), random).slice(
+        0,
+        requested - selected.length,
+      ),
+    );
+  }
+
+  return shuffled(selected, random).slice(0, requested);
+}
 
 export function isLanguageId(value: unknown): value is LanguageId {
   return (

@@ -14,21 +14,21 @@ const siteUrl = getSiteUrl();
 const structuredProfile = siteUrl ? {
   "@context": "https://schema.org",
   "@graph": [
-    { "@type": "WebSite", "@id": `${siteUrl}/#website`, url: siteUrl, name: "Alexender", description: siteConfig.description, publisher: { "@id": `${siteUrl}/#person` } },
-    { "@type": "Person", "@id": `${siteUrl}/#person`, name: "Alexender", url: `${siteUrl}/about/`, description: "Developer and creator building websites, useful software and practical coding examples.", sameAs: [getGitHubUrl(), getLinkedInUrl(), getTikTokUrl()].filter(Boolean) },
+    { "@type": "WebSite", "@id": `${siteUrl}/#website`, url: siteUrl, name: "Mbiopeter", description: siteConfig.description, publisher: { "@id": `${siteUrl}/#person` } },
+    { "@type": "Person", "@id": `${siteUrl}/#person`, name: "Mbiopeter", url: `${siteUrl}/about/`, description: "Developer and creator building websites, useful software and practical coding examples.", sameAs: [getGitHubUrl(), getLinkedInUrl(), getTikTokUrl()].filter(Boolean) },
   ],
 } : null;
 
 export const metadata: Metadata = {
-  title: "Alexender : Developer",
+  title: "Mbiopeter : Developer",
   description: siteConfig.description,
-  applicationName: "Alexender",
+  applicationName: "Mbiopeter",
   ...(siteUrl ? { metadataBase: new URL(siteUrl) } : {}),
   openGraph: {
-    title: "Good ideas deserve great code. — Alexender",
+    title: "Good ideas deserve great code. — Mbiopeter",
     description: siteConfig.description,
     type: "website",
-    siteName: "Alexender",
+    siteName: "Mbiopeter",
     ...(siteUrl
       ? {
           url: siteUrl,
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
               url: "/social-card.png",
               width: 1200,
               height: 630,
-              alt: "Alexender — Developer & Creator",
+              alt: "Mbiopeter — Developer & Creator",
             },
           ],
         }
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Alexender — Developer & Creator",
+    title: "Mbiopeter — Developer & Creator",
     description: siteConfig.description,
     ...(siteUrl
       ? { images: [new URL("/social-card.png", siteUrl).toString()] }

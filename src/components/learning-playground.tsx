@@ -84,8 +84,8 @@ const lessons = [
 
 const pythonExamples = [
   {
-    input: '["  alexender  ", "", None, "  learning  "]',
-    output: "['Alexender', 'Learning']",
+    input: '["  mbiopeter  ", "", None, "  learning  "]',
+    output: "['Mbiopeter', 'Learning']",
   },
   {
     input: '["  django  ", "  python  ", "   ", None]',
@@ -126,7 +126,7 @@ export function LearningPlayground() {
     active === 2
       ? lesson.code.replace("bg-lime-300", `bg-${swatchNames[swatch]}-300`)
       : active === 1 && !emptyProfile
-        ? lesson.code.replace("undefined", '{ name: "Alexender" }')
+        ? lesson.code.replace("undefined", '{ name: "Mbiopeter" }')
         : active === 3
           ? lesson.code.replace(
               "__VALUES__",
@@ -295,7 +295,7 @@ export function LearningPlayground() {
               {active === 1 && (
                 <div className="debug-demo">
                   <strong aria-live="polite">
-                    {emptyProfile ? "Hello, developer" : "Alexender"}
+                    {emptyProfile ? "Hello, developer" : "Mbiopeter"}
                     <span className="text-[var(--green)]">.</span>
                   </strong>
                   <button

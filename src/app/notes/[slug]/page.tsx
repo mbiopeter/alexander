@@ -10,7 +10,7 @@ type Props = { params: Promise<{ slug: string }> };
 export function generateStaticParams() { return notes.map(({ slug }) => ({ slug })); }
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const note = getNote((await params).slug);
-  return note ? makeMetadata(note.title, note.summary, `/notes/${note.slug}/`) : { title: "Note not found — Alexender", robots: { index: false } };
+  return note ? makeMetadata(note.title, note.summary, `/notes/${note.slug}/`) : { title: "Note not found — Mbiopeter", robots: { index: false } };
 }
 
 export default async function NotePage({ params }: Props) {
@@ -24,7 +24,7 @@ export default async function NotePage({ params }: Props) {
           <p className="eyebrow">{note.category} <span className="ml-3 normal-case tracking-normal text-[var(--muted)]">{note.readingTime}</span></p>
           <h1 className="my-5 text-4xl font-semibold leading-tight tracking-tight md:text-5xl">{note.title}</h1>
           <p className="mb-0 text-base leading-8 text-[var(--muted)]">{note.summary}</p>
-          <p className="mb-0 mt-5 text-sm text-[var(--muted)]">By Alexender</p>
+          <p className="mb-0 mt-5 text-sm text-[var(--muted)]">By Mbiopeter</p>
         </header>
         <div className="grid items-start gap-10 pt-10 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-20">
           <div className="min-w-0 max-w-3xl space-y-10">

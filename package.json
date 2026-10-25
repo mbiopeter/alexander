@@ -1,8 +1,8 @@
 {
-  "name": "alexender-dev",
+  "name": "mbiopeter-dev",
   "version": "2.1.0",
   "private": true,
-  "description": "Alexender's developer portfolio, services, creator hub, and coding playground.",
+  "description": "Mbiopeter's developer portfolio, services, creator hub, and coding playground.",
   "engines": {
     "node": ">=22.0.0"
   },

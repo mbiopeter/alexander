@@ -4,7 +4,7 @@ import { makeMetadata } from "@/lib/metadata";
 
 export const metadata = makeMetadata(
   "Projects",
-  "Explore Alexender’s interactive frontend projects: a task board, an API learning lab, and a CSV cleanup tool.",
+  "Explore Mbiopeter’s interactive frontend projects: a task board, an API learning lab, and a CSV cleanup tool.",
   "/projects/",
 );
 

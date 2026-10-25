@@ -11,7 +11,7 @@ import {
 } from "./validation";
 
 export const defaultEnquiry =
-  "Hi Alexender! I found your website and would like to discuss a project.";
+  "Hi Mbiopeter! I found your website and would like to discuss a project.";
 
 export function getWhatsAppUrl(message = defaultEnquiry): string | null {
   if (!siteConfig.contact.whatsappEnabled) return null;
