@@ -22,7 +22,7 @@ const serviceOptions = [
 const serviceSlugs = serviceOptions.map((option) => option.slug);
 
 const fieldClass =
-  "w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-4 py-3.5 text-sm text-[var(--text)] transition-colors placeholder:text-[var(--muted)] hover:border-[var(--muted)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--green)]";
+  "w-full rounded-xl border border-(--line) bg-(--surface) px-4 py-3.5 text-sm text-(--text) transition-colors placeholder:text-(--muted) hover:border-(--muted) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--green)";
 
 function ContactFormFields({ requestedService }: { requestedService: string | null }) {
   const id = useId();
@@ -170,16 +170,17 @@ function ContactFormFields({ requestedService }: { requestedService: string | nu
       className="contact-form space-y-5"
       onSubmit={handleSubmit}
       aria-busy={!ready}
-      noValidate
-    >
+      noValidate>
+
       <div>
+
         <label
-          className="mb-2 block text-sm font-semibold text-[var(--text)]"
-          htmlFor={`${id}-service`}
-        >
+          className="mb-2 block text-sm font-semibold text-(--text)"
+          htmlFor={`${id}-service`}>
           What can I help with?
         </label>
         <div className="relative">
+
           <select
             id={`${id}-service`}
             name="service"
@@ -194,8 +195,7 @@ function ContactFormFields({ requestedService }: { requestedService: string | nu
             aria-invalid={Boolean(errors.service)}
             aria-describedby={
               errors.service ? `${id}-service-error` : undefined
-            }
-          >
+            }>
             <option value="" disabled>
               Choose a service
             </option>
@@ -207,22 +207,21 @@ function ContactFormFields({ requestedService }: { requestedService: string | nu
           </select>
           <ChevronDown
             size={17}
-            className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-[var(--muted)]"
-            aria-hidden="true"
-          />
+            className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-(--muted)"
+            aria-hidden="true"/>
+
         </div>
         {errors.service && (
           <p
             id={`${id}-service-error`}
-            className="mt-2 text-xs font-medium text-[var(--text)]"
-            role="alert"
-          >
+            className="mt-2 text-xs font-medium text-(--text)"
+            role="alert">
             {errors.service}
           </p>
         )}
       </div>
-
       <div className="grid gap-5 sm:grid-cols-2">
+
         {optionalFields.map(
           ({
             field,
@@ -235,13 +234,14 @@ function ContactFormFields({ requestedService }: { requestedService: string | nu
           }) => (
             <div key={field}>
               <label
-                className="mb-2 block text-sm font-semibold text-[var(--text)]"
-                htmlFor={`${id}-${field}`}
-              >
+                className="mb-2 block text-sm font-semibold text-(--text)"
+                htmlFor={`${id}-${field}`}>
+
                 {label}{" "}
-                <span className="font-normal text-[var(--muted)]">
+                <span className="font-normal text-(--muted)">
                   (optional)
                 </span>
+
               </label>
               <input
                 id={`${id}-${field}`}
@@ -260,14 +260,12 @@ function ContactFormFields({ requestedService }: { requestedService: string | nu
                 aria-invalid={Boolean(errors[field])}
                 aria-describedby={
                   errors[field] ? `${id}-${field}-error` : undefined
-                }
-              />
+                }/>
               {errors[field] && (
                 <p
                   id={`${id}-${field}-error`}
-                  className="mt-2 text-xs font-medium text-[var(--text)]"
-                  role="alert"
-                >
+                  className="mt-2 text-xs font-medium text-(--text)"
+                  role="alert">
                   {errors[field]}
                 </p>
               )}
@@ -275,12 +273,11 @@ function ContactFormFields({ requestedService }: { requestedService: string | nu
           ),
         )}
       </div>
-
       <div>
+
         <label
-          className="mb-2 block text-sm font-semibold text-[var(--text)]"
-          htmlFor={`${id}-message`}
-        >
+          className="mb-2 block text-sm font-semibold text-(--text)"
+          htmlFor={`${id}-message`}>
           Tell me about your project
         </label>
         <textarea
@@ -300,69 +297,70 @@ function ContactFormFields({ requestedService }: { requestedService: string | nu
           placeholder="What would you like to build, fix, or make easier? A few sentences are enough to start."
           className={`${fieldClass} min-h-36 resize-y leading-relaxed`}
           aria-invalid={Boolean(errors.message)}
-          aria-describedby={`${id}-message-hint${errors.message ? ` ${id}-message-error` : ""}`}
-        />
+          aria-describedby={`${id}-message-hint${errors.message ? ` ${id}-message-error` : ""}`}/>
         <div
           id={`${id}-message-hint`}
-          className="mt-2 flex items-center justify-between gap-3 text-xs text-[var(--muted)]"
-        >
+          className="mt-2 flex items-center justify-between gap-3 text-xs text-(--muted)">
           <span>At least 15 characters</span>
           <span>{message.length.toLocaleString("en-US")} / 2,000</span>
+
         </div>
         {errors.message && (
           <p
             id={`${id}-message-error`}
-            className="mt-2 text-xs font-medium text-[var(--text)]"
-            role="alert"
-          >
+            className="mt-2 text-xs font-medium text-(--text)"
+            role="alert">
             {errors.message}
           </p>
         )}
       </div>
+      <div className="rounded-xl bg-(--surface-soft) px-4 py-3">
 
-      <div className="rounded-xl bg-[var(--surface-soft)] px-4 py-3">
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-          <p className="mb-0 text-xs leading-6 text-[var(--muted)]" role="status">
+
+          <p className="mb-0 text-xs leading-6 text-(--muted)" role="status">
             {storageNote}
           </p>
           {hasContactBrief(brief) && !confirmClear && (
             <button
               type="button"
-              className="inline-flex min-h-10 items-center gap-2 text-xs font-medium text-[var(--muted)] hover:text-[var(--text)]"
+              className="inline-flex min-h-10 items-center gap-2 text-xs font-medium text-(--muted) hover:text-(--text)"
               onClick={() => setConfirmClear(true)}
-              disabled={!ready}
-            >
+              disabled={!ready}>
               <Trash2 size={14} aria-hidden="true" />
               Clear draft
             </button>
           )}
         </div>
         {confirmClear && (
-          <div className="mt-3 border-t border-[var(--line)] pt-3">
-            <p className="mb-2 text-xs leading-6 text-[var(--text)]">
+          <div className="mt-3 border-t border-(--line) pt-3">
+
+            <p className="mb-2 text-xs leading-6 text-(--text)">
               Clear all fields and this tab’s saved brief?
             </p>
             <div className="flex flex-wrap gap-2">
+
               <button type="button" className="button button-outline" onClick={clearBrief}>
                 Clear brief
               </button>
               <button type="button" className="button button-quiet" onClick={() => setConfirmClear(false)}>
                 Keep editing
               </button>
+
             </div>
+
           </div>
         )}
       </div>
-
       <details
         open={previewOpen}
         onToggle={(event) => setPreviewOpen(event.currentTarget.open)}
-        className="rounded-xl border border-[var(--line)] bg-[var(--surface)]"
-      >
-        <summary className="cursor-pointer rounded-xl px-4 py-3 text-sm font-medium text-[var(--text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--green)]">
+        className="rounded-xl border border-(--line) bg-(--surface)">
+        <summary className="cursor-pointer rounded-xl px-4 py-3 text-sm font-medium text-(--text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--green)">
           Preview or copy your message
         </summary>
         <div className="space-y-3 px-4 pb-4">
+
           <label htmlFor={`${id}-preview`} className="sr-only">
             Your project brief preview
           </label>
@@ -372,47 +370,54 @@ function ContactFormFields({ requestedService }: { requestedService: string | nu
             value={buildDraft()}
             readOnly
             rows={8}
-            className={`${fieldClass} resize-y font-mono text-xs leading-relaxed`}
-          />
+            className={`${fieldClass} resize-y font-mono text-xs leading-relaxed`}/>
           <button
             type="button"
             onClick={copyDraft}
-            className="button button-quiet w-full"
-          >
+            className="button button-quiet w-full">
             <Copy size={16} aria-hidden="true" />
             Copy message
           </button>
-          <p className="text-xs leading-relaxed text-[var(--muted)]">
+          <p className="text-xs leading-relaxed text-(--muted)">
             If your messaging or email app opens without the brief, copy it here
             and paste it into your draft.
           </p>
-        </div>
-      </details>
 
+        </div>
+        
+      </details>
       <button type="submit" className="button button-accent w-full" disabled={!ready}>
+
         {whatsappAvailable ? <MessageCircle size={18} aria-hidden="true" /> : emailAvailable ? <Mail size={18} aria-hidden="true" /> : <Copy size={18} aria-hidden="true" />}
         {whatsappAvailable ? "Continue on WhatsApp" : emailAvailable ? "Open email draft" : "Copy project brief"}
         <ArrowUpRight size={18} aria-hidden="true" />
+
       </button>
       {(whatsappAvailable || emailAvailable) && (
         <div className={`grid gap-3 ${whatsappAvailable && emailAvailable ? "sm:grid-cols-2" : ""}`}>
+
           {whatsappAvailable && emailAvailable && (
             <button type="button" className="button button-outline w-full" onClick={openEmailDraft} disabled={!ready}>
+
               <Mail size={17} aria-hidden="true" />
               Use email instead
+
             </button>
           )}
           <button type="button" className="button button-quiet w-full" onClick={copyDraft} disabled={!ready}>
+
             <Copy size={17} aria-hidden="true" />
             Copy project brief
           </button>
+
         </div>
       )}
-      <p className="text-center text-xs leading-relaxed text-[var(--muted)]">
+      <p className="text-center text-xs leading-relaxed text-(--muted)">
         {whatsappAvailable || emailAvailable
           ? "You review and send the draft in your chosen app. Opening it does not send your enquiry."
           : "Copy your brief and send it through your preferred contact channel."}
       </p>
+      
     </form>
   );
 }

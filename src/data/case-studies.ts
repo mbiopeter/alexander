@@ -18,7 +18,6 @@ export type CaseStudy = {
   sourceFiles: string[];
 };
 
-/** Build notes describe the shipped demonstrations, not client outcomes. */
 export const caseStudies: Record<string, CaseStudy> = {
   focusboard: {
     heading: "Make the next step easy to find.",

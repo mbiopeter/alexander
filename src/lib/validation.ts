@@ -1,4 +1,4 @@
-/** Validate public destinations before generating outbound links. */
+
 function parseHttpsUrl(value: string): URL | null {
   try {
     const url = new URL(value.trim());
@@ -16,7 +16,6 @@ export function validateWhatsAppNumber(value: string): string | null {
   return /^[1-9]\d{7,14}$/.test(number) ? number : null;
 }
 
-/** Accept a WhatsApp username, optionally pasted with its display @ prefix. */
 export function validateWhatsAppUsername(value: string): string | null {
   const username = value.trim().replace(/^@/, "");
   return /^[a-z0-9_.]{3,35}$/.test(username) && /[a-z]/.test(username)
@@ -95,7 +94,6 @@ export function validateSiteUrl(value: string): string | null {
   return url.href.replace(/\/$/, "");
 }
 
-/** One plain mailbox, not a mailto URL, display name, or recipient list. */
 export function validateContactEmail(value: string): string | null {
   if (/[\r\n\0]/.test(value)) return null;
   const email = value.trim();
@@ -129,8 +127,6 @@ export function createEmailDraftUrl(
 ): string | null {
   const recipient = validateContactEmail(email);
   if (!recipient) return null;
-  // Encode the recipient as well as the query: characters such as ? and & can
-  // occur in a valid mailbox, but must never introduce additional mail headers.
   const destination = encodeURIComponent(recipient).replace(/%40/g, "@");
   const heading = subject.replace(/[\r\n\0]+/g, " ").trim().slice(0, 160).replace(/[\uD800-\uDBFF]$/, "");
   const body = message.replace(/\r\n?|\n/g, "\r\n");
@@ -149,7 +145,6 @@ export function validateLinkedInUrl(value: string): string | null {
   return url.href;
 }
 
-/** A public HTTPS document link, or a PDF placed in this site's public folder. */
 export function validateCvUrl(value: string): string | null {
   const candidate = value.trim();
   if (candidate.length > 2000) return null;

@@ -22,7 +22,6 @@ export function hasContactBrief(brief: ContactBrief): boolean {
   return Object.values(brief).some((value) => value.length > 0);
 }
 
-/** Restore only bounded, known fields from the visitor's own session storage. */
 export function readContactDraft(
   raw: string | null,
   validServices: readonly string[],
@@ -41,10 +40,7 @@ export function readContactDraft(
       if (typeof value !== "string" || value.length > CONTACT_LIMITS[field] || value.includes("\0")) return null;
       result[field] = value;
     }
-    // A removed or renamed service must not strand an otherwise useful brief.
     if (result.service && !validServices.includes(result.service)) result.service = "";
-    // A new service-page link can preselect its service. Refreshing the same
-    // link must preserve a different service the visitor selected afterward.
     if (validServices.includes(requestedService) && record.serviceHint !== requestedService) {
       result.service = requestedService;
     }

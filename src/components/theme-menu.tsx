@@ -40,8 +40,7 @@ export function ThemeMenu() {
       className="relative"
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
-      }}
-    >
+      }}>
       <button
         ref={trigger}
         className="icon-button theme-toggle"
@@ -49,8 +48,7 @@ export function ThemeMenu() {
         aria-expanded={open}
         aria-controls={menuId}
         aria-label="Choose color theme"
-        onClick={() => setOpen(!open)}
-      >
+        onClick={() => setOpen(!open)}>
         <Sun className="theme-sun" size={18} />
         <Moon className="theme-moon" size={18} />
       </button>
@@ -59,8 +57,7 @@ export function ThemeMenu() {
           id={menuId}
           className="theme-menu"
           role="group"
-          aria-label="Color theme"
-        >
+          aria-label="Color theme">
           {options.map(({ value, label, icon: Icon }) => (
             <button
               key={value}
@@ -70,8 +67,7 @@ export function ThemeMenu() {
                 setTheme(value);
                 setOpen(false);
                 trigger.current?.focus();
-              }}
-            >
+              }}>
               <Icon size={16} />
               {label}
               {theme === value && <Check size={14} className="ml-auto" />}

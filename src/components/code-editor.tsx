@@ -23,16 +23,13 @@ export type CodeLanguage = LanguageId;
 
 export type CodeEditorProps = {
   value: string;
-  /** Return false to reject an edit and retain the previous accepted draft. */
   onChange: (value: string) => boolean;
   language: CodeLanguage;
   theme: "light" | "dark";
   filename: string;
   onRun: () => void;
   disabled?: boolean;
-  /** Use a distinct id per exercise so undo never crosses exercise boundaries. */
   documentId?: string;
-  /** Self-hosted Monaco assets copied from node_modules/monaco-editor/min/vs. */
   editorBasePath?: string;
 };
 
@@ -144,9 +141,6 @@ export default function CodeEditor({
     let active = true;
     let settled = false;
     setLoadState("loading");
-
-    // Workers can start from blob: URLs, where root-relative fetches have no
-    // usable base. Resolve the asset root before Monaco builds worker URLs.
     let assetRoot: URL;
     try {
       assetRoot = new URL(editorBasePath, window.location.origin);
@@ -250,7 +244,6 @@ export default function CodeEditor({
       event.stopPropagation();
       if (!disabled) onRun();
     }
-    // Tab intentionally follows normal page navigation in the plain editor.
   };
 
   const fallback = (
@@ -280,7 +273,7 @@ export default function CodeEditor({
       autoCapitalize="off"
       autoCorrect="off"
       wrap="off"
-      className="h-full w-full resize-none border-0 bg-[var(--pg-panel)] p-5 font-mono text-[13px] leading-6 text-[var(--pg-fg)] outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--pg-accent)] sm:text-sm"
+      className="h-full w-full resize-none border-0 bg-(--pg-panel) p-5 font-mono text-[13px] leading-6 text-(--pg-fg) outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-(--pg-accent) sm:text-sm"
     />
   );
 
@@ -290,36 +283,39 @@ export default function CodeEditor({
   return (
     <section
       aria-label={`${labels[language]} source editor`}
-      className="min-w-0 overflow-hidden rounded-2xl border border-[var(--pg-border)] bg-[var(--pg-panel)] shadow-sm"
-    >
-      <header className="flex min-h-[50px] items-center justify-between gap-2 border-b border-[var(--pg-border)] bg-[var(--pg-soft)] px-3 sm:px-4">
+      className="min-w-0 overflow-hidden rounded-2xl border border-(--pg-border) bg-(--pg-panel) shadow-sm">
+
+      <header className="flex min-h-[50px] items-center justify-between gap-2 border-b border-(--pg-border) bg-(--pg-soft) px-3 sm:px-4">
+
         <div className="flex min-w-0 items-center gap-3">
+
           <div
             className="hidden items-center gap-1.5 sm:flex"
-            aria-hidden="true"
-          >
+            aria-hidden="true">
+
             <span className="h-2 w-2 rounded-full bg-rose-400/80" />
             <span className="h-2 w-2 rounded-full bg-amber-400/80" />
             <span className="h-2 w-2 rounded-full bg-emerald-400/80" />
+
           </div>
-          <div className="flex min-w-0 items-center gap-2 border-b-2 border-[var(--pg-accent)] py-3">
+          <div className="flex min-w-0 items-center gap-2 border-b-2 border-(--pg-accent) py-3">
             <span
-              className="text-[10px] font-bold text-[var(--pg-accent)]"
-              aria-hidden="true"
-            >
+              className="text-[10px] font-bold text-(--pg-accent)"
+              aria-hidden="true">
               {badges[language]}
             </span>
-            <span className="truncate font-mono text-xs text-[var(--pg-fg)]">
+            <span className="truncate font-mono text-xs text-(--pg-fg)">
               {filename}
             </span>
+            
           </div>
+
         </div>
         {loadState === "ready" && (
           <button
             type="button"
             onClick={() => setSimpleMode((current) => !current)}
-            className="min-h-[40px] shrink-0 rounded-md px-2 text-[11px] text-[var(--pg-muted)] hover:text-[var(--pg-fg)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--pg-accent)]"
-          >
+            className="min-h-[40px] shrink-0 rounded-md px-2 text-[11px] text-(--pg-muted) hover:text-(--pg-fg) focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--pg-accent)">
             {simpleMode ? "Use syntax editor" : "Use plain editor"}
           </button>
         )}
@@ -328,8 +324,7 @@ export default function CodeEditor({
       {loadState !== "ready" && (
         <p
           role="status"
-          className="border-b border-[var(--pg-border)] bg-[var(--pg-soft)] px-4 py-2 text-xs leading-5 text-[var(--pg-muted)]"
-        >
+          className="border-b border-(--pg-border) bg-(--pg-soft) px-4 py-2 text-xs leading-5 text-(--pg-muted)">
           {loadState === "loading"
             ? "Loading syntax highlighting. You can already write below."
             : "Syntax highlighting is unavailable. You can still edit and run your code below."}
@@ -339,6 +334,7 @@ export default function CodeEditor({
       <div className="h-[360px] min-w-0 sm:h-[410px]">
         {useMonaco ? (
           <EditorBoundary onError={() => setLoadState("failed")}>
+
             <Editor
               key={modelId}
               height="100%"
@@ -354,9 +350,6 @@ export default function CodeEditor({
                   acceptedValueRef.current = next;
                   return;
                 }
-                // Monaco owns its text model. A rejected controlled value must
-                // also be restored in that model; otherwise it would display
-                // text that browser storage and exports never accepted.
                 const editor = editorRef.current;
                 if (!editor || editor.getValue() === acceptedValueRef.current) return;
                 revertingRejectedEdit.current = true;
@@ -404,18 +397,18 @@ export default function CodeEditor({
           fallback
         )}
       </div>
+      <footer className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-(--pg-border) bg-(--pg-soft) px-4 py-2 font-mono text-[10px] text-(--pg-muted)">
 
-      <footer className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-[var(--pg-border)] bg-[var(--pg-soft)] px-4 py-2 font-mono text-[10px] text-[var(--pg-muted)]">
         <span>
           Ln {cursor.line}, Col {cursor.column}
         </span>
         <span>{labels[language]} · UTF-8 · Spaces: 4</span>
+
       </footer>
       <p
         id={instructionsId}
-        className="border-t border-[var(--pg-border)] px-4 py-2.5 text-[11px] leading-5 text-[var(--pg-muted)]"
-      >
-        <span className="font-medium text-[var(--pg-fg)]">
+        className="border-t border-(--pg-border) px-4 py-2.5 text-[11px] leading-5 text-(--pg-muted)">
+        <span className="font-medium text-(--pg-fg)">
           Ctrl / ⌘ + Enter
         </span>{" "}
         to run.
@@ -423,6 +416,7 @@ export default function CodeEditor({
           ? " To let Tab leave the editor, use Ctrl+M (Ctrl+Shift+M on Mac)."
           : " Tab moves to the next control."}
       </p>
+
     </section>
   );
 }

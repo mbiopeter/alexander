@@ -260,7 +260,7 @@ export function Hero() {
           </span>
           <p>
 
-            <Link href="/projects/" className="hero-project-link inline-flex items-center gap-1.5 font-semibold hover:text-[var(--green)]">
+            <Link href="/projects/" className="hero-project-link inline-flex items-center gap-1.5 font-semibold hover:text-(--green)">
               Explore my projects <ArrowUpRight size={14} aria-hidden="true" />
             </Link>
             <br />

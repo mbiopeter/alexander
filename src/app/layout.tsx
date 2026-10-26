@@ -67,18 +67,26 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
+
       <head>
+
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         {structuredProfile && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredProfile).replace(/</g, "\\u003c") }} />}
+
       </head>
       <body>
+
         <a href="#main" className="skip-link">
           Skip to content
         </a>
         <Providers>
+
           <SiteShell>{children}</SiteShell>
+
         </Providers>
+
       </body>
+      
     </html>
   );
 }

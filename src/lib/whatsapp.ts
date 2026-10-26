@@ -4,7 +4,6 @@ import {
   validateWhatsAppUsername,
 } from "./validation";
 
-/** Pass this configuration only from server routes or local configuration tools. */
 export type WhatsAppEnvironment = {
   WHATSAPP_USERNAME?: string;
   WHATSAPP_NUMBER?: string;
@@ -27,10 +26,6 @@ export type WhatsAppConfiguration =
 
 export const MAX_WHATSAPP_MESSAGE_LENGTH = 4000;
 
-/**
- * A chosen username never silently falls back to the phone number when invalid.
- * This prevents a configuration typo from changing the selected privacy mode.
- */
 export function resolveWhatsAppConfiguration(
   environment: WhatsAppEnvironment,
 ): WhatsAppConfiguration {
@@ -64,10 +59,6 @@ export function resolveWhatsAppConfiguration(
   return { status: "missing" };
 }
 
-/**
- * The destination is built from allowlisted account identifiers, never from a
- * redirect URL supplied by the caller. No contact details are returned on error.
- */
 export function createWhatsAppRedirect(
   request: Request,
   environment: WhatsAppEnvironment,

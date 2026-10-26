@@ -45,7 +45,9 @@ export function PageIntro({
 }) {
   return (
     <section className="page-intro shell">
+
       <Reveal>
+
         <p className="eyebrow">
           <span aria-hidden="true">✳</span>
           {eyebrow}
@@ -55,6 +57,7 @@ export function PageIntro({
         {children && <div className="intro-actions">{children}</div>}
       </Reveal>
       <span className="intro-decoration" aria-hidden="true">{`{ }`}</span>
+
     </section>
   );
 }
@@ -70,11 +73,13 @@ export function SectionHeading({
 }) {
   return (
     <div className="section-header">
+
       <div>
         {eyebrow && <p className="eyebrow">{eyebrow}</p>}
         <h2>{title}</h2>
       </div>
       {description && <p>{description}</p>}
+
     </div>
   );
 }
@@ -88,25 +93,32 @@ export function ActionBanner({
 }) {
   return (
     <section className="shell action-banner-wrap">
+
       <div className="action-banner">
+
         <div>
+
           <p className="eyebrow">HAVE SOMETHING IN MIND?</p>
           <h2>{title}</h2>
           <p>{description}</p>
+
         </div>
         <div className="action-banner-buttons">
+
           <Link href="/hire/" className="button button-accent">
             Hire me <ArrowUpRight size={18} />
           </Link>
           <DestinationLink
             destination="paystack"
             fallbackHref="/support/"
-            className="button button-on-dark"
-          >
+            className="button button-on-dark">
             <Coffee size={17} /> Buy me a coffee
           </DestinationLink>
+
         </div>
+
       </div>
+
     </section>
   );
 }
@@ -135,13 +147,15 @@ export function ServiceIcon({
 export function ServiceCard({ service }: { service: Service }) {
   return (
     <article
-      className={`service-card service-${service.icon === "django" || service.icon === "web" ? "green" : service.icon === "debugging" || service.icon === "automation" ? "orange" : "violet"}`}
-    >
+      className={`service-card service-${service.icon === "django" || service.icon === "web" ? "green" : service.icon === "debugging" || service.icon === "automation" ? "orange" : "violet"}`}>
+
       <div className="flex items-center justify-between gap-4">
+
         <span className="service-icon">
           <ServiceIcon name={service.icon} />
         </span>
-        <ArrowUpRight size={18} className="text-[var(--muted)]" />
+        <ArrowUpRight size={18} className="text-(--muted)" />
+
       </div>
       <h3>
         <Link href={`/services/${service.slug}/`}>{service.title}</Link>
@@ -155,6 +169,7 @@ export function ServiceCard({ service }: { service: Service }) {
       <Link href={`/services/${service.slug}/`} className="service-link">
         Explore this service <ArrowRight size={17} />
       </Link>
+
     </article>
   );
 }

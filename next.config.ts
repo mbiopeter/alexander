@@ -4,7 +4,6 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
   images: { unoptimized: true },
   poweredByHeader: false,
-  // Only availability enters browser code. Contact destinations stay server-side.
   env: {
     NEXT_PUBLIC_WHATSAPP_ENABLED: String(
       [

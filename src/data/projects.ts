@@ -12,7 +12,6 @@ export type Project = {
   buildNote: string;
 };
 
-/** Original, working demonstration projects. These are not client case studies. */
 export const projects: Project[] = [
   {
     slug: "focusboard",

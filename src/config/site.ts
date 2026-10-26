@@ -5,8 +5,6 @@ export const siteConfig = {
     "Websites, Python and Django development, custom software, automation, and debugging by Mbiopeter. Practical projects and short coding tutorials that make things click.",
   url: process.env.NEXT_PUBLIC_SITE_URL?.trim() ?? "",
   contact: {
-    // Only availability is exposed to the browser. The server resolves the
-    // private username/number when the visitor opens the contact route.
     whatsappEnabled: process.env.NEXT_PUBLIC_WHATSAPP_ENABLED === "true",
     email: process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() ?? "",
   },

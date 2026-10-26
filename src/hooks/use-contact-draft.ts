@@ -45,8 +45,6 @@ export function useContactDraft(validServices: readonly string[], requestedServi
     if (hydrated.current) {
       if (hint === serviceHint.current) return;
       serviceHint.current = hint;
-      // Same-route client navigation must retain the in-memory brief even if
-      // the browser denied session storage. Only the explicit service changes.
       const next = { ...current.current, ...(hint ? { service: hint } : {}) };
       current.current = next;
       setBrief(next);
@@ -81,8 +79,6 @@ export function useContactDraft(validServices: readonly string[], requestedServi
     current.current = next;
     setBrief(next);
     setRestored(false);
-    // Save during the edit, so a subsequent refresh or navigation cannot race
-    // a debounce timer or leave the last typed characters behind.
     persist(next);
   }
 

@@ -157,11 +157,14 @@ export function LearningPlayground() {
     <section
       id="playground"
       className="learn-section"
-      aria-labelledby="playground-title"
-    >
+      aria-labelledby="playground-title">
+
       <div className="shell section">
+
         <Reveal className="learn-grid">
+
           <div className="learn-copy">
+
             <p className="eyebrow">GUIDED MINI LESSONS</p>
             <h2 id="playground-title">
               See the idea.
@@ -176,8 +179,7 @@ export function LearningPlayground() {
               className="lesson-tabs"
               role="tablist"
               aria-label="Mini coding lessons"
-              aria-orientation="vertical"
-            >
+              aria-orientation="vertical">
               {lessons.map(({ name, icon: Icon, tag }, index) => (
                 <button
                   key={tag}
@@ -203,8 +205,7 @@ export function LearningPlayground() {
                     event.preventDefault();
                     selectLesson(next);
                     tabs.current[next]?.focus();
-                  }}
-                >
+                  }}>
                   <span className="lesson-icon">
                     <Icon size={21} aria-hidden="true" />
                   </span>
@@ -215,36 +216,38 @@ export function LearningPlayground() {
                   <ArrowUpRight
                     size={19}
                     className="ml-auto"
-                    aria-hidden="true"
-                  />
+                    aria-hidden="true"/>
                 </button>
               ))}
             </div>
             <DestinationLink
               destination="tiktok"
-              className="text-link tiktok-link"
-            >
+              className="text-link tiktok-link">
               <Play size={17} aria-hidden="true" />
               More on TikTok
               <ArrowUpRight size={17} aria-hidden="true" />
-            </DestinationLink>
-          </div>
 
+            </DestinationLink>
+
+          </div>
           <div
             className="playground"
             role="tabpanel"
             id={`${id}-panel`}
             aria-labelledby={`${id}-tab-${active}`}
-            tabIndex={0}
-          >
+            tabIndex={0}>
             <div className="playground-heading">
+
               <span>
                 <span className="status-dot" />A SMALL IDEA, EXPLAINED
               </span>
               <span>{lesson.tag}</span>
+
             </div>
             <div className="playground-editor">
+
               <div className="playground-file">
+
                 <span>
                   <Code2 size={14} aria-hidden="true" />
                   {lesson.file}
@@ -253,8 +256,7 @@ export function LearningPlayground() {
                   type="button"
                   className="copy-button"
                   onClick={copySnippet}
-                  aria-label={copied ? "Code copied" : "Copy code snippet"}
-                >
+                  aria-label={copied ? "Code copied" : "Copy code snippet"}>
                   {copied ? (
                     <Check size={15} aria-hidden="true" />
                   ) : (
@@ -262,22 +264,25 @@ export function LearningPlayground() {
                   )}
                   {copied ? "Copied" : "Copy"}
                 </button>
+
               </div>
               <pre>
                 <code>{visibleCode}</code>
               </pre>
+
             </div>
             <div className="demo-preview">
+
               <span className="preview-label">
                 {active >= 3 ? "EXAMPLE OUTPUT" : "LIVE PREVIEW"}
               </span>
               {active === 0 && (
                 <div className="counter-demo">
+
                   <button
                     type="button"
                     className="demo-button"
-                    onClick={() => setCount((value) => value + 1)}
-                  >
+                    onClick={() => setCount((value) => value + 1)}>
                     Clicked <span aria-live="polite">{count}</span>{" "}
                     {count === 1 ? "time" : "times"}
                     <MousePointer2 size={17} aria-hidden="true" />
@@ -286,17 +291,18 @@ export function LearningPlayground() {
                     type="button"
                     className="icon-button"
                     onClick={() => setCount(0)}
-                    aria-label="Reset counter"
-                  >
+                    aria-label="Reset counter">
                     <RotateCcw size={17} aria-hidden="true" />
                   </button>
+
                 </div>
               )}
               {active === 1 && (
                 <div className="debug-demo">
+
                   <strong aria-live="polite">
                     {emptyProfile ? "Hello, developer" : "Mbiopeter"}
-                    <span className="text-[var(--green)]">.</span>
+                    <span className="text-(--green)">.</span>
                   </strong>
                   <button
                     className="demo-small-button"
@@ -304,28 +310,28 @@ export function LearningPlayground() {
                     onClick={() => {
                       setEmptyProfile((value) => !value);
                       setCopied(false);
-                    }}
-                  >
+                    }}>
                     {emptyProfile
                       ? "Try a named profile"
                       : "Try an empty profile"}
                     <RotateCcw size={13} aria-hidden="true" />
+
                   </button>
+
                 </div>
               )}
               {active === 2 && (
                 <div className="style-demo">
+
                   <span
-                    className={`demo-button sample-button swatch-${swatch}`}
-                  >
+                    className={`demo-button sample-button swatch-${swatch}`}>
                     Make something good
                     <ArrowUpRight size={17} aria-hidden="true" />
                   </span>
                   <div
                     className="swatches"
                     role="group"
-                    aria-label="Button color"
-                  >
+                    aria-label="Button color">
                     {swatchNames.map((name, index) => (
                       <button
                         className={`swatch-${index}`}
@@ -336,22 +342,22 @@ export function LearningPlayground() {
                           setCopied(false);
                         }}
                         aria-pressed={swatch === index}
-                        aria-label={`${name} button`}
-                      >
+                        aria-label={`${name} button`}>
                         {swatch === index && (
                           <Check size={13} aria-hidden="true" />
                         )}
                       </button>
                     ))}
                   </div>
+
                 </div>
               )}
               {active === 3 && (
                 <div className="flex flex-col items-center gap-4">
+
                   <code
-                    className="max-w-full break-words px-4 text-sm text-[var(--text)]"
-                    aria-live="polite"
-                  >
+                    className="max-w-full break-words px-4 text-sm text-(--text)"
+                    aria-live="polite">
                     {pythonExamples[pythonExample].output}
                   </code>
                   <button
@@ -362,19 +368,20 @@ export function LearningPlayground() {
                         (value) => (value + 1) % pythonExamples.length,
                       );
                       setCopied(false);
-                    }}
-                  >
+                    }}>
                     Try another input
                     <RotateCcw size={13} aria-hidden="true" />
+
                   </button>
+
                 </div>
               )}
               {active === 4 && (
                 <div className="flex flex-col items-center gap-4">
+
                   <code
-                    className="text-sm text-[var(--text)]"
-                    aria-live="polite"
-                  >
+                    className="text-sm text-(--text)"
+                    aria-live="polite">
                     {showDjangoResponse
                       ? '200 OK → {"status": "ok"}'
                       : "GET /health/"}
@@ -382,25 +389,32 @@ export function LearningPlayground() {
                   <button
                     type="button"
                     className="demo-small-button"
-                    onClick={() => setShowDjangoResponse((value) => !value)}
-                  >
+                    onClick={() => setShowDjangoResponse((value) => !value)}>
                     {showDjangoResponse
                       ? "Show the request"
                       : "Show example response"}
                     <ArrowUpRight size={13} aria-hidden="true" />
+
                   </button>
+
                 </div>
               )}
               <p>{lesson.label}</p>
             </div>
             <div className="lesson-summary">
+
               <p className="mb-3">{lesson.summary}</p>
-              <p className="mb-0 text-[var(--muted)]">{lesson.setup}</p>
+              <p className="mb-0 text-(--muted)">{lesson.setup}</p>
               <Link href={nextSteps[active].href} className="text-link mt-5 min-h-11">{nextSteps[active].label}<ArrowUpRight size={17} /></Link>
+
             </div>
+
           </div>
+
         </Reveal>
+
       </div>
+      
     </section>
   );
 }

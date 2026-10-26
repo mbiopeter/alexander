@@ -73,7 +73,9 @@ function Header() {
   }, [open]);
   return (
     <header ref={header} className="site-header multi-header">
+
       <div className="shell header-inner">
+
         <Logo />
         <nav aria-label="Main navigation" className="desktop-nav">
           {links.map((link) => (
@@ -90,20 +92,19 @@ function Header() {
               }
               aria-current={
                 activePath(pathname, link.href) ? "page" : undefined
-              }
-            >
+              }>
               {link.label}
             </Link>
           ))}
         </nav>
         <div className="header-actions">
+
           <ThemeMenu />
           <DestinationLink
             destination="paystack"
             fallbackHref="/support/"
             className="button button-outline header-coffee"
-            label="Buy me a coffee"
-          >
+            label="Buy me a coffee">
             <Coffee size={16} />
             <span>Buy me a coffee</span>
           </DestinationLink>
@@ -117,18 +118,18 @@ function Header() {
             aria-label={open ? "Close navigation" : "Open navigation"}
             aria-expanded={open}
             aria-controls="mobile-navigation"
-            onClick={() => setOpen(!open)}
-          >
+            onClick={() => setOpen(!open)}>
             {open ? <X size={21} /> : <Menu size={21} />}
           </button>
+
         </div>
+
       </div>
       {open && (
         <nav
           id="mobile-navigation"
           className="mobile-nav shell"
-          aria-label="Mobile navigation"
-        >
+          aria-label="Mobile navigation">
           {[
             ...links,
             { href: "/hire/", label: "Hire me" },
@@ -140,8 +141,7 @@ function Header() {
               onClick={() => setOpen(false)}
               aria-current={
                 activePath(pathname, link.href) ? "page" : undefined
-              }
-            >
+              }>
               {link.label}
               <ArrowUpRight size={17} />
             </Link>
@@ -157,41 +157,53 @@ function Footer() {
   const linkedInUrl = getLinkedInUrl();
   return (
     <footer className="site-footer multi-footer">
+
       <div className="shell">
+
         <div className="footer-grid">
+
           <div className="footer-brand">
+
             <Logo />
             <p>
+
               Thoughtful websites. Useful software.
               <br />
               Code that makes things click.
+
             </p>
             <div className="footer-socials">
+
               <DestinationLink
                 destination="tiktok"
                 className="icon-button"
-                label="Mbiopeter on TikTok"
-              >
+                label="Mbiopeter on TikTok">
+
                 <TikTokIcon className="h-4 w-4" />
+
               </DestinationLink>
               {getGitHubUrl() && (
                 <DestinationLink
                   destination="github"
                   className="icon-button"
-                  label="Mbiopeter on GitHub"
-                >
+                  label="Mbiopeter on GitHub">
+
                   <GitBranch size={17} />
+
                 </DestinationLink>
               )}
               {emailUrl && <a href={emailUrl} className="icon-button" aria-label="Email Mbiopeter"><Mail size={18} /></a>}
               <DestinationLink
                 destination="whatsapp"
                 className="icon-button"
-                label="Message Mbiopeter on WhatsApp"
-              >
+                label="Message Mbiopeter on WhatsApp">
+
                 <MessageCircle size={18} />
+
               </DestinationLink>
+
             </div>
+
           </div>
           <div>
             <h2>Explore</h2>
@@ -205,8 +217,10 @@ function Footer() {
             </nav>
           </div>
           <div>
+
             <h2>Let’s connect</h2>
             <nav aria-label="Contact and support">
+
               <Link href="/hire/">
                 Hire me <ArrowUpRight size={13} />
               </Link>
@@ -221,9 +235,12 @@ function Footer() {
               <DestinationLink destination="paystack" fallbackHref="/support/">
                 Buy me a coffee <Coffee size={13} />
               </DestinationLink>
+
             </nav>
+
           </div>
           <div className="footer-mini-note">
+
             <span aria-hidden="true">✳</span>
             <p>
               Have a little idea?
@@ -233,23 +250,28 @@ function Footer() {
             <Link href="/hire/" className="text-link">
               Start a conversation <ArrowUpRight size={16} />
             </Link>
+
           </div>
+
         </div>
         <div className="footer-bottom">
+
           <span>© {new Date().getFullYear()} Mbiopeter. Made with care.</span>
           <Link
             href="/playground/"
             aria-keyshortcuts="Control+. Meta+."
-            className="playground-shortcut-link"
-          >
+            className="playground-shortcut-link">
             Coding playground <kbd>Ctrl + .</kbd>
           </Link>
           <Link href="/privacy/">Privacy</Link>
           <Link href="/support/">
             Thank you for supporting independent work <Heart size={12} />
           </Link>
+
         </div>
+
       </div>
+
     </footer>
   );
 }
@@ -279,7 +301,6 @@ export function SiteShell({ children }: { children: ReactNode }) {
         return;
 
       const target = event.target;
-      // Keep typing, form fields, and Monaco's own quick-fix shortcut intact.
       if (
         target instanceof Element &&
         target.closest(
@@ -302,6 +323,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
       {children}
       <Footer />
       <nav className={`mobile-action-dock${learningPage ? " learning-dock" : ""}`} aria-label="Quick actions">
+
         <Link href="/hire/" className="button button-primary">
           <BriefcaseBusiness size={17} />
           Hire me <ArrowUpRight size={15} />
@@ -309,8 +331,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
         <DestinationLink
           destination="paystack"
           fallbackHref="/support/"
-          className="button button-outline"
-        >
+          className="button button-outline">
           <Coffee size={18} />
           Buy me a coffee
         </DestinationLink>
@@ -318,10 +339,11 @@ export function SiteShell({ children }: { children: ReactNode }) {
       <DestinationLink
         destination="whatsapp"
         className={`floating-contact desktop-whatsapp${learningPage ? " learning-contact" : ""}`}
-        label="Start a WhatsApp conversation"
-      >
+        label="Start a WhatsApp conversation">
+          
         <MessageCircle size={22} />
         <span>Let’s talk</span>
+
       </DestinationLink>
     </>
   );

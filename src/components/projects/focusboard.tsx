@@ -46,7 +46,7 @@ const samples: BoardTask[] = [
   },
 ];
 const field =
-  "w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-3.5 py-3 text-sm text-[var(--text)] placeholder:text-[var(--muted)] focus-visible:outline-[var(--green)]";
+  "w-full rounded-xl border border-(--line) bg-(--surface) px-3.5 py-3 text-sm text-(--text) placeholder:text-(--muted) focus-visible:outline-(--green)";
 type Filter = "all" | "active" | "done";
 
 export function Focusboard() {
@@ -187,48 +187,53 @@ export function Focusboard() {
   if (!ready)
     return (
       <div
-        className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-10 text-sm text-[var(--muted)]"
-        role="status"
-      >
+        className="rounded-2xl border border-(--line) bg-(--surface) p-10 text-sm text-(--muted)"
+        role="status">
         Opening your board…
       </div>
     );
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)]">
-      <div className="flex flex-col justify-between gap-4 border-b border-[var(--line)] bg-[var(--surface-soft)] p-5 sm:flex-row sm:items-center sm:p-7">
+    <div className="overflow-hidden rounded-2xl border border-(--line) bg-(--surface)">
+
+      <div className="flex flex-col justify-between gap-4 border-b border-(--line) bg-(--surface-soft) p-5 sm:flex-row sm:items-center sm:p-7">
+
         <div>
-          <p className="mb-2 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-[var(--green)]">
+
+          <p className="mb-2 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-(--green)">
             <ClipboardList size={15} /> YOUR PERSONAL WORKSPACE
           </p>
           <h2 className="!mb-0 !text-2xl !tracking-tight">
             A little focus goes a long way.
           </h2>
+
         </div>
-        <span className="inline-flex items-center gap-2 text-xs text-[var(--muted)]">
+        <span className="inline-flex items-center gap-2 text-xs text-(--muted)">
           <HardDrive size={15} />
           {storageMessage ? "This browser only" : "Saved on this device"}
         </span>
+
       </div>
       {storageMessage && (
         <p
           role="status"
-          className="m-5 rounded-lg border border-[var(--line)] bg-[var(--surface-soft)] p-3 text-xs leading-relaxed text-[var(--muted)]"
-        >
+          className="m-5 rounded-lg border border-(--line) bg-(--surface-soft) p-3 text-xs leading-relaxed text-(--muted)">
           {storageMessage}
         </p>
       )}
       <div className="grid gap-8 p-5 sm:p-7 lg:grid-cols-[.75fr_1.25fr]">
+
         <div>
+
           <form onSubmit={saveTask} className="space-y-4">
+
             <h3 className="text-base font-semibold">
               {editing ? "Refine your task" : "What’s the next step?"}
             </h3>
             <div>
               <label
                 htmlFor={`${id}-title`}
-                className="mb-2 block text-xs font-medium"
-              >
+                className="mb-2 block text-xs font-medium">
                 Task title
               </label>
               <input
@@ -243,18 +248,19 @@ export function Focusboard() {
                 placeholder="Something worth getting done"
                 className={field}
                 aria-invalid={Boolean(error)}
-                aria-describedby={error ? `${id}-error` : undefined}
-              />
+                aria-describedby={error ? `${id}-error` : undefined}/>
             </div>
             <div>
+
               <label
                 htmlFor={`${id}-detail`}
-                className="mb-2 block text-xs font-medium"
-              >
+                className="mb-2 block text-xs font-medium">
+
                 A little detail{" "}
                 <span className="font-normal text-[var(--muted)]">
                   (optional)
                 </span>
+                
               </label>
               <textarea
                 id={`${id}-detail`}
@@ -263,14 +269,14 @@ export function Focusboard() {
                 maxLength={280}
                 rows={3}
                 placeholder="What would make this task clearer?"
-                className={`${field} resize-y`}
-              />
+                className={`${field} resize-y`}/>
+
             </div>
             <div>
+
               <label
                 htmlFor={`${id}-priority`}
-                className="mb-2 block text-xs font-medium"
-              >
+                className="mb-2 block text-xs font-medium">
                 Priority
               </label>
               <select
@@ -279,106 +285,120 @@ export function Focusboard() {
                 value={priority}
                 onChange={(event) =>
                   setPriority(event.target.value as BoardTask["priority"])
-                }
-              >
+                }>
+
                 <option value="low">Low — whenever there’s room</option>
                 <option value="medium">Medium — keep it moving</option>
                 <option value="high">High — start here</option>
+
               </select>
+
             </div>
             {error && (
               <p
                 id={`${id}-error`}
                 role="alert"
-                className="text-xs font-medium text-[var(--text)]"
-              >
+                className="text-xs font-medium text-(--text)">
                 {error}
               </p>
             )}
             <div className="flex flex-wrap gap-2">
+
               <button type="submit" className="button button-primary">
+
                 {editing ? <Check size={16} /> : <Plus size={16} />}
                 {editing ? "Save changes" : "Add task"}
+
               </button>
               {editing && (
                 <button
                   type="button"
                   onClick={clearEditor}
-                  className="button button-outline"
-                >
+                  className="button button-outline">
                   <X size={15} />
                   Cancel
                 </button>
               )}
             </div>
+
           </form>
-          <div className="mt-7 border-t border-[var(--line)] pt-5">
-            <p className="mb-3 text-xs leading-relaxed text-[var(--muted)]">
+          <div className="mt-7 border-t border-(--line) pt-5">
+
+            <p className="mb-3 text-xs leading-relaxed text-(--muted)">
               A sample board starts things off on your first visit. Your edits
               stay in this browser. There is no account or cloud sync.
             </p>
             <button
               type="button"
               onClick={() => setConfirmReset(true)}
-              className="inline-flex min-h-10 items-center gap-2 text-xs font-medium text-[var(--muted)] hover:text-[var(--text)]"
-            >
+              className="inline-flex min-h-10 items-center gap-2 text-xs font-medium text-(--muted) hover:text-(--text)">
               <RotateCcw size={14} />
               Load sample tasks
             </button>
             {confirmReset && (
-              <div className="mt-3 rounded-xl border border-[var(--line)] bg-[var(--surface-soft)] p-4">
+              <div className="mt-3 rounded-xl border border-(--line) bg-(--surface-soft) p-4">
+
                 <p className="mb-3 text-xs leading-relaxed">
                   Replace this board with the three sample tasks? Your current
                   tasks will be removed.
                 </p>
                 <div className="flex flex-wrap gap-2">
+
                   <button
                     type="button"
                     onClick={resetSample}
-                    className="rounded-lg bg-[var(--text)] px-3 py-2 text-xs text-[var(--bg)]"
-                  >
+                    className="rounded-lg bg-(--text) px-3 py-2 text-xs text-(--bg)">
                     Replace with samples
                   </button>
                   <button
                     type="button"
                     onClick={() => setConfirmReset(false)}
-                    className="rounded-lg border border-[var(--line)] px-3 py-2 text-xs"
-                  >
+                    className="rounded-lg border border-(--line) px-3 py-2 text-xs">
                     Keep my board
                   </button>
+
                 </div>
+
               </div>
+
             )}
           </div>
+
         </div>
         <div className="min-w-0">
-          <div className="mb-5 rounded-xl border border-[var(--line)] bg-[var(--surface-soft)] p-4">
+
+          <div className="mb-5 rounded-xl border border-(--line) bg-(--surface-soft) p-4">
+
             <div className="mb-3 flex items-center justify-between text-xs">
+
               <span className="font-medium">Small steps, visible progress</span>
-              <span className="text-[var(--muted)]" role="status">
+              <span className="text-(--muted)" role="status">
                 {completed} / {tasks.length} complete
               </span>
+
             </div>
             <div
-              className="h-2 overflow-hidden rounded-full bg-[var(--line)]"
+              className="h-2 overflow-hidden rounded-full bg-(--line)"
               role="progressbar"
               aria-label="Task completion"
               aria-valuenow={percentage}
               aria-valuemin={0}
-              aria-valuemax={100}
-            >
+              aria-valuemax={100}>
+
               <div
-                className="h-full rounded-full bg-[var(--green)] transition-[width]"
+                className="h-full rounded-full bg-(--green) transition-[width]"
                 style={{ width: `${percentage}%` }}
               />
+
             </div>
+
           </div>
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+
             <div
-              className="flex gap-1 rounded-lg border border-[var(--line)] p-1"
+              className="flex gap-1 rounded-lg border border-(--line) p-1"
               role="group"
-              aria-label="Filter tasks"
-            >
+              aria-label="Filter tasks">
               {(
                 [
                   ["all", "All"],
@@ -391,35 +411,37 @@ export function Focusboard() {
                   type="button"
                   onClick={() => setFilter(value)}
                   aria-pressed={filter === value}
-                  className={`min-h-9 rounded-md px-3 text-xs ${filter === value ? "bg-[var(--text)] text-[var(--bg)]" : "text-[var(--muted)]"}`}
-                >
+                  className={`min-h-9 rounded-md px-3 text-xs ${filter === value ? "bg-(--text) text-(--bg)" : "text-(--muted)"}`}>
                   {label}
                 </button>
               ))}
             </div>
             <label className="relative max-w-full">
+
               <span className="sr-only">Search your tasks</span>
               <Search
                 size={14}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--muted)]"
-              />
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-(--muted)"/>
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Find a task"
                 maxLength={100}
                 type="search"
-                className="w-44 rounded-lg border border-[var(--line)] bg-[var(--surface)] py-2.5 pl-8 pr-3 text-xs"
+                className="w-44 rounded-lg border border-(--line) bg-(--surface) py-2.5 pl-8 pr-3 text-xs"
               />
+
             </label>
+
           </div>
           <ul className="space-y-3">
             {visible.map((task) => (
               <li
                 key={task.id}
-                className="rounded-xl border border-[var(--line)] bg-[var(--surface)] p-4"
-              >
+                className="rounded-xl border border-(--line) bg-(--surface) p-4">
+
                 <div className="flex items-start gap-3">
+
                   <input
                     type="checkbox"
                     checked={task.completed}
@@ -433,70 +455,76 @@ export function Focusboard() {
                       )
                     }
                     aria-label={`Mark “${task.title}” ${task.completed ? "active" : "complete"}`}
-                    className="mt-1 h-4 w-4 shrink-0 accent-[var(--green)]"
-                  />
+                    className="mt-1 h-4 w-4 shrink-0 accent-(--green)"/>
                   <div className="min-w-0 flex-1">
+
                     <h4
-                      className={`mb-1 break-words text-sm font-semibold ${task.completed ? "text-[var(--muted)] line-through" : ""}`}
-                    >
+                      className={`mb-1 break-words text-sm font-semibold ${task.completed ? "text-(--muted) line-through" : ""}`}>
                       {task.title}
                     </h4>
                     {task.detail && (
-                      <p className="mb-3 whitespace-pre-wrap break-words text-xs leading-relaxed text-[var(--muted)]">
+                      <p className="mb-3 whitespace-pre-wrap break-words text-xs leading-relaxed text-(--muted)">
                         {task.detail}
                       </p>
                     )}
-                    <span className="inline-flex rounded border border-[var(--line)] px-2 py-1 text-[10px] capitalize text-[var(--muted)]">
+                    <span className="inline-flex rounded border border-(--line) px-2 py-1 text-[10px] capitalize text-(--muted)">
                       {task.priority} priority
                     </span>
+
                   </div>
                   <div className="flex shrink-0 flex-col gap-1">
+                    
                     <button
                       type="button"
                       aria-label={`Edit “${task.title}”`}
-                      className="flex h-8 w-8 items-center justify-center rounded-md text-[var(--muted)] hover:bg-[var(--surface-soft)] hover:text-[var(--text)]"
-                      onClick={() => editTask(task)}
-                    >
+                      className="flex h-8 w-8 items-center justify-center rounded-md text-(--muted) hover:bg-(--surface-soft) hover:text-(--text)"
+                      onClick={() => editTask(task)}>
                       <Edit3 size={14} />
                     </button>
                     <button
                       type="button"
                       aria-label={`Delete “${task.title}”`}
-                      className="flex h-8 w-8 items-center justify-center rounded-md text-[var(--muted)] hover:bg-[var(--surface-soft)] hover:text-[var(--text)]"
+                      className="flex h-8 w-8 items-center justify-center rounded-md text-(--muted) hover:bg-(--surface-soft) hover:text-(--text)"
                       onClick={() => {
                         setTasks((current) =>
                           current.filter((item) => item.id !== task.id),
                         );
                         if (editing === task.id) clearEditor();
-                      }}
-                    >
+                      }}>
                       <Trash2 size={14} />
+
                     </button>
+
                   </div>
+
                 </div>
+
               </li>
             ))}
           </ul>
           {!visible.length && (
-            <div className="rounded-xl border border-dashed border-[var(--line)] p-8 text-center">
+            <div className="rounded-xl border border-dashed border-(--line) p-8 text-center">
+
               <ClipboardList
                 size={26}
-                className="mx-auto mb-3 text-[var(--muted)]"
-              />
+                className="mx-auto mb-3 text-(--muted)"/>
               <p className="mb-1 text-sm font-medium">
                 {tasks.length
                   ? "No tasks match this view."
                   : "Your board is a clean slate."}
               </p>
-              <p className="mb-0 text-xs leading-relaxed text-[var(--muted)]">
+              <p className="mb-0 text-xs leading-relaxed text-(--muted)">
                 {tasks.length
                   ? "Try a different filter or search."
                   : "Add a small first step. That’s how good projects start."}
               </p>
+
             </div>
           )}
         </div>
+
       </div>
+      
     </div>
   );
 }

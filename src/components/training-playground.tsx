@@ -63,8 +63,7 @@ const CodeEditor = dynamic(() => import("./code-editor"), {
   loading: () => (
     <div
       role="status"
-      className="grid h-[480px] place-items-center rounded-2xl border border-[var(--pg-border)] bg-[var(--pg-panel)] text-sm text-[var(--pg-muted)]"
-    >
+      className="grid h-120 place-items-center rounded-2xl border border-(--pg-border) bg-(--pg-panel) text-sm text-(--pg-muted)">
       Preparing your workspace…
     </div>
   ),
@@ -86,9 +85,9 @@ type RunView =
   | { phase: "error"; message: string };
 type Connection = "checking" | "configured" | "unavailable" | "unknown";
 const smallButton =
-  "inline-flex min-h-10 items-center justify-center gap-2 rounded-lg px-3 text-xs font-medium text-[var(--pg-muted)] transition-colors hover:bg-[var(--pg-soft)] hover:text-[var(--pg-fg)] disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none";
+  "inline-flex min-h-10 items-center justify-center gap-2 rounded-lg px-3 text-xs font-medium text-(--pg-muted) transition-colors hover:bg-(--pg-soft) hover:text-(--pg-fg) disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none";
 const panel =
-  "rounded-2xl border border-[var(--pg-border)] bg-[var(--pg-panel)]";
+  "rounded-2xl border border-(--pg-border) bg-(--pg-panel)";
 
 function isRunReport(value: unknown): value is RunReport {
   if (!value || typeof value !== "object") return false;
@@ -576,14 +575,16 @@ export default function TrainingPlayground({
       id="main"
       data-detour-theme={themeReady ? resolvedTheme : "auto"}
       data-focus-mode={focusMode ? "true" : undefined}
-      className="detour-playground min-h-dvh bg-[var(--pg-bg)] pb-12 font-sans text-[var(--pg-fg)] antialiased"
-    >
+      className="detour-playground min-h-dvh bg-(--pg-bg) pb-12 font-sans text-(--pg-fg) antialiased">
+
       <div className="shell">
+
         <nav
           aria-label="Playground navigation"
-          className="practice-navigation flex flex-wrap items-center justify-between gap-2 border-b border-[var(--pg-border)] py-3"
-        >
+          className="practice-navigation flex flex-wrap items-center justify-between gap-2 border-b border-(--pg-border) py-3">
+
           <div className="flex flex-wrap items-center gap-1">
+
             <Link href="/" className={smallButton}>
               <ArrowLeft size={14} aria-hidden="true" /> Back home
             </Link>
@@ -594,87 +595,93 @@ export default function TrainingPlayground({
                 onClick={() => {
                   if (window.history.length > 1) window.history.back();
                   else window.location.assign("/");
-                }}
-              >
+                }}>
                 Go back
               </button>
             )}
           </div>
           <div className="flex flex-wrap items-center gap-1">
+
             <Link href="/learn/" className={`${smallButton} practice-more-lessons`}>
               More ways to learn <ArrowUpRight size={13} aria-hidden="true" />
             </Link>
             <button
               type="button"
               aria-pressed={focusMode}
-              className={`${smallButton} border border-[var(--pg-border)] bg-[var(--pg-panel)]`}
+              className={`${smallButton} border border-(--pg-border) bg-(--pg-panel)`}
               onClick={() => {
                 setFocusMode((current) => !current);
                 if (!focusMode) requestAnimationFrame(() => workbenchRef.current?.scrollIntoView({ behavior: "auto", block: "start" }));
-              }}
-            >
+              }}>
               {focusMode ? <Minimize2 size={14} aria-hidden="true" /> : <Maximize2 size={14} aria-hidden="true" />}
               {focusMode ? "Exit focus mode" : "Focus on coding"}
             </button>
-          </div>
-        </nav>
 
-        <div className="mt-5 flex flex-wrap items-center gap-2 rounded-2xl border border-[var(--pg-border)] bg-[var(--pg-panel)] p-2" role="tablist" aria-label="Playground section">
+          </div>
+
+        </nav>
+        <div className="mt-5 flex flex-wrap items-center gap-2 rounded-2xl border border-(--pg-border) bg-(--pg-panel) p-2" role="tablist" aria-label="Playground section">
+
           <button
             type="button"
             role="tab"
             aria-selected={section === "theory"}
             onClick={() => { setSection("theory"); setFocusMode(false); cancelRun(); }}
-            className={`inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold transition-colors ${section === "theory" ? "bg-[var(--pg-accent)] text-[var(--pg-accent-ink)]" : "text-[var(--pg-muted)] hover:bg-[var(--pg-soft)]"}`}
-          >
+            className={`inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold transition-colors ${section === "theory" ? "bg-(--pg-accent) text-(--pg-accent-ink)" : "text-(--pg-muted) hover:bg-(--pg-soft)"}`}>
+
             <BookOpen size={16} aria-hidden="true" /> Theory
             <span className="rounded-full bg-black/10 px-2 py-0.5 text-[10px]">100 questions</span>
+
           </button>
           <button
             type="button"
             role="tab"
             aria-selected={section === "practice"}
             onClick={() => setSection("practice")}
-            className={`inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold transition-colors ${section === "practice" ? "bg-[var(--pg-accent)] text-[var(--pg-accent-ink)]" : "text-[var(--pg-muted)] hover:bg-[var(--pg-soft)]"}`}
-          >
+            className={`inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold transition-colors ${section === "practice" ? "bg-(--pg-accent) text-(--pg-accent-ink)" : "text-(--pg-muted) hover:bg-(--pg-soft)"}`}>
+
             <ListChecks size={16} aria-hidden="true" /> Practice
             <span className="rounded-full bg-black/10 px-2 py-0.5 text-[10px]">{CHALLENGES.length} questions</span>
-          </button>
-        </div>
 
+          </button>
+
+        </div>
         {section === "theory" ? (
           <TheoryQuiz />
         ) : (
           <>
         <section
           aria-labelledby="playground-title"
-          className="practice-intro grid items-center gap-6 py-7 md:grid-cols-[1fr_auto] md:py-10"
-        >
+                className="practice-intro grid items-center gap-6 py-7 md:grid-cols-[1fr_auto] md:py-10">
+
           <div>
+
             <div className="mb-3 flex flex-wrap items-center gap-2.5 text-[10px] font-semibold uppercase tracking-[0.14em]">
-              <span className="rounded-full bg-[var(--pg-accent-soft)] px-2.5 py-1 text-[var(--pg-accent)]">
+
+                    <span className="rounded-full bg-(--pg-accent-soft) px-2.5 py-1 text-(--pg-accent)">
                 {isNotFound ? "404 / Page not found" : "The coding playground"}
               </span>
-              <span className="text-[var(--pg-muted)]">
+                    <span className="text-(--pg-muted)">
                 {isNotFound
                   ? "A little lost. A little curious."
                   : "Stay curious. Keep building."}
               </span>
+
             </div>
             <h1
               id="playground-title"
-              className="text-balance text-3xl font-semibold leading-tight tracking-[-0.045em] sm:text-4xl lg:text-[42px]"
-            >
+                    className="text-balance text-3xl font-semibold leading-tight tracking-[-0.045em] sm:text-4xl lg:text-[42px]">
               {isNotFound ? "Make this detour " : "A little practice. "}
-              <span className="text-[var(--pg-accent)]">{isNotFound ? "count." : "Real progress."}</span>
+                    <span className="text-(--pg-accent)">{isNotFound ? "count." : "Real progress."}</span>
             </h1>
-            <p className="mt-3 max-w-xl text-sm leading-6 text-[var(--pg-muted)]">
+                  <p className="mt-3 max-w-xl text-sm leading-6 text(--pg-muted)">
               {isNotFound
                 ? "That page is out of reach, but a new skill isn’t. "
                 : "A small space for your next coding win. "}
               Pick a language, try a challenge, and collect your wins.
             </p>
-            <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-[var(--pg-muted)]">
+                  <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-(--pg-muted)">
+
               <span className="flex items-center gap-1.5">
                 <FileCode2 size={14} aria-hidden="true" /> {sessionChallenges.length} random questions from {CHALLENGES.length}
               </span>
@@ -687,60 +694,72 @@ export default function TrainingPlayground({
                 onClick={() =>
                   collectionRef.current?.scrollIntoView({ behavior: "auto" })
                 }
-                className="flex min-h-9 items-center gap-1.5 rounded-md font-medium text-[var(--pg-accent)]"
-              >
+                      className="flex min-h-9 items-center gap-1.5 rounded-md font-medium text-(--pg-accent)">
+
                 <Bookmark size={14} aria-hidden="true" />{" "}
                 {progress.answers.length} collected{" "}
                 <ArrowUpRight size={13} aria-hidden="true" />
+
               </button>
+
             </div>
+
           </div>
           <div className="relative hidden w-64 md:block">
+
             <div
               aria-hidden="true"
-              className="relative flex h-36 items-center justify-center gap-2 select-none"
-            >
-              {isNotFound && <span className="text-[98px] font-semibold tracking-tighter text-[var(--pg-border)]">4</span>}
+                    className="relative flex h-36 items-center justify-center gap-2 select-none">
+
+                    {isNotFound && <span className="text-[98px] font-semibold tracking-tighter text-(--pg-border)">4</span>}
               <div className="relative h-20 w-20 shrink-0">
+
                 <div
-                  className={`absolute top-0 h-6 w-full animate-bounce [animation-duration:6s] motion-reduce:animate-none ${motionState}`}
-                >
+                        className={`absolute top-0 h-6 w-full animate-bounce [animation-duration:6s] motion-reduce:animate-none ${motionState}`}>
+
                   <div className="relative h-20 w-20 rounded-full border border-[#a3cabd] bg-[radial-gradient(circle_at_30%_25%,#e0ffe8,#9ecbb5_32%,#457c69_65%,#284a42)] shadow-[inset_-8px_-6px_15px_#0c2a3840]">
                     <div
-                      className={`absolute -inset-4 animate-spin rounded-full border border-[var(--pg-border)] [animation-duration:24s] motion-reduce:animate-none ${motionState}`}
-                    >
-                      <span className="absolute -top-1 left-1/2 h-2 w-2 rounded-full bg-[var(--pg-accent)]" />
+                            className={`absolute -inset-4 animate-spin rounded-full border border-(--pg-border) [animation-duration:24s] motion-reduce:animate-none ${motionState}`}>
+
+                            <span className="absolute -top-1 left-1/2 h-2 w-2 rounded-full bg-(--pg-accent)" />
+
                     </div>
-                    <div className="absolute -left-[25%] top-[30%] h-[38%] w-[150%] -rotate-[25deg] rounded-[50%] border-[4px] border-[#b9e4bd] border-t-[#b9e4bd40]" />
+
+                          <div className="absolute left-[-25%] top-[30%] h-[38%] w-[150%] rotate-[-25deg] rounded-[50%] border-4 border-[#b9e4bd] border-t-[#b9e4bd40]" />
+
                   </div>
+
                 </div>
+
               </div>
-              {isNotFound && <span className="text-[98px] font-semibold tracking-tighter text-[var(--pg-border)]">4</span>}
-              <Sparkles className="absolute right-4 top-1 h-4 w-4 text-[var(--pg-accent)]" />
-              <span className="absolute bottom-0 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-[var(--pg-border)] bg-[var(--pg-panel)] px-3 py-1 font-mono text-[9px] tracking-wider text-[var(--pg-muted)]">
+
+                    {isNotFound && <span className="text-[98px] font-semibold tracking-tighter text-(--pg-border)">4</span>}
+                    <Sparkles className="absolute right-4 top-1 h-4 w-4 text-(--pg-accent)" />
+                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-(--pg-border) bg-(--pg-panel) px-3 py-1 font-mono text-[9px] tracking-wider text-(--pg-muted)">
                 {isNotFound ? "YOU’RE IN A GOOD PLACE" : "SMALL STEPS. KEEP BUILDING."}
               </span>
+
             </div>
             <button
               type="button"
               onClick={() => setMotionPaused((paused) => !paused)}
-              className="absolute -right-2 -top-3 grid h-8 w-8 place-items-center rounded-full text-[var(--pg-muted)] hover:bg-[var(--pg-soft)] motion-reduce:hidden"
+                    className="absolute -right-2 -top-3 grid h-8 w-8 place-items-center rounded-full text-(--pg-muted) hover:bg-(--pg-soft) motion-reduce:hidden"
               aria-label={
                 motionPaused
                   ? "Resume illustration animation"
                   : "Pause illustration animation"
-              }
-            >
+              }>
               {motionPaused ? <Play size={12} /> : <Pause size={12} />}
             </button>
-          </div>
-        </section>
 
+          </div>
+
+              </section>
         <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+
           <div
             className="flex flex-wrap items-center gap-2"
-            aria-label="Programming language"
-          >
+                  aria-label="Programming language">
             {LANGUAGES.map((option) => (
               <button
                 key={option.id}
@@ -748,21 +767,18 @@ export default function TrainingPlayground({
                 aria-pressed={language.id === option.id}
                 disabled={!ready}
                 onClick={() => choose(challenge.id, option.id)}
-                className={`inline-flex min-h-11 items-center gap-2 rounded-xl border px-3 text-xs font-medium transition-colors disabled:opacity-50 motion-reduce:transition-none ${language.id === option.id ? "border-[var(--pg-accent)] bg-[var(--pg-panel)] text-[var(--pg-fg)] shadow-sm" : "border-transparent text-[var(--pg-muted)] hover:bg-[var(--pg-soft)]"}`}
-              >
+                className={`inline-flex min-h-11 items-center gap-2 rounded-xl border px-3 text-xs font-medium transition-colors disabled:opacity-50 motion-reduce:transition-none ${language.id === option.id ? "border-(--pg-accent) bg-(--pg-panel) text-(--pg-fg) shadow-sm" : "border-transparent text-(--pg-muted) hover:bg-(--pg-soft)"}`}>
                 <span
-                  className={`grid h-6 min-w-6 place-items-center rounded-md px-1 font-mono text-[10px] font-bold ${languageBadges[option.id].color}`}
-                >
+                  className={`grid h-6 min-w-6 place-items-center rounded-md px-1 font-mono text-[10px] font-bold ${languageBadges[option.id].color}`}>
                   {languageBadges[option.id].badge}
                 </span>
                 {option.label}
               </button>
             ))}
           </div>
-          <div className="flex flex-wrap items-center gap-2 text-[11px] text-[var(--pg-muted)]">
+                <div className="flex flex-wrap items-center gap-2 text-[11px] text-(--pg-muted)">
             <span
-              className={`h-1.5 w-1.5 rounded-full ${connection === "configured" ? "bg-[var(--pg-success)]" : "bg-[var(--pg-warning)]"}`}
-            />
+                    className={`h-1.5 w-1.5 rounded-full ${connection === "configured" ? "bg-(--pg-success)" : "bg-(--pg-warning)"}`} />
             {connection === "checking"
               ? "Checking runner…"
               : connection === "configured"
@@ -775,82 +791,83 @@ export default function TrainingPlayground({
                 <RotateCcw size={12} aria-hidden="true" /> Check connection
               </button>
             )}
-            <span className="rounded-lg bg-[var(--pg-accent-soft)] px-2.5 py-1.5 font-semibold text-[var(--pg-accent)]">
+                  <span className="rounded-lg bg-(--pg-accent-soft) px-2.5 py-1.5 font-semibold text-(--pg-accent)">
               Score {solvedInLanguage}/{sessionChallenges.length} · {practiceScore}%
             </span>
-            <button type="button" onClick={newPracticeTest} disabled={!ready || isRunning} className={`${smallButton} border border-[var(--pg-border)] bg-[var(--pg-panel)]`}>
+                  <button type="button" onClick={newPracticeTest} disabled={!ready || isRunning} className={`${smallButton} border border-(--pg-border) bg-(--pg-panel)`}>
               <RotateCcw size={12} aria-hidden="true" /> New random 10
             </button>
-          </div>
-        </div>
 
+                </div>
+
+              </div>
         {storageNote && (
           <p
             role="status"
-            className="mb-4 rounded-xl bg-[var(--pg-warning-bg)] px-4 py-3 text-xs leading-5 text-[var(--pg-warning)]"
-          >
+                  className="mb-4 rounded-xl bg-(--pg-warning-bg) px-4 py-3 text-xs leading-5 text-(--pg-warning)">
             {storageNote}
           </p>
         )}
         {connection === "unavailable" && (
           <p
             role="status"
-            className="mb-4 rounded-xl border border-[var(--pg-border)] bg-[var(--pg-panel)] px-4 py-3 text-xs leading-5 text-[var(--pg-muted)]"
-          >
-            <span className="font-semibold text-[var(--pg-fg)]">
+                  className="mb-4 rounded-xl border border-(--pg-border) bg-(--pg-panel) px-4 py-3 text-xs leading-5 text-(--pg-muted)">
+                  <span className="font-semibold text-(--pg-fg)">
               Practice space is ready.
             </span>{" "}
             The free public code runner is temporarily unavailable. You can still write code,
             explore hints, and read reference solutions. Your drafts stay in this browser;
             try the runner again shortly.
           </p>
-        )}
-
+              )}
         <div className={`practice-mobile-selector ${panel} mb-4 p-4`}>
+
           <label htmlFor="practice-challenge" className="mb-2 block text-xs font-semibold">Choose a challenge</label>
           <select
             id="practice-challenge"
             value={challenge.id}
             disabled={!ready}
             onChange={(event) => choose(event.target.value)}
-            className="min-h-11 w-full rounded-lg border border-[var(--pg-border)] bg-[var(--pg-soft)] px-3 py-2 text-sm text-[var(--pg-fg)]"
-          >
+                  className="min-h-11 w-full rounded-lg border border-(--pg-border) bg-(--pg-soft) px-3 py-2 text-sm text-(--pg-fg)">
             {sessionChallenges.map((item, index) => (
               <option key={item.id} value={item.id}>
                 {String(index + 1).padStart(2, "0")} · {item.title}{progress.answers.some((answer) => answer.language === language.id && answer.challengeId === item.id) ? " · Completed" : ""}
               </option>
             ))}
           </select>
-          <p className="mb-0 mt-2 text-xs text-[var(--pg-muted)]">{language.label} test score · {solvedInLanguage}/{sessionChallenges.length} solved · {practiceScore}%</p>
+                <p className="mb-0 mt-2 text-xs text-(--pg-muted)">{language.label} test score · {solvedInLanguage}/{sessionChallenges.length} solved · {practiceScore}%</p>
         </div>
 
         <div
           ref={workbenchRef}
-          className="practice-workbench grid scroll-mt-28 items-start gap-5 lg:grid-cols-[260px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(0,1fr)]"
-        >
+                className="practice-workbench grid scroll-mt-28 items-start gap-5 lg:grid-cols-[260px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(0,1fr)]">
+
           <aside
             aria-labelledby="challenge-list-title"
-            className={`practice-challenge-sidebar ${panel} overflow-hidden lg:sticky lg:top-28`}
-          >
-            <div className="border-b border-[var(--pg-border)] px-5 py-4">
+                  className={`practice-challenge-sidebar ${panel} overflow-hidden lg:sticky lg:top-28`}>
+
+                  <div className="border-b border-(--pg-border) px-5 py-4">
+
               <div className="flex items-center justify-between">
+
                 <h2
                   id="challenge-list-title"
-                  className="text-sm font-semibold tracking-normal"
-                >
+                        className="text-sm font-semibold tracking-normal">
                   Your next challenge
                 </h2>
                 <FolderOpen
                   size={16}
-                  className="text-[var(--pg-muted)]"
+                        className="text-(--pg-muted)"
                   aria-hidden="true"
                 />
               </div>
-              <p className="mt-1.5 text-xs text-[var(--pg-muted)]">
+                    <p className="mt-1.5 text-xs text-(--pg-muted)">
                 Small steps. Real progress.
               </p>
+
             </div>
             <ol className="grid gap-1 p-2 sm:grid-cols-2 lg:grid-cols-1">
+
               {sessionChallenges.map((item, index) => {
                 const solved = progress.answers.some(
                   (answer) =>
@@ -866,11 +883,9 @@ export default function TrainingPlayground({
                       aria-current={
                         challenge.id === item.id ? "step" : undefined
                       }
-                      className={`flex w-full items-start gap-3 rounded-xl px-3 py-3 text-left transition-colors disabled:opacity-50 motion-reduce:transition-none ${challenge.id === item.id ? "bg-[var(--pg-accent-soft)]" : "hover:bg-[var(--pg-soft)]"}`}
-                    >
+                      className={`flex w-full items-start gap-3 rounded-xl px-3 py-3 text-left transition-colors disabled:opacity-50 motion-reduce:transition-none ${challenge.id === item.id ? "bg-(--pg-accent-soft)" : "hover:bg-(--pg-soft)"}`}>
                       <span
-                        className={`mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full text-[10px] font-medium ${solved ? "bg-[var(--pg-success-bg)] text-[var(--pg-success)]" : challenge.id === item.id ? "bg-[var(--pg-accent)] text-[var(--pg-accent-ink)]" : "bg-[var(--pg-soft)] text-[var(--pg-muted)]"}`}
-                      >
+                        className={`mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full text-[10px] font-medium ${solved ? "bg-(--pg-success-bg) text-(--pg-success)" : challenge.id === item.id ? "bg-(--pg-accent) text-(--pg-accent-ink)" : "bg-(--pg-soft) text-(--pg-muted)"}`}>
                         {solved ? (
                           <Check size={12} aria-label="Completed" />
                         ) : (
@@ -878,55 +893,64 @@ export default function TrainingPlayground({
                         )}
                       </span>
                       <span className="min-w-0 flex-1">
+
                         <span className="block text-xs font-medium leading-5">
                           {item.title}
                         </span>
-                        <span className="mt-1 block text-[10px] text-[var(--pg-muted)]">
+                        <span className="mt-1 block text-[10px] text-(--pg-muted)">
                           {item.difficulty} ·{" "}
                           {solved
                             ? "Collected"
                             : `${item.tests.length} test cases`}
                         </span>
+
                       </span>
                       {challenge.id === item.id && (
                         <ChevronRight
                           size={13}
-                          className="mt-1 shrink-0 text-[var(--pg-accent)]"
+                          className="mt-1 shrink-0 text-(--pg-accent)"
                           aria-hidden="true"
                         />
                       )}
                     </button>
+
                   </li>
                 );
               })}
             </ol>
-            <div className="border-t border-[var(--pg-border)] p-5">
-              <div className="mb-2 flex items-center justify-between text-[10px] text-[var(--pg-muted)]">
+                  <div className="border-t border-(--pg-border) p-5">
+
+                    <div className="mb-2 flex items-center justify-between text-[10px] text-(--pg-muted)">
+
                 <span>{language.label} progress</span>
                 <span>
                   {solvedInLanguage}/{sessionChallenges.length}
                 </span>
+
               </div>
               <progress
-                className="block h-1.5 w-full overflow-hidden rounded-full [&::-webkit-progress-bar]:bg-[var(--pg-soft)] [&::-webkit-progress-value]:bg-[var(--pg-accent)] [&::-moz-progress-bar]:bg-[var(--pg-accent)]"
+                      className="block h-1.5 w-full overflow-hidden rounded-full [&::-webkit-progress-bar]:bg-(--pg-soft) [&::-webkit-progress-value]:bg-(--pg-accent) [&::-moz-progress-bar]:bg-(--pg-accent)"
                 value={solvedInLanguage}
                 max={sessionChallenges.length}
-                aria-label={`${language.label} completed challenges`}
-              />
-              <p className="mt-3 text-[11px] leading-5 text-[var(--pg-muted)]">
+                      aria-label={`${language.label} completed challenges`} />
+                    <p className="mt-3 text-[11px] leading-5 text-(--pg-muted)">
                 Every correct solution is a little win worth keeping.
               </p>
-            </div>
-          </aside>
 
+            </div>
+
+                </aside>
           <div className="min-w-0 space-y-4">
+
             <section
               aria-labelledby="active-challenge-title"
-              className={`${panel} p-5 sm:p-6`}
-            >
+                    className={`${panel} p-5 sm:p-6`}>
+
               <div className="flex flex-wrap items-start justify-between gap-3">
+
                 <div>
-                  <div className="mb-2 flex items-center gap-2 text-[9px] font-semibold uppercase tracking-widest text-[var(--pg-muted)]">
+
+                        <div className="mb-2 flex items-center gap-2 text-[9px] font-semibold uppercase tracking-widest text-(--pg-muted)">
                     <span>
                       Challenge{" "}
                       {String(
@@ -935,43 +959,44 @@ export default function TrainingPlayground({
                         ) + 1,
                       ).padStart(2, "0")}
                     </span>
-                    <span className="rounded bg-[var(--pg-success-bg)] px-1.5 py-0.5 text-[var(--pg-success)]">
+                          <span className="rounded bg-(--pg-success-bg) px-1.5 py-0.5 text-(--pg-success)">
                       {challenge.difficulty}
                     </span>
+
                   </div>
                   <h2
                     id="active-challenge-title"
-                    className="text-lg font-semibold tracking-tight sm:text-xl"
-                  >
+                          className="text-lg font-semibold tracking-tight sm:text-xl">
                     {challenge.title}
                   </h2>
+
                 </div>
-                <span className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--pg-soft)] px-2.5 py-1.5 font-mono text-[10px] text-[var(--pg-muted)]">
+                      <span className="inline-flex items-center gap-1.5 rounded-lg bg-(--pg-soft) px-2.5 py-1.5 font-mono text-[10px] text-(--pg-muted)">
                   <Terminal size={11} aria-hidden="true" /> stdin → stdout
                 </span>
+
               </div>
-              <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--pg-muted)]">
+                    <p className="mt-3 max-w-3xl text-sm leading-6 text-(--pg-muted)">
                 {challenge.prompt}
               </p>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 <Example
                   label="Sample input"
-                  value={challenge.tests[0].input}
-                />
+                        value={challenge.tests[0].input} />
                 <Example
                   label="Expected output"
-                  value={challenge.tests[0].expected}
-                />
+                        value={challenge.tests[0].expected} />
               </div>
               <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
+
                 <details
                   key={`${key}:format`}
-                  className="max-w-xl text-xs text-[var(--pg-muted)]"
-                >
+                        className="max-w-xl text-xs text-(--pg-muted)">
                   <summary className="cursor-pointer rounded py-2 font-medium">
                     Input, output & constraints
                   </summary>
                   <div className="space-y-2 pb-2 leading-5">
+
                     <p>
                       <strong>Input:</strong> {challenge.inputFormat}
                     </p>
@@ -983,13 +1008,15 @@ export default function TrainingPlayground({
                         <li key={constraint}>{constraint}</li>
                       ))}
                     </ul>
+
                   </div>
+
                 </details>
                 <details
                   key={`${key}:hints`}
-                  className="max-w-sm text-xs text-[var(--pg-muted)]"
-                >
-                  <summary className="cursor-pointer rounded py-2 font-medium text-[var(--pg-accent)]">
+                        className="max-w-sm text-xs text-(--pg-muted)">
+                        <summary className="cursor-pointer rounded py-2 font-medium text-(--pg-accent)">
+
                     <Lightbulb
                       size={13}
                       className="mr-1.5 inline"
@@ -1002,10 +1029,12 @@ export default function TrainingPlayground({
                       <li key={hint}>{hint}</li>
                     ))}
                   </ol>
-                </details>
-              </div>
-            </section>
 
+                </details>
+
+              </div>
+
+                  </section>
             <CodeEditor
               value={code}
               onChange={changeCode}
@@ -1015,17 +1044,16 @@ export default function TrainingPlayground({
               documentId={key}
               onRun={runTests}
               disabled={isRunning || !ready}
-              editorBasePath={`${basePath}/monaco/vs`}
-            />
-
+                    editorBasePath={`${basePath}/monaco/vs`} />
             <div className="flex flex-wrap items-center justify-between gap-3 px-1">
+
               <div className="flex flex-wrap items-center gap-1">
+
                 <button
                   type="button"
                   disabled={isRunning || !ready}
                   onClick={() => replaceCode(challenge.starter[language.id], "Starter code restored.")}
-                  className={smallButton}
-                >
+                        className={smallButton}>
                   <RotateCcw size={13} aria-hidden="true" />
                   Reset code
                 </button>
@@ -1034,19 +1062,18 @@ export default function TrainingPlayground({
                   aria-expanded={showSolution}
                   disabled={!ready}
                   onClick={revealSolution}
-                  className={smallButton}
-                >
+                        className={smallButton}>
                   <Lightbulb size={13} aria-hidden="true" />
                   {showSolution ? "Hide solution" : "View solution"}
                 </button>
+
               </div>
               <div className="flex items-center gap-2">
                 {isRunning && (
                   <button
                     type="button"
                     onClick={cancelRun}
-                    className={smallButton}
-                  >
+                          className={smallButton}>
                     Cancel
                   </button>
                 )}
@@ -1054,8 +1081,7 @@ export default function TrainingPlayground({
                   type="button"
                   onClick={runTests}
                   disabled={!canRun}
-                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[var(--pg-accent)] px-5 text-xs font-semibold text-[var(--pg-accent-ink)] shadow-sm transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
-                >
+                        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-(--pg-accent) px-5 text-xs font-semibold text-(--pg-accent-ink) shadow-sm transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none">
                   {isRunning ? (
                     <LoaderCircle
                       size={14}
@@ -1069,25 +1095,29 @@ export default function TrainingPlayground({
                   <kbd className="ml-2 hidden rounded border border-current/25 px-1.5 py-0.5 text-[9px] font-normal opacity-80 sm:inline">
                     Ctrl ↵
                   </kbd>
-                </button>
-              </div>
-            </div>
 
+                </button>
+
+                    </div>
+
+                  </div>
             {undo?.key === key && (
-              <div role="status" className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[var(--pg-border)] bg-[var(--pg-accent-soft)] px-4 py-2 text-xs">
+                    <div role="status" className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-(--pg-border) bg-(--pg-accent-soft) px-4 py-2 text-xs">
+
                 <span>{undo.message} Your previous draft is available until your next edit.</span>
                 <button type="button" onClick={undoReplacement} disabled={isRunning} className={smallButton}>
                   <Undo2 size={14} aria-hidden="true" /> Undo replacement
                 </button>
-              </div>
-            )}
 
+              </div>
+                  )}
             {showSolution && (
               <section
                 className={`${panel} overflow-hidden`}
-                aria-labelledby="reference-title"
-              >
-                <div className="flex items-center justify-between gap-3 border-b border-[var(--pg-border)] px-5 py-3">
+                      aria-labelledby="reference-title">
+
+                      <div className="flex items-center justify-between gap-3 border-b border-(--pg-border) px-5 py-3">
+
                   <h3 id="reference-title" className="text-sm font-semibold">
                     Reference solution · {language.label}
                   </h3>
@@ -1099,23 +1129,23 @@ export default function TrainingPlayground({
                         "Reference solution copied.",
                       )
                     }
-                    className={smallButton}
-                  >
+                          className={smallButton}>
                     <Copy size={13} aria-hidden="true" />
                     Copy
                   </button>
+
                 </div>
-                <p className="px-5 pt-4 text-xs leading-6 text-[var(--pg-muted)]">
+                      <p className="px-5 pt-4 text-xs leading-6 text-(--pg-muted)">
                   {challenge.explanation}
                 </p>
                 <pre
                   tabIndex={0}
-                  className="m-4 max-h-80 overflow-auto rounded-xl bg-[var(--pg-soft)] p-4 text-xs leading-6"
-                >
+                        className="m-4 max-h-80 overflow-auto rounded-xl bg-(--pg-soft) p-4 text-xs leading-6">
                   <code>{challenge.solution[language.id]}</code>
                 </pre>
-                <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--pg-border)] px-5 py-3">
-                  <p className="text-[11px] leading-5 text-[var(--pg-muted)]">
+                      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-(--pg-border) px-5 py-3">
+
+                        <p className="text-[11px] leading-5 text-(--pg-muted)">
                     Viewing a solution doesn’t complete the challenge. A passing
                     run will be labeled “Guided”.
                   </p>
@@ -1125,47 +1155,47 @@ export default function TrainingPlayground({
                     onClick={() => {
                       replaceCode(challenge.solution[language.id], "Reference solution loaded. Run the tests to check it.");
                     }}
-                    className={smallButton}
-                  >
+                          className={smallButton}>
                     <Code2 size={13} aria-hidden="true" />
                     Use in editor
                   </button>
-                </div>
-              </section>
-            )}
 
+                </div>
+
+              </section>
+                  )}
             <section
               aria-labelledby="results-title"
-              className={`${panel} overflow-hidden`}
-            >
-              <div className="flex items-center justify-between border-b border-[var(--pg-border)] px-5 py-3.5">
+                    className={`${panel} overflow-hidden`}>
+
+                    <div className="flex items-center justify-between border-b border-(--pg-border) px-5 py-3.5">
+
                 <h3
                   id="results-title"
-                  className="flex items-center gap-2 text-xs font-semibold"
-                >
+                        className="flex items-center gap-2 text-xs font-semibold">
                   <Terminal size={14} aria-hidden="true" />
                   Output & tests
                 </h3>
-                <span className="font-mono text-[10px] text-[var(--pg-muted)]">
+                      <span className="font-mono text-[10px] text-(--pg-muted)">
                   {report
                     ? `${report.passed}/${report.total} passed · ${Math.round((report.passed / report.total) * 100)}%`
                     : `${challenge.tests.length} test cases`}
                 </span>
+
               </div>
               <div
                 role="status"
                 aria-live="polite"
                 aria-atomic="true"
-                className="px-5 py-4"
-              >
+                      className="px-5 py-4">
                 {run.phase === "idle" && (
-                  <p className="flex items-center gap-2 text-xs leading-6 text-[var(--pg-muted)]">
-                    <span className="font-mono text-[var(--pg-accent)]">❯</span>
+                        <p className="flex items-center gap-2 text-xs leading-6 text-(--pg-muted)">
+                          <span className="font-mono text-(--pg-accent)">❯</span>
                     Your next win starts with a run. Results will appear here.
                   </p>
                 )}
                 {run.phase === "running" && (
-                  <p className="flex items-center gap-2 text-xs leading-6 text-[var(--pg-muted)]">
+                        <p className="flex items-center gap-2 text-xs leading-6 text-(--pg-muted)">
                     <LoaderCircle
                       size={14}
                       className="animate-spin motion-reduce:animate-none"
@@ -1175,14 +1205,13 @@ export default function TrainingPlayground({
                   </p>
                 )}
                 {run.phase === "error" && (
-                  <p className="rounded-lg bg-[var(--pg-warning-bg)] px-3 py-2 text-xs leading-6 text-[var(--pg-warning)]">
+                        <p className="rounded-lg bg-(--pg-warning-bg) px-3 py-2 text-xs leading-6 text-(--pg-warning)">
                     {run.message} No correctness result was recorded.
                   </p>
                 )}
                 {report && (
                   <div
-                    className={`flex items-start gap-3 rounded-xl p-3 ${report.verdict === "correct" ? "bg-[var(--pg-success-bg)] text-[var(--pg-success)]" : "bg-[var(--pg-error-bg)] text-[var(--pg-error)]"}`}
-                  >
+                          className={`flex items-start gap-3 rounded-xl p-3 ${report.verdict === "correct" ? "bg-(--pg-success-bg) text-(--pg-success)" : "bg-(--pg-error-bg) text-(--pg-error)"}`}>
                     {report.verdict === "correct" ? (
                       <CheckCheck
                         size={18}
@@ -1208,7 +1237,9 @@ export default function TrainingPlayground({
                           ? " Compare the expected and actual output below."
                           : " Your passing code has been collected on this device."}
                       </p>
+
                     </div>
+
                   </div>
                 )}
               </div>
@@ -1216,26 +1247,24 @@ export default function TrainingPlayground({
                 <>
                   <div
                     className="flex flex-wrap gap-2 px-5 pb-4"
-                    aria-label="Test cases"
-                  >
+                          aria-label="Test cases">
                     {report.tests.map((test, index) => (
                       <button
                         key={test.id}
                         type="button"
                         aria-pressed={selectedResult === index}
                         onClick={() => setSelectedResult(index)}
-                        className={`inline-flex min-h-9 items-center gap-1.5 rounded-lg border px-2.5 text-[11px] ${selectedResult === index ? "border-[var(--pg-accent)] bg-[var(--pg-soft)]" : "border-[var(--pg-border)]"}`}
-                      >
+                        className={`inline-flex min-h-9 items-center gap-1.5 rounded-lg border px-2.5 text-[11px] ${selectedResult === index ? "border-(--pg-accent) bg-(--pg-soft)" : "border-(--pg-border)"}`}>
                         {test.passed ? (
                           <Check
                             size={12}
-                            className="text-[var(--pg-success)]"
+                            className="text-(--pg-success)"
                             aria-hidden="true"
                           />
                         ) : (
                           <X
                             size={12}
-                            className="text-[var(--pg-error)]"
+                              className="text-(--pg-error)"
                             aria-hidden="true"
                           />
                         )}
@@ -1247,27 +1276,33 @@ export default function TrainingPlayground({
                 </>
               )}
             </section>
-            <p className="px-1 text-[10px] leading-5 text-[var(--pg-muted)]">
+                  <p className="px-1 text-[10px] leading-5 text-(--pg-muted)">
               Run sends your code and the exercise’s test inputs to this site’s
               code-execution service. Correct means all published cases passed;
               it isn’t a proof for every possible input.
             </p>
-          </div>
-        </div>
 
+                </div>
+
+              </div>
         <section aria-labelledby="practice-backup-title" className={`${panel} mt-8 p-5 sm:p-6`}>
+
           <div className="flex flex-wrap items-center justify-between gap-4">
+
             <div className="max-w-xl">
+
               <h2 id="practice-backup-title" className="text-lg font-semibold tracking-tight">Take your practice with you.</h2>
-              <p className="mb-0 mt-2 text-xs leading-6 text-[var(--pg-muted)]">
+                    <p className="mb-0 mt-2 text-xs leading-6 text-(--pg-muted)">
                 Export your drafts, saved solutions, and progress. Restore them in another browser whenever you are ready. No account needed.
               </p>
+
             </div>
             <div className="flex flex-wrap gap-2">
-              <button type="button" disabled={!ready || isRunning} onClick={downloadPractice} className={`${smallButton} border border-[var(--pg-border)]`}>
+
+                    <button type="button" disabled={!ready || isRunning} onClick={downloadPractice} className={`${smallButton} border border-(--pg-border)`}>
                 <Download size={14} aria-hidden="true" /> Export practice backup
               </button>
-              <button type="button" disabled={!ready || isRunning || readingBackup} onClick={() => importInputRef.current?.click()} className={`${smallButton} border border-[var(--pg-border)]`}>
+                    <button type="button" disabled={!ready || isRunning || readingBackup} onClick={() => importInputRef.current?.click()} className={`${smallButton} border border-(--pg-border)`}>
                 <Upload size={14} aria-hidden="true" /> {readingBackup ? "Reading backup…" : "Restore backup"}
               </button>
               <input
@@ -1280,62 +1315,73 @@ export default function TrainingPlayground({
                 onChange={(event) => void readBackup(event.target.files?.[0])}
               />
             </div>
+
           </div>
-          {backupError && <p role="alert" className="mb-0 mt-4 rounded-lg bg-[var(--pg-error-bg)] px-4 py-3 text-xs leading-6 text-[var(--pg-error)]">{backupError}</p>}
+                {backupError && <p role="alert" className="mb-0 mt-4 rounded-lg bg-(--pg-error-bg) px-4 py-3 text-xs leading-6 text-(--pg-error)">{backupError}</p>}
           {pendingBackup && (
-            <section ref={importPanelRef} tabIndex={-1} aria-labelledby="restore-backup-title" className="mt-5 rounded-xl border border-[var(--pg-border)] bg-[var(--pg-soft)] p-4 sm:p-5">
+                  <section ref={importPanelRef} tabIndex={-1} aria-labelledby="restore-backup-title" className="mt-5 rounded-xl border border-(--pg-border) bg-(--pg-soft) p-4 sm:p-5">
+
               <h3 id="restore-backup-title" className="text-sm font-semibold">Review your backup</h3>
-              <p className="mt-2 break-words text-xs leading-6 text-[var(--pg-muted)]">
+                    <p className="mt-2 wrap-break-words text-xs leading-6 text-(--pg-muted)">
                 {pendingBackup.name} · {Object.keys(pendingBackup.backup.progress.drafts).length} drafts · {pendingBackup.backup.progress.answers.length} saved solutions
               </p>
               <fieldset className="space-y-3">
+
                 <legend className="mb-3 text-xs font-semibold">How would you like to restore it?</legend>
-                <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-[var(--pg-border)] bg-[var(--pg-panel)] p-3">
-                  <input type="radio" name="practice-restore-mode" value="merge" checked={restoreMode === "merge"} onChange={() => { setRestoreMode("merge"); setReplaceConfirmed(false); }} className="mt-1 h-4 w-4 accent-[var(--pg-accent)]" />
-                  <span className="text-xs leading-6"><strong className="block">Merge and keep my current work</strong><span className="text-[var(--pg-muted)]">Add missing drafts and solutions. Where both copies have work for the same exercise and language, this browser’s copy stays.</span></span>
+                      <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-(--pg-border) bg-(--pg-panel) p-3">
+
+                        <input type="radio" name="practice-restore-mode" value="merge" checked={restoreMode === "merge"} onChange={() => { setRestoreMode("merge"); setReplaceConfirmed(false); }} className="mt-1 h-4 w-4 accent-(--pg-accent)" />
+                        <span className="text-xs leading-6"><strong className="block">Merge and keep my current work</strong><span className="text-(--pg-muted)">Add missing drafts and solutions. Where both copies have work for the same exercise and language, this browser’s copy stays.</span></span>
+
                 </label>
-                <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-[var(--pg-border)] bg-[var(--pg-panel)] p-3">
-                  <input type="radio" name="practice-restore-mode" value="replace" checked={restoreMode === "replace"} onChange={() => { setRestoreMode("replace"); setReplaceConfirmed(false); }} className="mt-1 h-4 w-4 accent-[var(--pg-accent)]" />
-                  <span className="text-xs leading-6"><strong className="block">Replace this browser’s practice</strong><span className="text-[var(--pg-muted)]">Restore only the backup, including its selected language and exercise. Export your current work first if you want to keep a separate copy.</span></span>
+                      <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-(--pg-border) bg-(--pg-panel) p-3">
+
+                        <input type="radio" name="practice-restore-mode" value="replace" checked={restoreMode === "replace"} onChange={() => { setRestoreMode("replace"); setReplaceConfirmed(false); }} className="mt-1 h-4 w-4 accent-(--pg-accent)" />
+                        <span className="text-xs leading-6"><strong className="block">Replace this browser’s practice</strong><span className="text-(--pg-muted)">Restore only the backup, including its selected language and exercise. Export your current work first if you want to keep a separate copy.</span></span>
+
                 </label>
               </fieldset>
               {restoreMode === "replace" && (
                 <label className="mt-4 flex cursor-pointer items-start gap-3 text-xs leading-6">
-                  <input type="checkbox" checked={replaceConfirmed} onChange={(event) => setReplaceConfirmed(event.target.checked)} className="mt-1 h-4 w-4 shrink-0 accent-[var(--pg-accent)]" />
+
+                        <input type="checkbox" checked={replaceConfirmed} onChange={(event) => setReplaceConfirmed(event.target.checked)} className="mt-1 h-4 w-4 shrink-0 accent-(--pg-accent)" />
                   <span>I understand that this replaces all practice currently saved in this browser.</span>
+
                 </label>
               )}
-              <p className="mt-4 text-xs leading-6 text-[var(--pg-muted)]">Restoring a backup brings back saved pass records; it does not run the imported code. You can run tests again in the editor.</p>
+                    <p className="mt-4 text-xs leading-6 text-(--pg-muted)">Restoring a backup brings back saved pass records; it does not run the imported code. You can run tests again in the editor.</p>
               <div className="mt-4 flex flex-wrap gap-2">
-                <button type="button" onClick={confirmRestore} disabled={isRunning || (restoreMode === "replace" && !replaceConfirmed)} className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-[var(--pg-accent)] px-4 text-xs font-semibold text-[var(--pg-accent-ink)] disabled:opacity-50">
+
+                      <button type="button" onClick={confirmRestore} disabled={isRunning || (restoreMode === "replace" && !replaceConfirmed)} className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-(--pg-accent) px-4 text-xs font-semibold text-(--pg-accent-ink) disabled:opacity-50">
                   <Upload size={14} aria-hidden="true" /> {restoreMode === "merge" ? "Merge backup" : "Replace local practice"}
                 </button>
                 <button type="button" onClick={() => { setPendingBackup(null); setReplaceConfirmed(false); }} className={smallButton}>Cancel restore</button>
+
               </div>
+
             </section>
           )}
-        </section>
-
+              </section>
         <section
           ref={collectionRef}
           aria-labelledby="collection-title"
-          className="scroll-mt-28 pt-9"
-        >
+                className="scroll-mt-28 pt-9">
           <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+
             <div>
-              <p className="mb-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-[var(--pg-accent)]">
+
+                    <p className="mb-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-(--pg-accent)">
                 Keep the good stuff
               </p>
               <h2
                 id="collection-title"
-                className="flex items-center gap-2 text-xl font-semibold tracking-tight"
-              >
+                      className="flex items-center gap-2 text-xl font-semibold tracking-tight">
                 Your solution collection{" "}
-                <span className="rounded-full bg-[var(--pg-soft)] px-2 py-0.5 text-xs font-normal text-[var(--pg-muted)]">
+                      <span className="rounded-full bg-(--pg-soft) px-2 py-0.5 text-xs font-normal text-(--pg-muted)">
                   {progress.answers.length}/{totalPairs}
                 </span>
               </h2>
-              <p className="mt-1.5 text-xs leading-5 text-[var(--pg-muted)]">
+                    <p className="mt-1.5 text-xs leading-5 text-(--pg-muted)">
                 Correct submissions, saved in this browser. Come back, revisit,
                 and build on them.
               </p>
@@ -1344,26 +1390,26 @@ export default function TrainingPlayground({
               type="button"
               onClick={downloadAnswers}
               disabled={progress.answers.length === 0}
-              className={`${smallButton} border border-[var(--pg-border)] bg-[var(--pg-panel)]`}
-            >
+                    className={`${smallButton} border border-(--pg-border) bg-(--pg-panel)`}>
               <Download size={13} aria-hidden="true" />
               Download answers
             </button>
+
           </div>
           {progress.answers.length === 0 ? (
             <div
-              className={`${panel} flex flex-col items-center justify-center gap-3 px-5 py-10 text-center`}
-            >
-              <div className="grid h-11 w-11 place-items-center rounded-xl bg-[var(--pg-accent-soft)] text-[var(--pg-accent)]">
+                    className={`${panel} flex flex-col items-center justify-center gap-3 px-5 py-10 text-center`}>
+                    <div className="grid h-11 w-11 place-items-center rounded-xl bg-(--pg-accent-soft) text-(--pg-accent)">
                 <Trophy size={21} aria-hidden="true" />
               </div>
               <h3 className="text-sm font-semibold">
                 Your first win belongs right here.
               </h3>
-              <p className="max-w-sm text-xs leading-6 text-[var(--pg-muted)]">
+                    <p className="max-w-sm text-xs leading-6 text-(--pg-muted)">
                 Pass every test in a challenge and we’ll collect your answer
                 automatically. There’s no account to set up.
               </p>
+
             </div>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -1373,23 +1419,24 @@ export default function TrainingPlayground({
                 return (
                   <article
                     key={answerKey(answer.language, answer.challengeId)}
-                    className={`${panel} overflow-hidden p-4`}
-                  >
+                    className={`${panel} overflow-hidden p-4`}>
+
                     <div className="flex items-start justify-between gap-3">
+
                       <span
-                        className={`grid h-8 min-w-8 place-items-center rounded-lg px-1.5 font-mono text-xs font-bold ${languageBadges[answer.language].color}`}
-                      >
+                        className={`grid h-8 min-w-8 place-items-center rounded-lg px-1.5 font-mono text-xs font-bold ${languageBadges[answer.language].color}`}>
                         {languageBadges[answer.language].badge}
                       </span>
-                      <span className="inline-flex items-center gap-1 rounded-full bg-[var(--pg-success-bg)] px-2 py-1 text-[9px] font-medium text-[var(--pg-success)]">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-(--pg-success-bg) px-2 py-1 text-[9px] font-medium text-(--pg-success)">
                         <Check size={10} aria-hidden="true" />
                         {answer.passed}/{answer.total} passed
                       </span>
+
                     </div>
                     <h3 className="mt-3 text-sm font-semibold">
                       {savedChallenge.title}
                     </h3>
-                    <p className="mt-1 text-[10px] text-[var(--pg-muted)]">
+                    <p className="mt-1 text-[10px] text-(--pg-muted)">
                       {savedLanguage.label} ·{" "}
                       {answer.guided ? "Guided" : "Independent"} ·{" "}
                       {new Intl.DateTimeFormat(undefined, {
@@ -1398,34 +1445,33 @@ export default function TrainingPlayground({
                       }).format(new Date(answer.savedAt))}
                     </p>
                     <details className="mt-3">
-                      <summary className="cursor-pointer rounded text-[11px] text-[var(--pg-accent)]">
+
+                      <summary className="cursor-pointer rounded text-[11px] text-(--pg-accent)">
                         View saved code
                       </summary>
                       <pre
                         tabIndex={0}
-                        className="mt-2 max-h-56 overflow-auto rounded-lg bg-[var(--pg-soft)] p-3 text-[11px] leading-5"
-                      >
+                        className="mt-2 max-h-56 overflow-auto rounded-lg bg-(--pg-soft) p-3 text-[11px] leading-5">
                         <code>{answer.sourceCode}</code>
                       </pre>
                     </details>
-                    <div className="mt-3 flex flex-wrap items-center justify-between gap-1 border-t border-[var(--pg-border)] pt-2">
+                    <div className="mt-3 flex flex-wrap items-center justify-between gap-1 border-t border-(--pg-border) pt-2">
                       <button
                         type="button"
                         onClick={() => openAnswer(answer)}
-                        className={smallButton}
-                      >
+                        className={smallButton}>
                         <FileCode2 size={12} aria-hidden="true" />
                         Open
                       </button>
                       <div className="flex">
+
                         <button
                           type="button"
                           onClick={() =>
                             copy(answer.sourceCode, "Saved answer copied.")
                           }
                           className={smallButton}
-                          aria-label={`Copy ${savedLanguage.label} solution for ${savedChallenge.title}`}
-                        >
+                          aria-label={`Copy ${savedLanguage.label} solution for ${savedChallenge.title}`}>
                           <Copy size={12} aria-hidden="true" />
                         </button>
                         <button
@@ -1444,45 +1490,49 @@ export default function TrainingPlayground({
                             }))
                           }
                           className={smallButton}
-                          aria-label={`Remove ${savedLanguage.label} solution for ${savedChallenge.title}`}
-                        >
+                          aria-label={`Remove ${savedLanguage.label} solution for ${savedChallenge.title}`}>
                           <Trash2 size={12} aria-hidden="true" />
+
                         </button>
+
                       </div>
+
                     </div>
+
                   </article>
                 );
               })}
             </div>
+
           )}
         </section>
           </>
         )}
+        <footer className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-(--pg-border) pt-5 text-[10px] leading-5 text-(--pg-muted)">
 
-        <footer className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--pg-border)] pt-5 text-[10px] leading-5 text-[var(--pg-muted)]">
           <span>{isNotFound ? "Some wrong turns lead to good things. Keep going." : "One small exercise at a time. Keep building."}</span>
           <Link
             href="/"
-            className="inline-flex min-h-10 items-center gap-1.5 rounded font-medium"
-          >
+            className="inline-flex min-h-10 items-center gap-1.5 rounded font-medium">
             Ready to head home? <ArrowUpRight size={12} aria-hidden="true" />
           </Link>
+
         </footer>
+
       </div>
       {notice && (
         <div
           role="status"
-          className="fixed bottom-28 left-1/2 z-[60] sm:bottom-5 flex w-[calc(100%-2rem)] max-w-md -translate-x-1/2 items-center justify-between gap-3 rounded-xl border border-[var(--pg-border)] bg-[var(--pg-panel)] px-4 py-3 text-xs leading-5 shadow-lg"
-        >
+          className="fixed bottom-28 left-1/2 z-60 sm:bottom-5 flex w-[calc(100%-2rem)] max-w-md -translate-x-1/2 items-center justify-between gap-3 rounded-xl border border-(--pg-border) bg-(--pg-panel) px-4 py-3 text-xs leading-5 shadow-lg">
           {notice}
           <button
             type="button"
             onClick={() => setNotice(null)}
-            className="grid h-7 w-7 shrink-0 place-items-center rounded-md hover:bg-[var(--pg-soft)]"
-            aria-label="Dismiss notification"
-          >
+            className="grid h-7 w-7 shrink-0 place-items-center rounded-md hover:bg-(--pg-soft)"
+            aria-label="Dismiss notification">
             <X size={13} />
           </button>
+
         </div>
       )}
     </main>
@@ -1491,11 +1541,11 @@ export default function TrainingPlayground({
 
 function Example({ label, value }: { label: string; value: string }) {
   return (
-    <div className="min-w-0 rounded-xl border border-[var(--pg-border)] bg-[var(--pg-soft)] px-3.5 py-2.5">
-      <p className="mb-1.5 text-[9px] font-semibold uppercase tracking-widest text-[var(--pg-muted)]">
+    <div className="min-w-0 rounded-xl border border-(--pg-border) bg-(--pg-soft) px-3.5 py-2.5">
+      <p className="mb-1.5 text-[9px] font-semibold uppercase tracking-widest text-(--pg-muted)">
         {label}
       </p>
-      <pre className="overflow-auto font-mono text-xs leading-5 text-[var(--pg-fg)]">
+      <pre className="overflow-auto font-mono text-xs leading-5 text-(--pg-fg)">
         {value.trimEnd() || "(empty line)"}
       </pre>
     </div>
@@ -1511,40 +1561,44 @@ function TestDetails({ result }: { result: TestResult }) {
     time_limit: "Time limit exceeded",
   };
   return (
-    <div className="border-t border-[var(--pg-border)] bg-[var(--pg-soft)] p-4 sm:p-5">
+    <div className="border-t border-(--pg-border) bg-(--pg-soft) p-4 sm:p-5">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-[11px]">
+
         <span className="font-medium">{result.label}</span>
         <span
           className={
             result.passed
-              ? "text-[var(--pg-success)]"
-              : "text-[var(--pg-error)]"
-          }
-        >
+              ? "text-(--pg-success)"
+              : "text-(--pg-error)"
+          }  >
           {labels[result.status]}
           {result.timeMs !== null ? ` · ${result.timeMs} ms` : ""}
         </span>
+
       </div>
       <div className="grid gap-3 sm:grid-cols-3">
+
         <Example label="Input" value={result.input} />
         <Example label="Expected output" value={result.expected} />
         <Example label="Your output" value={visibleOutput(result.actual)} />
+
       </div>
       {result.stderr && (
         <div className="mt-3">
-          <p className="mb-1.5 text-[10px] font-medium text-[var(--pg-error)]">
+
+          <p className="mb-1.5 text-[10px] font-medium text-(--pg-error)">
             Compiler / runtime messages
           </p>
           <pre
             tabIndex={0}
-            className="max-h-48 overflow-auto whitespace-pre-wrap break-words rounded-lg bg-[var(--pg-panel)] p-3 font-mono text-xs leading-5 text-[var(--pg-error)]"
-          >
+            className="max-h-48 overflow-auto whitespace-pre-wrap wrap-break-words rounded-lg bg-(--pg-panel) p-3 font-mono text-xs leading-5 text-(--pg-error)">
             {result.stderr}
           </pre>
+
         </div>
       )}
       {result.outputTruncated && (
-        <p className="mt-2 text-[10px] text-[var(--pg-muted)]">
+        <p className="mt-2 text-[10px] text-(--pg-muted)">
           Output display shortened. The full output was used for grading.
         </p>
       )}

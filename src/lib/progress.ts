@@ -42,7 +42,6 @@ export interface PracticeBackup {
 
 export type RestoreMode = "merge" | "replace";
 
-/** The editor, browser persistence, and backup format share this draft limit. */
 export function isDraftWithinLimit(source: string): boolean {
   return source.length <= MAX_SOURCE_CHARS;
 }
@@ -195,7 +194,6 @@ export function readProgress(raw: string | null): Progress {
   return initial;
 }
 
-/** Import is strict: malformed backups never silently erase or trim work. */
 export function parsePracticeBackup(raw: string): PracticeBackup {
   if (new TextEncoder().encode(raw).length > MAX_BACKUP_BYTES) {
     throw new Error("Choose a practice backup smaller than 8 MB.");
@@ -260,7 +258,6 @@ export function parsePracticeBackup(raw: string): PracticeBackup {
     }
     answerKeys.add(key);
   }
-  // Rebuild known fields rather than adopting arbitrary properties from a file.
   const progress = readProgress(JSON.stringify(state));
   return { format: "alexender-playground-backup", version: 1, exportedAt: value.exportedAt, progress };
 }
@@ -276,7 +273,6 @@ export function serializePracticeBackup(progress: Progress): string {
   return raw;
 }
 
-/** Merge keeps this browser's drafts, answers, and selection on conflicts. */
 export function restorePractice(current: Progress, incoming: Progress, mode: RestoreMode): Progress {
   if (mode === "replace") return readProgress(JSON.stringify(incoming));
   const existing = new Set(current.answers.map((answer) => answerKey(answer.language, answer.challengeId)));
@@ -366,7 +362,7 @@ export function useProgress() {
           JSON.stringify(latest.current),
         );
       } catch {
-        // The visible save notice handles storage errors.
+
       }
     };
 

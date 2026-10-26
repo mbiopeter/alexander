@@ -57,31 +57,31 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
   return (
     <ToastContext.Provider value={value}>
+
       {children}
       <div
-        className="toast-container pointer-events-none fixed inset-x-4 bottom-24 z-[100] flex flex-col items-center gap-3 sm:inset-x-auto sm:right-6 sm:bottom-6 sm:items-end"
+        className="toast-container pointer-events-none fixed inset-x-4 bottom-24 z-100 flex flex-col items-center gap-3 sm:inset-x-auto sm:right-6 sm:bottom-6 sm:items-end"
         aria-live="polite"
         aria-atomic="false"
-        aria-relevant="additions"
-      >
+        aria-relevant="additions">
+
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className="pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-4 text-sm text-[var(--text)] shadow-xl"
-          >
+            className="pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-2xl border border-(--line) bg-(--surface) p-4 text-sm text-foreground shadow-xl">
+
             <span
-              className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-[#172218]"
-              aria-hidden="true"
-            >
+              className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-(--accent) text-xs font-bold text-[#172218]"
+              aria-hidden="true">
               {toast.tone === "success" ? "✓" : "i"}
             </span>
             <p className="flex-1 leading-relaxed">{toast.message}</p>
             <button
               type="button"
               onClick={() => dismiss(toast.id)}
-              className="-m-2 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-[var(--muted)] transition-colors hover:text-[var(--text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
-              aria-label="Dismiss notification"
-            >
+              className="-m-2 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-(--muted) transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent)"
+              aria-label="Dismiss notification">
+
               <svg
                 viewBox="0 0 16 16"
                 width="16"
@@ -89,14 +89,17 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="1.5"
-                aria-hidden="true"
-              >
+                aria-hidden="true">
                 <path d="m4 4 8 8M12 4l-8 8" />
+
               </svg>
+
             </button>
+
           </div>
         ))}
       </div>
+
     </ToastContext.Provider>
   );
 }

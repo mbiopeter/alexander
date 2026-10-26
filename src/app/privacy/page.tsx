@@ -13,14 +13,17 @@ export const metadata = makeMetadata(
 export default function PrivacyPage() {
   return (
     <main id="main" className="page-main">
+
       <PageIntro
         eyebrow="PRIVACY / A CLEAR PICTURE"
         title="Your data, explained simply."
-        description="Here’s what happens when you browse, try a demo, send an enquiry, or support my work."
-      />
+        description="Here’s what happens when you browse, try a demo, send an enquiry, or support my work."/>
       <section className="page-section shell">
+
         <div className="privacy-page-grid">
+
           <article className="prose-content">
+
             <h2>Browsing this website</h2>
             <p>
               This website does not have visitor accounts, an enquiry database,
@@ -127,29 +130,38 @@ export default function PrivacyPage() {
             <DestinationLink
               destination="whatsapp"
               message="Hi Mbiopeter! I have a question about privacy on your website."
-              className="button button-primary"
-            >
+              className="button button-primary">
+
               <MessageCircle size={18} /> Ask about privacy{" "}
               <ArrowUpRight size={17} />
+
             </DestinationLink>
+
           </article>
           <aside className="info-card privacy-sidebar">
+
             <p className="eyebrow">THE QUICK VERSION</p>
             <h2>You stay in control.</h2>
             <ul className="feature-list">
+
               <li>Choose your theme.</li>
               <li>Keep demo data on your device.</li>
               <li>Run code only when you choose.</li>
               <li>Restore or clear your unfinished brief.</li>
               <li>Review a contact draft before sending.</li>
               <li>Pay through Paystack’s hosted page.</li>
+
             </ul>
             <Link href="/" className="text-link mt-7">
               Back to home <ArrowUpRight size={16} />
             </Link>
+
           </aside>
+
         </div>
+
       </section>
+      
     </main>
   );
 }

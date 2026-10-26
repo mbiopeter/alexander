@@ -2,7 +2,6 @@ export const CSV_MAX_CHARACTERS = 120_000;
 export const CSV_MAX_ROWS = 2_000;
 export const CSV_MAX_COLUMNS = 50;
 
-/** Comma-separated CSV with double-quoted fields, escaped quotes, and CR/LF lines. */
 export function parseCsv(source: string): string[][] {
   if (source.length > CSV_MAX_CHARACTERS) {
     throw new Error(
@@ -59,7 +58,6 @@ export function parseCsv(source: string): string[][] {
       finishRow();
       if (char === "\r" && input[index + 1] === "\n") index += 1;
     } else if (quoteClosed) {
-      // Permit harmless horizontal padding after a quoted field.
       if (char !== " " && char !== "\t") {
         throw new Error(
           `Unexpected text after a closing quote near character ${index + 1}. Add a comma between fields.`,
@@ -106,7 +104,6 @@ export function cleanCsvRows(rows: string[][], options: CsvCleanOptions) {
       blanksRemoved += 1;
       continue;
     }
-    // A header is the first nonremoved row. Do not deduplicate it against data.
     const isHeader = options.hasHeader && cleaned.length === 0;
     const signature = JSON.stringify(row);
     if (!isHeader && options.removeDuplicates && seen.has(signature)) {
@@ -120,7 +117,6 @@ export function cleanCsvRows(rows: string[][], options: CsvCleanOptions) {
 }
 
 export function spreadsheetSafeCell(value: string): string {
-  // Optional text prefix: includes leading whitespace before a formula marker.
   return /^[\t\r\n]/.test(value) || /^\s*[=+\-@]/.test(value)
     ? `'${value}`
     : value;

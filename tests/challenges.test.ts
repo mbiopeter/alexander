@@ -13,8 +13,6 @@ import { join } from "node:path";
 import test from "node:test";
 import { CHALLENGES, LANGUAGES, pickPracticeChallenges, type LanguageId } from "../src/lib/challenges";
 
-// These offline checks execute ONLY the trusted programs bundled in the catalogue.
-// Learner submissions must go through the isolated execution-service API instead.
 const availability: Record<LanguageId, boolean> = {
   python: spawnSync("python3", ["--version"]).status === 0,
   javascript: true,
@@ -86,8 +84,7 @@ function prepareProgram(language: LanguageId, source: string) {
 
   return {
     run(input: string): string {
-      // Regular fixture files supply deterministic EOF and preserve stdout
-      // without relying on synchronous pipes restricted hosts can reject.
+
       const inputFile = join(directory, "stdin.txt");
       const outputFile = join(directory, "stdout.txt");
       const errorFile = join(directory, "stderr.txt");

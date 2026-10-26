@@ -91,7 +91,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     try {
       window.localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
     } catch {
-      // The selected theme still works when storage is unavailable.
+
     }
   }, []);
 

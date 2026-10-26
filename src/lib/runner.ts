@@ -125,8 +125,7 @@ function isDocumentationHostname(hostname: string): boolean {
 }
 
 export function loadRunnerConfig(env: Environment = process.env): RunnerConfig {
-  // Judge0 CE exposes a public community instance that does not require an API
-  // key for basic use. A custom endpoint can still be supplied when deploying.
+
   const base = env.JUDGE0_BASE_URL?.trim() || "https://ce.judge0.com";
   const authToken = env.JUDGE0_AUTH_TOKEN?.trim();
   const bearer = env.JUDGE0_BEARER_TOKEN?.trim();
@@ -294,7 +293,6 @@ export function gradeSubmission(
     status = "wrong_answer";
   }
 
-  // Compare the complete output before shortening it for the UI.
   const output = displayOutput(actual);
   const error = displayOutput(diagnostics);
   const seconds = submission.time == null ? NaN : Number(submission.time);
@@ -610,7 +608,6 @@ export async function runChallenge(
     number_of_runs: 1,
   }));
 
-  // Do not automatically retry a submission POST.
   const created = await call("/submissions/batch?base64_encoded=true", {
     method: "POST",
     body: JSON.stringify({ submissions }),
@@ -699,7 +696,6 @@ export async function runChallenge(
   }
 }
 
-// Per-process protection. Multiple replicas need a shared/edge limiter.
 export class RunLimiter {
   private windowStarted = 0;
   private started = 0;
