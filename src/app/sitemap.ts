@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { getSiteUrl } from "@/lib/links";
 import { services } from "@/data/services";
 import { projects } from "@/data/projects";
+import { publicProjects } from "@/data/public-projects";
 import { notes } from "@/data/notes";
 
 export const dynamic = "force-static";
@@ -14,6 +15,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/services/",
     ...services.map((service) => `/services/${service.slug}/`),
     "/projects/",
+    "/public-projects/",
+    ...publicProjects.map((project) => project.href),
     ...projects.map((project) => `/projects/${project.slug}/`),
     "/learn/",
     "/notes/",

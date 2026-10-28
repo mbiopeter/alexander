@@ -1,12 +1,12 @@
-# Mbiopeter — developer, creator & coding playground · 2.1.0
+# Mbiopeter — developer, creator & coding playground · 2.3.0
 
-Your multipage portfolio, practical learning space, and coding playground. Built with Next.js, React, TypeScript and Tailwind CSS. Version 2.1.0 keeps the existing green/ink design, six service pages, three interactive projects, mini lessons, enquiry form, Paystack support, social links and theme controls, with clearer project evidence and more useful learning and contact flows.
+Your multipage portfolio, practical learning space, and coding playground. Built with Next.js, React, TypeScript and Tailwind CSS. Version 2.3.0 keeps the existing green/ink design, six service pages, three interactive projects, mini lessons, enquiry form, Paystack support, social links and theme controls, with clearer project evidence and more useful learning and contact flows.
 
 The playground is available at **`/playground/`** and on genuinely missing pages. The site now runs with a **Next.js server** because code execution and the private WhatsApp redirect use API routes. Static `out/` hosting is no longer the deployment mode.
 
 ## Quick start
 
-Use **Node.js 22 or newer**. From the extracted `mbiopeter-site` folder:
+Use **Node.js 22 or newer**. From the extracted `alexander` folder:
 
 ```bash
 npm ci
@@ -106,6 +106,8 @@ The coffee actions still open your hosted Paystack payment page. Configure the r
 | `/services/python-automation/` | Automation for data, files and reports.                                                            |
 | `/services/debugging/`         | Diagnosis, fixes and code review.                                                                  |
 | `/services/maintenance/`       | Maintenance and improvements.                                                                      |
+| `/public-projects/`            | Directory of independently deployed apps, starting with MbioTrade.                              |
+| `/mbiotrade/`                  | Detailed MbioTrade landing page with interactive illustrative feature tour.                     |
 | `/projects/`                   | Searchable and filterable project examples.                                                        |
 | `/projects/focusboard/`        | Task board, local persistence, detailed build notes and downloadable source.                        |
 | `/projects/django-api-lab/`    | Labelled API simulation, build decisions and downloadable source.                                  |
@@ -183,3 +185,20 @@ Use Vercel’s Next.js preset, Netlify’s Next.js runtime, or a Node host. The 
 - [WhatsApp username privacy](https://faq.whatsapp.com/658755553162769/)
 - [WhatsApp click to chat](https://faq.whatsapp.com/5913398998672934)
 - [Paystack Payment Pages](https://support.paystack.com/en/articles/2132546)
+
+## Featured project: mbioTrade
+
+The portfolio now includes **[the mbioTrade project landing](/mbiotrade/)**, a dedicated showcase for the independently deployed Deriv-connected trading platform at [mbiotrade.vercel.app](https://mbiotrade.vercel.app/). The homepage and Projects gallery still showcase MbioTrade. A new **Public Projects** hover/click dropdown (and mobile accordion) links to MbioTrade, with a separate `/public-projects/` directory for more apps. The existing designs, services, teaching playground, projects and contact features remain intact.
+
+The new trading chart on the portfolio is an **illustrative preview**, not live market data or an embedded trading terminal. Visitors connect accounts and place orders only on the separate MbioTrade application. All external launch buttons open that app in a new tab.
+
+Read [docs/MBIOTRADE-LANDING.md](docs/MBIOTRADE-LANDING.md) for the new route, source files, verification and deployment notes. Run `npm run test:mbiotrade` for a dependency-free showcase integration check.
+
+
+## v2.3.0 — Public Projects and expanded MbioTrade showcase
+
+The main navigation now has a **Public Projects** dropdown rather than a standalone MbioTrade tab. Hover or click it on desktop, or expand it inside the mobile menu. A new `/public-projects/` directory lists live products, with entries maintained in `src/data/public-projects.ts` for easy expansion.
+
+The MbioTrade showcase has a more detailed, theme-aware layout with an interactive feature tour, six strategy cards with timeframe context, Deriv syncing diagram, optional worker explanation, FAQ and clear links to the live app. Everything shown in the tour is illustrative. The platform is still hosted separately and this portfolio never accepts Deriv account credentials.
+
+See `docs/PUBLIC-PROJECTS.md` for how to add more live apps and `docs/MBIOTRADE-LANDING.md` for the product showcase.

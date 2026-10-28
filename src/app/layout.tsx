@@ -4,6 +4,8 @@ import "@fontsource-variable/dm-sans";
 import "@fontsource-variable/manrope";
 import "./globals.css";
 import "@/styles/playground.css";
+import "@/styles/mbiotrade.css";
+import "@/styles/public-projects.css";
 import { Providers } from "@/components/providers";
 import { SiteShell } from "@/components/site-shell";
 import { siteConfig } from "@/config/site";

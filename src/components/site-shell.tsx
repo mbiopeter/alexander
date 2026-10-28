@@ -7,6 +7,9 @@ import {
   ArrowUpRight,
   BriefcaseBusiness,
   Coffee,
+  ChevronDown,
+  Globe2,
+  LayoutGrid,
   GitBranch,
   Heart,
   Menu,
@@ -17,6 +20,7 @@ import {
 import { ThemeMenu } from "@/components/theme-menu";
 import { DestinationLink, TikTokIcon } from "@/components/destination-link";
 import { getGitHubUrl, getEmailDraftUrl, getLinkedInUrl } from "@/lib/links";
+import { publicProjects } from "@/data/public-projects";
 
 const links = [
   { href: "/", label: "Home" },
@@ -48,10 +52,16 @@ export function Logo() {
 function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [publicOpen, setPublicOpen] = useState(false);
+  const [mobilePublicOpen, setMobilePublicOpen] = useState(false);
+  const publicMenuRef = useRef<HTMLDivElement>(null);
+  const publicTriggerRef = useRef<HTMLButtonElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const header = useRef<HTMLElement>(null);
   useEffect(() => {
     setOpen(false);
+    setPublicOpen(false);
+    setMobilePublicOpen(false);
   }, [pathname]);
   useEffect(() => {
     if (!open) return;
@@ -71,6 +81,30 @@ function Header() {
       document.removeEventListener("pointerdown", onPointer);
     };
   }, [open]);
+  useEffect(() => {
+    if (!publicOpen) return;
+    const closeOnOutsidePress = (event: PointerEvent) => {
+      if (event.target instanceof Node && !publicMenuRef.current?.contains(event.target)) {
+        setPublicOpen(false);
+      }
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setPublicOpen(false);
+        publicTriggerRef.current?.focus();
+      }
+    };
+    document.addEventListener("pointerdown", closeOnOutsidePress);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutsidePress);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [publicOpen]);
+  const closeMobileMenu = () => { setOpen(false); setMobilePublicOpen(false); };
+  const publicActive = activePath(pathname, "/public-projects/") ||
+    publicProjects.some((project) => activePath(pathname, project.href));
+
   return (
     <header ref={header} className="site-header multi-header">
 
@@ -79,22 +113,59 @@ function Header() {
         <Logo />
         <nav aria-label="Main navigation" className="desktop-nav">
           {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              aria-keyshortcuts={
-                link.href === "/playground/" ? "Control+. Meta+." : undefined
-              }
-              title={
-                link.href === "/playground/"
-                  ? "Coding playground · Ctrl + . / ⌘ + ."
-                  : undefined
-              }
-              aria-current={
-                activePath(pathname, link.href) ? "page" : undefined
-              }>
-              {link.label}
-            </Link>
+            <div className="nav-link-slot" key={link.href}>
+              <Link
+                href={link.href}
+                aria-keyshortcuts={link.href === "/playground/" ? "Control+. Meta+." : undefined}
+                title={link.href === "/playground/" ? "Coding playground · Ctrl + . / ⌘ + ." : undefined}
+                aria-current={activePath(pathname, link.href) ? "page" : undefined}>
+                {link.label}
+              </Link>
+              {link.href === "/projects/" && (
+                <div
+                  ref={publicMenuRef}
+                  className="nav-projects"
+                  onMouseEnter={() => setPublicOpen(true)}
+                  onMouseLeave={() => setPublicOpen(false)}
+                  onBlur={(event) => {
+                    if (!event.currentTarget.contains(event.relatedTarget)) setPublicOpen(false);
+                  }}>
+                  <button
+                    ref={publicTriggerRef}
+                    type="button"
+                    className={`nav-projects-trigger${publicActive ? " nav-projects-current" : ""}`}
+                    aria-expanded={publicOpen}
+                    aria-haspopup="true"
+                    aria-controls="public-projects-popover"
+                    onClick={() => setPublicOpen(true)}>
+                    Public Projects <ChevronDown size={14} aria-hidden="true" />
+                  </button>
+                  {publicOpen && (
+                    <div id="public-projects-popover" className="nav-projects-popover" role="group" aria-label="Public projects">
+                      <div className="nav-projects-popover-head">
+                        <span className="nav-projects-eyebrow">LIVE &amp; PUBLIC BUILDS</span>
+                        <strong>Explore what I&apos;m building.</strong>
+                      </div>
+                      {publicProjects.map((project) => (
+                        <Link
+                          key={project.slug}
+                          className="nav-projects-item"
+                          href={project.href}
+                          onClick={() => setPublicOpen(false)}
+                          aria-current={activePath(pathname, project.href) ? "page" : undefined}>
+                          <span className="nav-projects-item-icon"><Globe2 size={18} aria-hidden="true" /></span>
+                          <span className="nav-projects-item-copy"><strong>{project.name}</strong><small>{project.category}</small></span>
+                          <ArrowUpRight size={15} aria-hidden="true" />
+                        </Link>
+                      ))}
+                      <Link href="/public-projects/" className="nav-projects-all" onClick={() => setPublicOpen(false)}>
+                        <LayoutGrid size={15} aria-hidden="true" /> View all public projects <ArrowUpRight size={15} aria-hidden="true" />
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           ))}
         </nav>
         <div className="header-actions">
@@ -130,22 +201,47 @@ function Header() {
           id="mobile-navigation"
           className="mobile-nav shell"
           aria-label="Mobile navigation">
-          {[
-            ...links,
-            { href: "/hire/", label: "Hire me" },
-            { href: "/support/", label: "Support my work" },
-          ].map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setOpen(false)}
-              aria-current={
-                activePath(pathname, link.href) ? "page" : undefined
-              }>
-              {link.label}
-              <ArrowUpRight size={17} />
-            </Link>
+          {links.map((link) => (
+            <div className="mobile-nav-slot" key={link.href}>
+              <Link
+                href={link.href}
+                onClick={closeMobileMenu}
+                aria-current={activePath(pathname, link.href) ? "page" : undefined}>
+                {link.label}<ArrowUpRight size={17} />
+              </Link>
+              {link.href === "/projects/" && (
+                <div className="mobile-public-projects">
+                  <button
+                    type="button"
+                    className="mobile-projects-trigger"
+                    aria-expanded={mobilePublicOpen}
+                    aria-controls="mobile-public-projects-list"
+                    onClick={() => setMobilePublicOpen((previous) => !previous)}>
+                    Public Projects <ChevronDown size={17} className={mobilePublicOpen ? "mobile-projects-chevron-open" : ""} aria-hidden="true" />
+                  </button>
+                  {mobilePublicOpen && (
+                    <div id="mobile-public-projects-list" className="mobile-projects-list">
+                      {publicProjects.map((project) => (
+                        <Link
+                          key={project.slug}
+                          href={project.href}
+                          aria-current={activePath(pathname, project.href) ? "page" : undefined}
+                          onClick={closeMobileMenu}>
+                          <span><strong>{project.name}</strong><small>{project.category}</small></span>
+                          <ArrowUpRight size={16} aria-hidden="true" />
+                        </Link>
+                      ))}
+                      <Link href="/public-projects/" onClick={closeMobileMenu}>
+                        View all public projects <ArrowUpRight size={16} aria-hidden="true" />
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           ))}
+          <Link href="/hire/" onClick={closeMobileMenu}>Hire me <ArrowUpRight size={17} aria-hidden="true" /></Link>
+          <Link href="/support/" onClick={closeMobileMenu}>Support my work <ArrowUpRight size={17} aria-hidden="true" /></Link>
         </nav>
       )}
     </header>
@@ -213,6 +309,7 @@ function Footer() {
                   {link.label}
                 </Link>
               ))}
+              <Link href="/public-projects/">Public Projects</Link>
               <Link href="/notes/">Notes &amp; resources</Link>
             </nav>
           </div>

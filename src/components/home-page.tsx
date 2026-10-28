@@ -18,6 +18,7 @@ import {
 } from "@/components/page-ui";
 import { DestinationLink } from "@/components/destination-link";
 import { ProjectCard } from "@/components/projects/project-card";
+import { MbiotradeFeature } from "@/components/mbiotrade-feature";
 import { services } from "@/data/services";
 import { projects } from "@/data/projects";
 
@@ -115,11 +116,14 @@ export function HomePage() {
             ))}
 
           </div>
+          <Reveal>
+            <MbiotradeFeature />
+          </Reveal>
           <div className="section-endnote">
 
             <p>
-              Original demos built for this site. Read the build notes and
-              download the source.
+              The three interactive demos were built for this site. MbioTrade
+              is a separate deployed application.
             </p>
             <Link href="/projects/" className="text-link">
               View the project gallery <ArrowRight size={17} />

@@ -1,6 +1,6 @@
 {
   "name": "mbiopeter-dev",
-  "version": "2.1.0",
+  "version": "2.3.0",
   "private": true,
   "description": "Mbiopeter's developer portfolio, services, creator hub, and coding playground.",
   "engines": {
@@ -19,7 +19,9 @@
     "postinstall": "node scripts/copy-monaco.mjs",
     "start": "next start",
     "assets:social": "node scripts/generate-share-cards.mjs",
-    "assets:sources": "python3 scripts/export-project-sources.py"
+    "assets:sources": "python3 scripts/export-project-sources.py",
+    "test:mbiotrade": "node --test tests/mbiotrade-landing.test.mjs",
+    "test:public-projects": "node --test tests/mbiotrade-landing.test.mjs"
   },
   "dependencies": {
     "@fontsource-variable/dm-sans": "^5.2.0",
