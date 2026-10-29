@@ -1,3 +1,10 @@
+## Current update — mbioTraders redesign and navy/emerald dark theme
+
+- Refreshed `/mbiotrade/` for the current **signal-only** mbioTraders app at `https://traders.mbiopeter.co.ke/`.
+- Added optimized dashboard images from the uploaded design, a redesigned hero, accurate feature explanations, an interactive keyboard-accessible four-tab tour and metadata preview.
+- Updated the site-wide dark theme from lime-on-charcoal to emerald-on-navy while preserving the old light theme.
+- Preserved all existing portfolio functions, public project navigation, demos, playground, services and contact/payment settings.
+
 # Mbiopeter 2.1.0 — update notes
 
 This update builds on the existing portfolio design and features. The green/ink

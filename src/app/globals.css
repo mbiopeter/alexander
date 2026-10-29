@@ -26,33 +26,35 @@
 }
 
 :root[data-theme="dark"] {
-  --bg: #101413;
-  --surface: #191f1b;
-  --surface-soft: #151b17;
-  --text: #edf1e8;
-  --muted: #a4afa1;
-  --line: #2b352d;
-  --accent: #d3f76b;
-  --accent-ink: #1c2c12;
-  --green: #c0e872;
-  --heading-muted: #94a38e;
-  --primary-bg: #d3f76b;
-  --primary-text: #18220f;
+  --bg: #04111c;
+  --surface: #071c29;
+  --surface-soft: #0a2230;
+  --text: #e9f6f5;
+  --muted: #9eb5ba;
+  --line: #1b3a4b;
+  --accent: #25dfa6;
+  --accent-ink: #03271e;
+  --green: #2be2ad;
+  --heading-muted: #89a8b0;
+  --primary-bg: #1bd4a0;
+  --primary-text: #03261e;
   color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #101413;
-    --surface: #191f1b;
-    --surface-soft: #151b17;
-    --text: #edf1e8;
-    --muted: #a4afa1;
-    --line: #2b352d;
-    --green: #c0e872;
-    --heading-muted: #94a38e;
-    --primary-bg: #d3f76b;
-    --primary-text: #18220f;
+    --bg: #04111c;
+    --surface: #071c29;
+    --surface-soft: #0a2230;
+    --text: #e9f6f5;
+    --muted: #9eb5ba;
+    --line: #1b3a4b;
+    --accent: #25dfa6;
+    --accent-ink: #03271e;
+    --green: #2be2ad;
+    --heading-muted: #89a8b0;
+    --primary-bg: #1bd4a0;
+    --primary-text: #03261e;
     color-scheme: dark;
   }
 }
@@ -179,7 +181,7 @@ svg {
   color: var(--accent-ink);
 }
 .button-accent:hover {
-  background: #e0ff92;
+  background: color-mix(in srgb,var(--accent) 84%,white);
 }
 .button-quiet {
   background: transparent;
@@ -3460,3 +3462,22 @@ body[data-practice-focus="true"] { scroll-padding-top: 16px; }
 @media (max-width: 375px) {
   .hero-art { height: 335px; }
 }
+
+/* mbioTraders-inspired dark palette for the original portfolio components.
+   Existing layout, functionality and light mode stay untouched. */
+:root[data-theme="dark"] .editor-window { background:#071927; border-color:#234557; color:#cbebe6; }
+:root[data-theme="dark"] .editor-chrome { background:#0b2735; border-color:#214557; color:#a3c9ca; }
+:root[data-theme="dark"] .editor-rail, :root[data-theme="dark"] .editor-tab { border-color:#214557; }
+:root[data-theme="dark"] .editor-rail>svg:first-child, :root[data-theme="dark"] .code-green, :root[data-theme="dark"] .terminal-check { color:#38e1ad; }
+:root[data-theme="dark"] .editor-tab { border-bottom-color:#18c18b; }
+:root[data-theme="dark"] .code-cursor, :root[data-theme="dark"] .status-dot { background:#27e1a7; }
+:root[data-theme="dark"] .editor-terminal { border-top-color:#214557; }
+:root[data-theme="dark"] .editor-status { background:#103e38; color:#bbf3e2; }
+:root[data-theme="dark"] .playground-editor { background:#071925; color:#d9f5ec; }
+:root[data-theme="dark"] .playground-file { border-color:#204153; }
+:root[data-theme="dark"] .copy-button:focus-visible { outline-color:#1fe1a5; }
+:root[data-theme="dark"] .craft-card { background:#0e3d35;color:#d3f8e9;border-color:#24715d; }
+:root[data-theme="dark"] .craft-icon { background:#155a47;color:#b8f6dd; }
+:root[data-theme="dark"] .support-card { background:#081e2b;color:#ebf9f5; }
+:root[data-theme="dark"] .support-copy h2>span { color:#31e1ac; }
+:root[data-theme="dark"] .button-primary:hover { box-shadow:0 8px 24px #17d6a42c; }

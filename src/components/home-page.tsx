@@ -122,8 +122,8 @@ export function HomePage() {
           <div className="section-endnote">
 
             <p>
-              The three interactive demos were built for this site. MbioTrade
-              is a separate deployed application.
+              The three interactive demos were built for this site. mbioTraders
+              is a separate signal-only application.
             </p>
             <Link href="/projects/" className="text-link">
               View the project gallery <ArrowRight size={17} />

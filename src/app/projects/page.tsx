@@ -5,7 +5,7 @@ import { makeMetadata } from "@/lib/metadata";
 
 export const metadata = makeMetadata(
   "Projects",
-  "Explore MbioTrade, a Deriv-connected trading application, alongside Mbiopeter’s interactive task board, API lab and CSV cleanup tool.",
+  "Explore mbioTraders, a Gold and forex signal dashboard, alongside Mbiopeter’s interactive task board, API lab and CSV cleanup tool.",
   "/projects/",
 );
 
@@ -16,7 +16,7 @@ export default function ProjectsPage() {
       <PageIntro
         eyebrow="THE WORKBENCH"
         title="Ideas you can actually try."
-        description="See a working trading platform alongside practical interactive tools. Explore the builds, try the demos, and learn how thoughtful code makes things easier."/>
+        description="See an independently hosted market-signal dashboard alongside practical interactive tools. Explore the builds, try the demos, and learn how thoughtful code makes things easier."/>
       <section className="page-section shell" aria-label="Browse projects">
         <MbiotradeFeature placement="projects" />
 
@@ -24,7 +24,7 @@ export default function ProjectsPage() {
 
           <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-(--green)" />
           <p className="mb-0">
-            MbioTrade is a separate deployed application. The three interactive tools below
+            mbioTraders is a separate, signal-only application. The three interactive tools below
             are original demos, not client case studies. They run in your browser;
             the API lab is a labelled simulation.
           </p>

@@ -16,11 +16,11 @@ export type PublicProject = {
 export const publicProjects: PublicProject[] = [
   {
     slug: "mbiotrade",
-    name: "MbioTrade",
-    category: "Trading technology",
-    description: "A Deriv-connected workspace for trend-first strategies, position management and market analysis.",
+    name: "mbioTraders",
+    category: "Market intelligence",
+    description: "A signal-only dashboard for Gold and major forex pairs, featuring live technical strength, trend alignment, and confirmed setup alerts.",
     href: "/mbiotrade/",
-    liveUrl: "https://mbiotrade.vercel.app/",
+    liveUrl: "https://traders.mbiopeter.co.ke/",
     status: "Live",
   },
 ];

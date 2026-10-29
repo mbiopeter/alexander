@@ -6,7 +6,7 @@ import { makeMetadata } from "@/lib/metadata";
 
 export const metadata = makeMetadata(
   "Public Projects — Live apps and products",
-  "Explore independently deployed apps and tools built by Mbiopeter, starting with the MbioTrade trading workspace.",
+  "Explore independently deployed apps and tools built by Mbiopeter, starting with the mbioTraders market-signal dashboard.",
   "/public-projects/",
 );
 

@@ -1,23 +1,27 @@
-# MbioTrade landing page — Mbiopeter portfolio v2.3
+# mbioTraders portfolio landing — Mbiopeter dark-theme refresh
 
-This standalone portfolio showcases the real MbioTrade application without embedding its trading code or requesting broker credentials. All **Launch** links go to `https://mbiotrade.vercel.app/` and open in a separate tab.
+The portfolio at **https://mbiopeter.co.ke** introduces the separate **signal-only** web application **https://traders.mbiopeter.co.ke**.
 
-## What's new in v2.3
+## What's included
 
-- **Public Projects** replaces the standalone MbioTrade top navigation tab. Desktop hover/click dropdown and mobile expandable accordion show MbioTrade; both are driven by `src/data/public-projects.ts`. A new `/public-projects/` directory supports future app launches.
-- `/mbiotrade/` has been expanded with a four-screen feature tour, more detailed product capabilities, deeper trend-strategy explanations, broker-sync diagram, background-worker section, FAQs, and multiple pathways to the live app.
-- All design changes use existing light/dark color variables and scoped styles in `src/styles/mbiotrade.css` and `src/styles/public-projects.css`.
-- Homepage MbioTrade feature, `/projects/` demos, services, tutorials, Monaco editor, social links, contact, theme controls and integrations are retained.
+- Redesigned `/mbiotrade/` project page with a two-column hero and optimized, user-supplied dashboard screenshot. The screenshot is **illustrative**: its gauges, prices, trades and statistics must not be presented as current market information.
+- Accessible, interactive four-tab product tour highlighting the chart, market-strength gauge, timeframe alignment, and signal setup. The screenshots are still visual examples; no live market calls are made from the portfolio.
+- Updated six-instrument overview, six selectable timeframes, the 3/5/7-day higher-timeframe concept, sound alerts, market-data limitations, and signal-only FAQs.
+- Updated homepage and Projects-page featured mbioTraders showcase; reused across `/public-projects/`.
+- Every launch link comes from `src/data/public-projects.ts` and opens **https://traders.mbiopeter.co.ke/** with `target="_blank"` and `rel="noopener noreferrer"`.
+- All existing services, contact flows, WhatsApp, Paystack, tutorials, coding playground, interactive demos, Public Projects dropdown, and themes remain in the project.
 
-## What's illustrated (not live)
+## Design and theme
 
-The chart and product-tour visuals show *examples*, not live Deriv candles, signals, balances, orders, or worker status. This landing page makes no API calls for trading. The supported account modes, contract handling and worker conditions described on the page are features of the **separate** MbioTrade application, not features this portfolio can execute.
+`src/app/globals.css` now gives the **dark theme** navy surfaces, emerald-green accent controls and teal borders based on the mbioTraders dashboard. **Light mode** retains its previous neutral/lime design. Shared feature graphics and legacy portfolio illustration accents receive scoped dark-theme refinements.
 
-## Add another app
+`src/styles/mbiotrade.css` is self-contained for the product showcase, homepage/project featured blocks and the portfolio's image preview. Original image assets remain in `public/`; added optimized assets are in `public/images/`.
 
-See [`docs/PUBLIC-PROJECTS.md`](PUBLIC-PROJECTS.md). Add a single entry to `src/data/public-projects.ts` plus a dedicated `src/app/<slug>/page.tsx`. The menu, directory and sitemap derive from the registry.
+## SEO
 
-## Run
+The product route has page-specific title, description, Open Graph screenshot card and canonical metadata. The root production canonical is **https://mbiopeter.co.ke**, overridden by `NEXT_PUBLIC_SITE_URL`. Do not set the app's subdomain as the portfolio's canonical URL.
+
+## Develop and deploy
 
 ```bash
 npm ci
@@ -27,4 +31,4 @@ npm run build
 npm run dev
 ```
 
-Then test `/public-projects/`, `/mbiotrade/`, mobile navigation, feature-tour buttons and FAQs. No new environment variables are needed for the portfolio showcase. See `docs/DEPLOYMENT.md` for original environment/configuration requirements and Vercel instructions.
+In Vercel, deploy the **portfolio repository** (not the mbioTraders app), and set `NEXT_PUBLIC_SITE_URL=https://mbiopeter.co.ke` in Production. Existing contact/payment environment configuration remains unchanged. Do not upload personal `.env.local` or private API credentials. Test light and dark modes, desktop hover and mobile accordion, page interactions, and launch URL after deployment.

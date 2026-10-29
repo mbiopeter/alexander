@@ -128,6 +128,6 @@ if (failures > 0) {
 
 if (!process.env.NEXT_PUBLIC_SITE_URL?.trim()) {
   console.warn(
-    "\nNEXT_PUBLIC_SITE_URL is optional. Add your final HTTPS domain and rebuild to enable complete canonical and social-sharing URLs.",
+    "\nNEXT_PUBLIC_SITE_URL not set. Canonical URLs use the configured production default https://mbiopeter.co.ke; set the variable to override.",
   );
 }
