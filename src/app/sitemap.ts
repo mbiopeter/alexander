@@ -16,6 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...services.map((service) => `/services/${service.slug}/`),
     "/projects/",
     "/public-projects/",
+    "/mbiotrade/",
     ...publicProjects.map((project) => project.href),
     ...projects.map((project) => `/projects/${project.slug}/`),
     "/learn/",
@@ -27,9 +28,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/support/",
     "/privacy/",
   ];
-  return routes.map((path) => ({
+  return [...new Set(routes)].map((path) => ({
     url: new URL(path, origin).toString(),
-    changeFrequency: "monthly",
+    changeFrequency: path === "/mbiotrade/" ? "weekly" : "monthly",
     priority: path === "/" ? 1 : path === "/privacy/" ? 0.3 : 0.8,
   }));
 }

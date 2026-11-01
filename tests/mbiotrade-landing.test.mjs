@@ -73,7 +73,7 @@ test("four-tour tabs remain functional with keyboard navigation", () => {
   assert.match(source, /role="tablist"/);
   assert.match(source, /role="tab"/);
   assert.match(source, /aria-selected=\{active === id\}/);
-  assert.match(source, /onClick=\{\(\) => setActive\(id\)\}/);
+  assert.match(source, /onClick=\{\(\) => \{ setActive\(id\); trackEvent\("mbiotraders_tour_tab"/);
   assert.match(source, /event\.key === "ArrowRight"/);
   assert.match(source, /event\.key === "ArrowLeft"/);
   assert.match(source, /role="tabpanel"/);

@@ -4,6 +4,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { Check, Monitor, Moon, Sun } from "lucide-react";
 import { useTheme } from "@/context/theme-context";
 import type { Theme } from "@/lib/theme";
+import { trackEvent } from "@/lib/analytics";
 
 export function ThemeMenu() {
   const { theme, setTheme } = useTheme();
@@ -65,6 +66,7 @@ export function ThemeMenu() {
               aria-pressed={theme === value}
               onClick={() => {
                 setTheme(value);
+                trackEvent("theme_changed", { theme: value });
                 setOpen(false);
                 trigger.current?.focus();
               }}>

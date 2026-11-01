@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { ArrowUpRight, MessageCircle } from "lucide-react";
 import { PageIntro } from "@/components/page-ui";
+import { AnalyticsPreferences } from "@/components/analytics-preferences";
 import { DestinationLink } from "@/components/destination-link";
 import { makeMetadata } from "@/lib/metadata";
 
 export const metadata = makeMetadata(
   "Privacy",
-  "How this site handles your enquiries, browser preferences, demonstration data, and links to external services.",
+  "How Mbiopeter handles usage analytics, click and scroll events, browser preferences, project demos and enquiries.",
   "/privacy/",
 );
 
@@ -26,11 +27,23 @@ export default function PrivacyPage() {
 
             <h2>Browsing this website</h2>
             <p>
-              This website does not have visitor accounts, an enquiry database,
-              advertising trackers, or analytics added by the site itself. The
-              hosting provider may process standard request information, such as
-              IP addresses and access logs, to serve and protect the site.
+              This website has no visitor accounts, enquiry database or advertising platform.
+              When configured, it uses Google Analytics 4 to understand website visits,
+              button and link clicks, navigation, project interactions, page sections,
+              scroll milestones, downloads, and form actions. The website does not
+              send your typed messages, contact details, code drafts, or search text
+              as custom analytics events. Google may set analytics cookies and
+              process device and usage information under its own privacy terms.
+              The hosting provider also processes standard request data for delivery and security.
             </p>
+            <h2>Control analytics on this device</h2>
+            <p>
+              You can disable or enable analytics for this browser below. Disabling
+              tracking prevents new events being sent from this site; it does not
+              erase information already collected by Google. Browser privacy settings
+              can also block cookies or remove existing site data.
+            </p>
+            <AnalyticsPreferences />
             <h2>Your theme preference</h2>
             <p>
               The light or dark theme follows your device by default. If you
@@ -144,6 +157,7 @@ export default function PrivacyPage() {
             <h2>You stay in control.</h2>
             <ul className="feature-list">
 
+              <li>Control analytics tracking on this device.</li>
               <li>Choose your theme.</li>
               <li>Keep demo data on your device.</li>
               <li>Run code only when you choose.</li>

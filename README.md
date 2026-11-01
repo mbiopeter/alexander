@@ -1,3 +1,7 @@
+## Analytics and search visibility (new)
+
+Google Analytics 4 events, privacy controls, updated mbioTraders documentation, structured data, and sitemap configuration are described in **[docs/ANALYTICS-AND-SEO.md](docs/ANALYTICS-AND-SEO.md)**. Set `NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX` locally or in Vercel (your own public Measurement ID), then redeploy. Run `npm run test:analytics` for the dedicated event/SEO regression suite.
+
 # Mbiopeter — developer, creator & coding playground · 2.3.0
 
 Your multipage portfolio, practical learning space, and coding playground. Built with Next.js, React, TypeScript and Tailwind CSS. Version 2.3.0 keeps the existing green/ink design, six service pages, three interactive projects, mini lessons, enquiry form, Paystack support, social links and theme controls, with clearer project evidence and more useful learning and contact flows.

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { trackEvent } from "@/lib/analytics";
 import type { ReactNode } from "react";
 import { useToast } from "@/context/toast-context";
 import {
@@ -49,7 +50,8 @@ export function DestinationLink({
         className={className}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label={label}>
+        aria-label={label}
+        onClick={() => trackEvent("destination_open", { destination })}>
         {children}
         <span className="sr-only"> (opens in a new tab)</span>
       </a>
@@ -65,7 +67,7 @@ export function DestinationLink({
       type="button"
       className={className}
       aria-label={label}
-      onClick={() => notify(unavailable[destination])}>
+      onClick={() => { trackEvent("destination_unavailable", { destination }); notify(unavailable[destination]); }}>
       {children}
     </button>
   );

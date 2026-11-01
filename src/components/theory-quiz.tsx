@@ -1,5 +1,7 @@
 "use client";
 
+import { trackEvent } from "@/lib/analytics";
+
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
@@ -57,6 +59,7 @@ export function TheoryQuiz() {
     setAnswers({});
     setCurrent(0);
     setSubmitted(false);
+    trackEvent("quiz_start", { question_count: 10 });
   }
 
   useEffect(() => {
@@ -187,7 +190,7 @@ export function TheoryQuiz() {
                     Next <ArrowRight size={13} aria-hidden="true" />
                   </button>
                 ) : (
-                  <button type="button" disabled={answered !== questions.length} onClick={() => setSubmitted(true)} className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-(--pg-accent) px-4 text-xs font-semibold text-(--pg-accent-ink) disabled:cursor-not-allowed disabled:opacity-45">
+                  <button type="button" disabled={answered !== questions.length} onClick={() => { setSubmitted(true); trackEvent("quiz_complete", { percent_score: percentage, question_count: questions.length }); }} className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-(--pg-accent) px-4 text-xs font-semibold text-(--pg-accent-ink) disabled:cursor-not-allowed disabled:opacity-45">
                     <CheckCircle2 size={14} aria-hidden="true" /> Submit test
                   </button>
                 )}

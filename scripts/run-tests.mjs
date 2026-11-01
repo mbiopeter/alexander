@@ -10,7 +10,7 @@ const directories = [
 let count = 0;
 for (const directory of directories) {
   const files = (await readdir(fileURLToPath(directory)))
-    .filter((name) => name.endsWith(".test.ts"))
+    .filter((name) => name.endsWith(".test.ts") || name.endsWith(".test.mjs"))
     .sort();
   for (const file of files) {
     await import(new URL(file, directory).href);

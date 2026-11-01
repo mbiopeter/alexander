@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search, X } from "lucide-react";
 import { projects } from "@/data/projects";
+import { trackEvent } from "@/lib/analytics";
 import { ProjectCard } from "./project-card";
 
 const categories = [
@@ -25,6 +26,15 @@ export function ProjectsExplorer() {
     [category, query],
   );
 
+
+  useEffect(() => {
+    if (!query.trim()) return;
+    const timeout = window.setTimeout(() => {
+      trackEvent("project_search_used", { results_count: shown.length, query_length_band: Math.min(20, Math.ceil(query.trim().length / 5) * 5) });
+    }, 700);
+    return () => window.clearTimeout(timeout);
+  }, [query, shown.length]);
+
   return (
     <>
       <div className="mb-8 flex flex-col justify-between gap-5 lg:flex-row lg:items-center">
@@ -38,7 +48,7 @@ export function ProjectsExplorer() {
             <button
               key={item}
               type="button"
-              onClick={() => setCategory(item)}
+              onClick={() => { setCategory(item); trackEvent("project_filter", { filter_category: item }); }}
               aria-pressed={category === item}
               className={`min-h-11 rounded-full border px-4 py-2 text-xs font-medium transition-colors ${category === item ? "border-(--text) bg-(--text) text-(--bg)" : "border-(--line) bg-(--surface) text-(--muted) hover:text-(--text)"}`}>
               {item}
@@ -90,6 +100,7 @@ export function ProjectsExplorer() {
             onClick={() => {
               setQuery("");
               setCategory("All projects");
+              trackEvent("project_filter_reset");
             }}>
             <X size={15} />
             Clear filters

@@ -11,8 +11,14 @@ import { SiteShell } from "@/components/site-shell";
 import { siteConfig } from "@/config/site";
 import { getSiteUrl, getGitHubUrl, getLinkedInUrl, getTikTokUrl } from "@/lib/links";
 import { THEME_INIT_SCRIPT } from "@/lib/theme";
+import { GoogleAnalytics } from "@next/third-parties/google";
+import { AnalyticsTracker } from "@/components/analytics-tracker";
+import { ANALYTICS_OPT_OUT_KEY, getAnalyticsId } from "@/lib/analytics";
 
 const siteUrl = getSiteUrl();
+const gaId = getAnalyticsId();
+const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim();
+const optOutInitScript = gaId ? `try { if (localStorage.getItem(${JSON.stringify(ANALYTICS_OPT_OUT_KEY)}) === "true") { window[${JSON.stringify(`ga-disable-${gaId}`)}] = true; } } catch (e) {}` : null;
 const structuredProfile = siteUrl ? {
   "@context": "https://schema.org",
   "@graph": [
@@ -55,6 +61,7 @@ export const metadata: Metadata = {
   },
   icons: { icon: "/icon.svg", apple: "/apple-touch-icon.png" },
   robots: { index: true, follow: true },
+  ...(googleVerification ? { verification: { google: googleVerification } } : {}),
 };
 
 export const viewport: Viewport = {
@@ -74,14 +81,16 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         {structuredProfile && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredProfile).replace(/</g, "\\u003c") }} />}
+        {optOutInitScript && <script dangerouslySetInnerHTML={{ __html: optOutInitScript }} />}
 
       </head>
       <body>
-
+        {gaId && <GoogleAnalytics gaId={gaId} />}
         <a href="#main" className="skip-link">
           Skip to content
         </a>
         <Providers>
+          {gaId && <AnalyticsTracker />}
 
           <SiteShell>{children}</SiteShell>
 

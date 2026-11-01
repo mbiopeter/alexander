@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { trackEvent } from "@/lib/analytics";
 import {
   Activity,
   ArrowRight,
@@ -42,7 +43,7 @@ const tour = [
     icon: Layers3,
     label: "Trend alignment",
     title: "The larger trend comes first.",
-    description: "Compare six timeframes and use the 3-, 5- or 7-day momentum window to evaluate the broader 1H, 4H and daily direction before accepting a shorter-term setup.",
+    description: "Five charts (15m, 30m, 1H, 4H, 1D) must agree on trend direction. The 5m chart is reserved for the countertrend pullback and entry confirmation.",
     image: "/images/mbiotraders-alignment.webp",
     width: 789,
     height: 170,
@@ -54,11 +55,11 @@ const tour = [
     icon: ShieldCheck,
     label: "Entry readiness",
     title: "Know why it's BUY, SELL or WAIT.",
-    description: "Each setup includes the direction, rule-based confluence score, indicative entry, stop and targets. An audible alert can notify you when a new qualifying setup is confirmed.",
+    description: "Each new entry requires two completed 5m candles with at least 60% body and starts at the third candle open. An earlier pivot sets the stop; the target is 2R. Real browser alerts work while the app is open.",
     image: "/images/mbiotraders-setup.webp",
     width: 425,
     height: 264,
-    detail: "Trend · Pullback · Confirmed reversal · Signal plan",
+    detail: "Pullback · 2 strong candles · Third open · 2R",
   },
 ] as const;
 
@@ -88,18 +89,20 @@ export function MbiotradeTour() {
                 aria-controls="mbio-tour-panel"
                 tabIndex={active === id ? 0 : -1}
                 className={`mbio-tour-option${active === id ? " is-selected" : ""}`}
-                onClick={() => setActive(id)}
+                onClick={() => { setActive(id); trackEvent("mbiotraders_tour_tab", { tab_name: id }); }}
                 onKeyDown={(event) => {
                   const index = tour.findIndex((item) => item.id === active);
                   if (event.key === "ArrowDown" || event.key === "ArrowRight") {
                     event.preventDefault();
                     const next = tour[(index + 1) % tour.length].id;
                     setActive(next);
+                    trackEvent("mbiotraders_tour_tab", { tab_name: next });
                     document.getElementById(`mbio-tour-tab-${next}`)?.focus();
                   } else if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
                     event.preventDefault();
                     const next = tour[(index + tour.length - 1) % tour.length].id;
                     setActive(next);
+                    trackEvent("mbiotraders_tour_tab", { tab_name: next });
                     document.getElementById(`mbio-tour-tab-${next}`)?.focus();
                   }
                 }}

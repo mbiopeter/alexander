@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { ArrowUpRight, ChevronDown, Copy, Mail, MessageCircle, Trash2 } from "lucide-react";
 import { useToast } from "@/context/toast-context";
 import { services } from "@/data/services";
+import { trackEvent } from "@/lib/analytics";
 import { getContactEmail, getEmailDraftUrl, getWhatsAppUrl } from "@/lib/links";
 import { useContactDraft } from "@/hooks/use-contact-draft";
 import {
@@ -54,6 +55,7 @@ function ContactFormFields({ requestedService }: { requestedService: string | nu
 
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) {
+      trackEvent("contact_brief_invalid", { invalid_fields: Object.keys(nextErrors).length });
       requestAnimationFrame(() => {
         formRef.current
           ?.querySelector<HTMLElement>('[aria-invalid="true"]')
@@ -62,6 +64,7 @@ function ContactFormFields({ requestedService }: { requestedService: string | nu
       return null;
     }
 
+    trackEvent("contact_brief_ready", { has_service: Boolean(service) });
     return buildDraft();
   }
 
@@ -83,6 +86,7 @@ function ContactFormFields({ requestedService }: { requestedService: string | nu
       return;
     }
     // This opens a draft. The visitor still decides whether to send it.
+    trackEvent("contact_channel_open", { channel: "whatsapp" });
     window.location.assign(url);
   }
 
@@ -93,11 +97,12 @@ function ContactFormFields({ requestedService }: { requestedService: string | nu
       ? `Project enquiry — ${project.trim()}`
       : "Project enquiry from your website";
     const url = getEmailDraftUrl(draft, subject);
-    if (url) window.location.assign(url);
+    if (url) { trackEvent("contact_channel_open", { channel: "email" }); window.location.assign(url); }
   }
 
   function clearBrief() {
     const cleared = clearDraft();
+    trackEvent("contact_brief_clear", { cleared });
     setErrors({});
     setConfirmClear(false);
     notify(
@@ -114,6 +119,7 @@ function ContactFormFields({ requestedService }: { requestedService: string | nu
     if (!draft) return;
     try {
       await navigator.clipboard.writeText(draft);
+      trackEvent("contact_brief_copy", { method: "clipboard" });
       notify("Brief copied. Paste it into your message.", "success");
     } catch {
       setPreviewOpen(true);
@@ -168,6 +174,7 @@ function ContactFormFields({ requestedService }: { requestedService: string | nu
     <form
       ref={formRef}
       className="contact-form space-y-5"
+      data-analytics-form="project_brief"
       onSubmit={handleSubmit}
       aria-busy={!ready}
       noValidate>

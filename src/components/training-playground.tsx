@@ -57,6 +57,7 @@ import {
 import { useTheme } from "@/context/theme-context";
 import type { RunReport, TestResult } from "@/lib/runner";
 import { TheoryQuiz } from "@/components/theory-quiz";
+import { trackEvent } from "@/lib/analytics";
 
 const CodeEditor = dynamic(() => import("./code-editor"), {
   ssr: false,
@@ -305,6 +306,7 @@ export default function TrainingPlayground({
       language: languageId,
     }));
     syncSelectionUrl(challengeId, languageId);
+    trackEvent("playground_challenge_select", { challenge_id: challengeId, language: languageId });
   }
 
   function newPracticeTest() {
@@ -372,6 +374,7 @@ export default function TrainingPlayground({
     const active = { controller, key };
     runRef.current = active;
     setRun({ phase: "running" });
+    trackEvent("playground_run_start", { language: language.id, challenge_id: challenge.id });
     setSelectedResult(0);
     let timedOut = false;
     const timer = window.setTimeout(() => {
@@ -418,6 +421,7 @@ export default function TrainingPlayground({
         );
       setConnection("configured");
       setRun({ phase: "done", report: body });
+      trackEvent("playground_run_complete", { language: language.id, result: body.verdict, passed_count: body.passed, total_count: body.total });
       if (
         body.verdict === "correct" &&
         body.passed === challenge.tests.length &&

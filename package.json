@@ -21,12 +21,14 @@
     "assets:social": "node scripts/generate-share-cards.mjs",
     "assets:sources": "python3 scripts/export-project-sources.py",
     "test:mbiotrade": "node --test tests/mbiotrade-landing.test.mjs",
-    "test:public-projects": "node --test tests/mbiotrade-landing.test.mjs"
+    "test:public-projects": "node --test tests/mbiotrade-landing.test.mjs",
+    "test:analytics": "node --import tsx --test tests/analytics-and-seo.test.mjs"
   },
   "dependencies": {
     "@fontsource-variable/dm-sans": "^5.2.0",
     "@fontsource-variable/manrope": "^5.2.0",
     "@monaco-editor/react": "4.7.0",
+    "@next/third-parties": "16.4.3",
     "lucide-react": "1.61.0",
     "monaco-editor": "0.52.2",
     "next": "16.4.2",
