@@ -831,7 +831,7 @@ function makeCountMultiplesChallenge(index: number): Challenge {
     tests: generatedTests([
       ["small", `${divisor - 1}\n`, "0"],
       ["exact", `${divisor * 5}\n`, "5"],
-      ["between", `${divisor * 7 + 2}\n`, "7"],
+      ["between", `${divisor * 7 + 1}\n`, "7"],
       ["large", "999\n", String(Math.floor(999 / divisor))],
     ]),
     starter: {

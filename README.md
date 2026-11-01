@@ -2,7 +2,7 @@
 
 Google Analytics 4 events, privacy controls, updated mbioTraders documentation, structured data, and sitemap configuration are described in **[docs/ANALYTICS-AND-SEO.md](docs/ANALYTICS-AND-SEO.md)**. Set `NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX` locally or in Vercel (your own public Measurement ID), then redeploy. Run `npm run test:analytics` for the dedicated event/SEO regression suite.
 
-# Mbiopeter — developer, creator & coding playground · 2.3.0
+# Mbiopeter — developer, creator & coding playground · 2.4.0
 
 Your multipage portfolio, practical learning space, and coding playground. Built with Next.js, React, TypeScript and Tailwind CSS. Version 2.3.0 keeps the existing green/ink design, six service pages, three interactive projects, mini lessons, enquiry form, Paystack support, social links and theme controls, with clearer project evidence and more useful learning and contact flows.
 
@@ -10,7 +10,7 @@ The playground is available at **`/playground/`** and on genuinely missing pages
 
 ## Quick start
 
-Use **Node.js 22 or newer**. From the extracted `alexander` folder:
+Use **Node.js 22 or newer**. From the extracted `mbiopeter` folder:
 
 ```bash
 npm ci
@@ -139,12 +139,13 @@ The original project examples remain examples, not invented client work. Focusbo
 | `npm run dev`          | Start local development.                                                                   |
 | `npm run check`        | Check TypeScript.                                                                          |
 | `npm test`             | Run original portfolio, WhatsApp and playground tests.                                     |
-| `npm run check:config` | Validate contact, support and social configuration.                                        |
+| `npm run check:config` | Strictly require real WhatsApp, Paystack and TikTok destinations; also validate other configured URLs.                                        |
 | `npm run setup:editor` | Recopy local Monaco assets if necessary.                                                   |
 | `npm run assets:sources` | Refresh the three source ZIPs from an explicit file allowlist; needs Python 3 only when regenerating. |
 | `npm run assets:social` | Regenerate the included PNG/SVG share cards using the installed Node dependencies.           |
-| `npm run build`        | Build the production Next.js app.                                                          |
-| `npm run build:ready`  | Validate contact configuration, then build.                                                |
+| `npm run build`        | Build the production Next.js app.
+| `npm run build:strict` | Strictly validate real contact/support destinations, then build.                                                          |
+| `npm run build:ready`  | Build with safe warnings for missing integration URLs; rejects invalid configured URLs.                                                |
 | `npm start`            | Run the production build.                                                                  |
 | `npm run preview`      | Alias-style wrapper for the production Next.js server, supporting preview host/port flags. |
 
@@ -206,3 +207,9 @@ Read `docs/MBIOTRADE-LANDING.md` and `docs/PUBLIC-PROJECTS.md` for instructions.
 - Dark-theme navbar, buttons, cards and code illustration use emerald accents on navy surfaces.
 - Official launch URL updated to `https://traders.mbiopeter.co.ke/` everywhere it is configured.
 - Original website pages and functionality remain in the complete source archive.
+
+## Local build and release checks
+
+`npm run build:ready` lets the application compile before you have configured WhatsApp, TikTok or Paystack. Missing destinations are clearly reported and their controls remain disabled; **invalid supplied values still stop the build**. Before publicly enabling all integrations, set real values in `.env.local` or your host settings and run `npm run check:config` (or `npm run build:strict`). Do not commit `.env.local` or fill it with invented account links.
+
+The corrected generated "count multiples" exercise fixtures now match the published integer-division solutions. The code runner readiness test now reflects the existing public Judge0 CE default without implying that the remote provider is currently online.

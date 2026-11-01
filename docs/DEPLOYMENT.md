@@ -47,7 +47,7 @@ npm run build:ready
 npm start
 ```
 
-`build:ready` validates the original contact/support/social requirements plus any supplied optional settings, then builds. It does not call the remote execution service. The playground reports whether runner configuration is present; this is not a provider-health or credit-balance check. Optional email, LinkedIn, CV and site-origin values may be left blank. Invalid supplied values are reported by the configuration check.
+`build:ready` reports missing WhatsApp/Paystack/TikTok settings as warnings so local and preview builds succeed, but rejects invalid configured destinations. Features without a valid destination stay unavailable instead of linking to placeholders. Run `npm run check:config` (strict validation) or `npm run build:strict` before launching with those integrations enabled. It does not call the remote execution service. The playground reports whether runner configuration is present; this is not a provider-health or credit-balance check. Optional email, LinkedIn, CV and site-origin values may be left blank. Invalid supplied values are reported by the configuration check.
 
 `npm run build` remains available to preview with unconfigured optional features. `npm start` and `npm run preview` serve the `.next` production build, normally on port 3000. For example:
 
@@ -119,7 +119,7 @@ For public traffic, the built-in runner limiter is per Node process, not a globa
 | Social card or canonical URL is missing           | Set `NEXT_PUBLIC_SITE_URL` to the final HTTPS origin and rebuild. Confirm the included `/social/` assets are deployed.                                      |
 | Username mode fails                               | Use an active WhatsApp username, not a display name or reservation; check username-key requirements.                                                         |
 | Phone still appears after opening a fallback link | This is inherent to number-based `wa.me` links. Configure an active username to stop using that destination.                                                 |
-| Build fails on external links                     | The launch check requires WhatsApp, Paystack and TikTok. `npm run build` can preview an unconfigured site.                                                   |
+| Build fails on external links                     | `npm run check:config` and `npm run build:strict` require WhatsApp, Paystack and TikTok. `npm run build:ready` permits missing destinations with warnings while still rejecting invalid supplied URLs.                                                   |
 | Old static instructions fail                      | Use `npm start` with the production `.next` build; do not upload an `out/` folder.                                                                           |
 
 The site is configured for a domain root. A subfolder deployment requires coordinated base-path changes to the original portfolio links, contact route and editor assets; it is not configured by this package.

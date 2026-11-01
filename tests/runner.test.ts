@@ -522,15 +522,26 @@ test("route enforces the streamed body bound without relying on Content-Length",
   assert.equal((await response.json()).error.code, "too_large");
 });
 
-test("runner readiness response contains only a configuration boolean", async () => {
-  const previous = process.env.JUDGE0_BASE_URL;
+test("runner readiness reports the configured default and rejects invalid overrides", async () => {
+  const keys = [
+    "JUDGE0_BASE_URL", "JUDGE0_AUTH_TOKEN", "JUDGE0_BEARER_TOKEN",
+    "JUDGE0_RAPIDAPI_KEY", "JUDGE0_RAPIDAPI_HOST", "JUDGE0_LANGUAGE_IDS",
+  ] as const;
+  const previous = Object.fromEntries(keys.map((key) => [key, process.env[key]]));
   try {
-    delete process.env.JUDGE0_BASE_URL;
-    const response = await GET();
-    assert.deepEqual(await response.json(), { configured: false });
-    assert.equal(response.headers.get("cache-control"), "no-store");
+    for (const key of keys) delete process.env[key];
+    const defaultResponse = await GET();
+    assert.deepEqual(await defaultResponse.json(), { configured: true });
+    assert.equal(defaultResponse.headers.get("cache-control"), "no-store");
+
+    process.env.JUDGE0_BASE_URL = "https://example.invalid";
+    const invalidResponse = await GET();
+    assert.deepEqual(await invalidResponse.json(), { configured: false });
+    assert.equal(invalidResponse.headers.get("cache-control"), "no-store");
   } finally {
-    if (previous === undefined) delete process.env.JUDGE0_BASE_URL;
-    else process.env.JUDGE0_BASE_URL = previous;
+    for (const key of keys) {
+      if (previous[key] === undefined) delete process.env[key];
+      else process.env[key] = previous[key];
+    }
   }
 });

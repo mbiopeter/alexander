@@ -125,7 +125,7 @@ export function AnalyticsTracker() {
             if (!section || viewed.has(section)) continue;
             viewed.add(section);
             trackEvent("section_view", { ...basic, section_name: section });
-            observer.unobserve(node);
+            observer?.unobserve(node);
           }
         }, { threshold: 0.12 })
       : null;

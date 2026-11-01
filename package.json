@@ -14,7 +14,7 @@
     "check:config": "node --import tsx scripts/check-config.ts",
     "test": "node --import tsx scripts/run-tests.mjs",
     "setup": "node scripts/setup.mjs",
-    "build:ready": "npm run check:config && npm run build",
+    "build:ready": "npm run check:config:build && npm run build",
     "setup:editor": "node scripts/copy-monaco.mjs",
     "postinstall": "node scripts/copy-monaco.mjs",
     "start": "next start",
@@ -22,7 +22,9 @@
     "assets:sources": "python3 scripts/export-project-sources.py",
     "test:mbiotrade": "node --test tests/mbiotrade-landing.test.mjs",
     "test:public-projects": "node --test tests/mbiotrade-landing.test.mjs",
-    "test:analytics": "node --import tsx --test tests/analytics-and-seo.test.mjs"
+    "test:analytics": "node --import tsx --test tests/analytics-and-seo.test.mjs",
+    "check:config:build": "node --import tsx scripts/check-config.ts --allow-unconfigured",
+    "build:strict": "npm run check:config && npm run build"
   },
   "dependencies": {
     "@fontsource-variable/dm-sans": "^5.2.0",
@@ -45,5 +47,8 @@
     "tailwindcss": "4.3.3",
     "tsx": "^4.20.0",
     "typescript": "^5.9.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
   }
 }

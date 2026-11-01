@@ -13,6 +13,8 @@ import {
 import { resolveWhatsAppConfiguration } from "../src/lib/whatsapp";
 
 // Match `next build` while keeping private WhatsApp settings on the server.
+// Build mode warns about missing integrations; strict mode requires live destinations.
+const allowUnconfigured = process.argv.includes("--allow-unconfigured");
 loadEnvConfig(process.cwd(), false);
 
 type Check = {
@@ -68,6 +70,7 @@ const checks: Check[] = [
 ];
 
 let failures = 0;
+let missingDestinations = 0;
 
 const whatsapp = resolveWhatsAppConfiguration({
   WHATSAPP_USERNAME: process.env.WHATSAPP_USERNAME,
@@ -76,11 +79,16 @@ const whatsapp = resolveWhatsAppConfiguration({
   NEXT_PUBLIC_WHATSAPP_NUMBER: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER,
 });
 if (whatsapp.status === "missing") {
-  failures += 1;
-  console.error("\nMissing WhatsApp destination");
-  console.error(
-    "  Set WHATSAPP_USERNAME to your active WhatsApp username, or WHATSAPP_NUMBER to your international number (8–15 digits, no + or spaces).",
-  );
+  if (allowUnconfigured) {
+    missingDestinations += 1;
+    console.warn("\nWhatsApp is not configured. Its contact action stays disabled until a real destination is supplied.");
+  } else {
+    failures += 1;
+    console.error("\nMissing WhatsApp destination");
+    console.error(
+      "  Set WHATSAPP_USERNAME to your active WhatsApp username, or WHATSAPP_NUMBER to your international number (8–15 digits, no + or spaces).",
+    );
+  }
 } else if (whatsapp.status === "invalid") {
   failures += 1;
   console.error(`\nInvalid ${whatsapp.key}`);
@@ -98,6 +106,12 @@ if (whatsapp.status === "missing") {
 for (const check of checks) {
   const value = process.env[check.key]?.trim() ?? "";
   if (!value && !check.required) continue;
+
+  if (!value && check.required && allowUnconfigured) {
+    missingDestinations += 1;
+    console.warn(`\n${check.key} is not configured. Its corresponding link will remain disabled.`);
+    continue;
+  }
 
   if (!value || !check.validate(value)) {
     failures += 1;
@@ -117,6 +131,13 @@ if (failures > 0) {
     `\nConfiguration needs ${failures} correction${failures === 1 ? "" : "s"}. Update .env.local or your hosting environment and run this check again.`,
   );
   process.exitCode = 1;
+} else if (missingDestinations > 0) {
+  console.warn(
+    `\nBuild configuration is valid, but ${missingDestinations} contact/support destination${missingDestinations === 1 ? " is" : "s are"} missing. These controls will remain disabled.`,
+  );
+  console.warn(
+    "Before publishing with every feature enabled, supply your real values and run npm run check:config.",
+  );
 } else {
   console.log(
     "WhatsApp contact, tutorial, and payment destinations are configured.",

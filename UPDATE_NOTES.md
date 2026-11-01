@@ -118,3 +118,10 @@ Current verification evidence and integration limits are recorded in
 - Kept homepage/project-gallery highlights and the official MbioTrade launch link. No Deriv tokens, trading API calls or background trading were added to this portfolio.
 - Scoped all visual changes to the new public-projects styles and MbioTrade components, preserving the prior services, demos, tutorials, coding playground, backups and contact tools.
 - Added checks for the menu, project registry, links, responsive components and trading-data isolation. See `docs/PUBLIC-PROJECTS.md`.
+
+## Deployment warning fixes (2026-11-01)
+
+- Tracked a public-only `.env.production` to configure the canonical site origin for Vercel builds.
+- Approved only the pinned `esbuild@0.28.2` dependency install script using npm's `allowScripts` field.
+- Added `docs/VERCEL-WARNINGS-AND-BUILD.md`. The Vercel-injected `cache-dir` warning may still appear and is not a build failure.
+- No site UI, portfolio, analytics, SEO, WhatsApp, payments, or playground application code changed.

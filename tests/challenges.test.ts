@@ -145,7 +145,18 @@ test("every listed language has complete exercise materials", () => {
     assert.ok(
       challenge.prompt && challenge.inputFormat && challenge.outputFormat,
     );
-    for (const language of LANGUAGES) {
+    
+test("generated multiples fixtures agree with integer division", () => {
+  for (const challenge of CHALLENGES.filter((entry) => entry.id.startsWith("count-multiples-"))) {
+    const divisor = Number(challenge.id.split("-").at(-1));
+    for (const fixture of challenge.tests) {
+      const n = Number(fixture.input.trim());
+      assert.equal(fixture.expected, String(Math.floor(n / divisor)), `${challenge.id}/${fixture.id}`);
+    }
+  }
+});
+
+for (const language of LANGUAGES) {
       assert.ok(challenge.starter[language.id].includes("TODO"));
       assert.ok(challenge.solution[language.id].trim());
     }
