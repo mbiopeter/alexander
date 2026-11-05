@@ -3463,7 +3463,7 @@ body[data-practice-focus="true"] { scroll-padding-top: 16px; }
   .hero-art { height: 335px; }
 }
 
-/* mbioTraders-inspired dark palette for the original portfolio components.
+/* Dark palette refinements for the existing portfolio components.
    Existing layout, functionality and light mode stay untouched. */
 :root[data-theme="dark"] .editor-window { background:#071927; border-color:#234557; color:#cbebe6; }
 :root[data-theme="dark"] .editor-chrome { background:#0b2735; border-color:#214557; color:#a3c9ca; }

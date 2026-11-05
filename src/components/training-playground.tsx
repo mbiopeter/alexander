@@ -1,6 +1,6 @@
 "use client";
 
-import dynamic from "next/dynamic";
+import CodeEditor from "@/components/editor-loader";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -58,17 +58,6 @@ import { useTheme } from "@/context/theme-context";
 import type { RunReport, TestResult } from "@/lib/runner";
 import { TheoryQuiz } from "@/components/theory-quiz";
 import { trackEvent } from "@/lib/analytics";
-
-const CodeEditor = dynamic(() => import("./code-editor"), {
-  ssr: false,
-  loading: () => (
-    <div
-      role="status"
-      className="grid h-120 place-items-center rounded-2xl border border-(--pg-border) bg-(--pg-panel) text-sm text-(--pg-muted)">
-      Preparing your workspace…
-    </div>
-  ),
-});
 
 const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/+$/, "");
 const languageBadges: Record<LanguageId, { badge: string; color: string }> = {

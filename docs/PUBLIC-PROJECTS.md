@@ -1,17 +1,19 @@
 # Public Projects — Mbiopeter
 
-The original **Projects** page (`/projects/`) continues to list three interactive portfolio demos. The separate **Public Projects** menu lists real independently deployed applications, using `src/data/public-projects.ts` as the single source of truth.
+The main `/projects/` page continues to list three interactive portfolio demos.
+The separate `/public-projects/` directory is reserved for independently deployed applications.
 
-## Navigation
+## Current behavior
 
-- Desktop: hover over or click **Public Projects** to open its dropdown. Press Escape or click elsewhere to dismiss it.
-- Mobile: open the main navigation and expand **Public Projects**.
-- `/public-projects/` lists registered public apps, linked from the dropdown and footer.
-- Currently listed: **mbioTraders**, showcased at `/mbiotrade/` and launched at **https://traders.mbiopeter.co.ke/**.
+No standalone applications are currently listed. The directory provides an honest
+empty state with a link back to the existing interactive project gallery.
+Until at least one application is registered, the Public Projects desktop and
+mobile navigation items are hidden, and the empty directory is excluded from the
+sitemap and marked `noindex`.
 
-## Add another app
+## Add a future public application
 
-Add a second object to `publicProjects`:
+Add a verified entry to `src/data/public-projects.ts` with these fields:
 
 ```ts
 {
@@ -25,10 +27,9 @@ Add a second object to `publicProjects`:
 }
 ```
 
-Create a matching `src/app/your-app/page.tsx` to showcase the product. The menu, public project directory and sitemap update automatically. Until a custom visual exists, the directory displays a generic placeholder for other projects.
+Create a matching `src/app/your-app/page.tsx` if it needs its own portfolio page.
+The directory, desktop/mobile navigation and sitemap then update from the same registry.
+Only publish verified URLs and accurate app descriptions. The directory displays a
+generic preview until a custom one is deliberately implemented.
 
-## mbioTraders showcase
-
-The redesigned site uses the uploaded dashboard reference as an *illustrative image*, not a fake live feed. It explains signal strength, the Gold/forex instruments, six timeframes, higher-timeframe momentum and audible setup alerts. The live mbioTraders application is signal-only and does not send broker orders.
-
-Run `npm run test:mbiotrade` after updating the registry or showcase; verify the launch URL, all four interactive product-tour tabs, the Public Projects dropdown and accordion, and light/dark theme readability.
+Use `npm run test:public-projects` to check registry, navigation, SEO and removal safeguards.

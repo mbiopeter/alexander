@@ -18,7 +18,6 @@ import {
 } from "@/components/page-ui";
 import { DestinationLink } from "@/components/destination-link";
 import { ProjectCard } from "@/components/projects/project-card";
-import { MbiotradeFeature } from "@/components/mbiotrade-feature";
 import { services } from "@/data/services";
 import { projects } from "@/data/projects";
 
@@ -116,14 +115,11 @@ export function HomePage() {
             ))}
 
           </div>
-          <Reveal>
-            <MbiotradeFeature />
-          </Reveal>
           <div className="section-endnote">
 
             <p>
-              The three interactive demos were built for this site. mbioTraders
-              is a separate signal-only application.
+              All three interactive demos were built for this site. Explore their
+              implementation notes, try them in your browser, and review the source.
             </p>
             <Link href="/projects/" className="text-link">
               View the project gallery <ArrowRight size={17} />

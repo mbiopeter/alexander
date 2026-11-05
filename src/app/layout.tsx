@@ -4,21 +4,15 @@ import "@fontsource-variable/dm-sans";
 import "@fontsource-variable/manrope";
 import "./globals.css";
 import "@/styles/playground.css";
-import "@/styles/mbiotrade.css";
 import "@/styles/public-projects.css";
-import { Providers } from "@/components/providers";
-import { SiteShell } from "@/components/site-shell";
+import { ClientRoot } from "@/components/client-root";
 import { siteConfig } from "@/config/site";
 import { getSiteUrl, getGitHubUrl, getLinkedInUrl, getTikTokUrl } from "@/lib/links";
-import { THEME_INIT_SCRIPT } from "@/lib/theme";
-import { GoogleAnalytics } from "@next/third-parties/google";
-import { AnalyticsTracker } from "@/components/analytics-tracker";
-import { ANALYTICS_OPT_OUT_KEY, getAnalyticsId } from "@/lib/analytics";
+import { getAnalyticsId } from "@/lib/analytics";
 
 const siteUrl = getSiteUrl();
 const gaId = getAnalyticsId();
 const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim();
-const optOutInitScript = gaId ? `try { if (localStorage.getItem(${JSON.stringify(ANALYTICS_OPT_OUT_KEY)}) === "true") { window[${JSON.stringify(`ga-disable-${gaId}`)}] = true; } } catch (e) {}` : null;
 const structuredProfile = siteUrl ? {
   "@context": "https://schema.org",
   "@graph": [
@@ -76,28 +70,21 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
-
       <head>
-
-        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
-        {structuredProfile && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredProfile).replace(/</g, "\\u003c") }} />}
-        {optOutInitScript && <script dangerouslySetInnerHTML={{ __html: optOutInitScript }} />}
-
+        {structuredProfile && (
+          <script
+            id="mbiopeter-structured-data"
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredProfile).replace(/</g, "\\u003c") }}
+          />
+        )}
       </head>
       <body>
-        {gaId && <GoogleAnalytics gaId={gaId} />}
-        <a href="#main" className="skip-link">
-          Skip to content
-        </a>
-        <Providers>
-          {gaId && <AnalyticsTracker />}
-
-          <SiteShell>{children}</SiteShell>
-
-        </Providers>
-
+        <a href="#main" className="skip-link">Skip to content</a>
+        <ClientRoot analyticsId={gaId} structuredProfile={structuredProfile}>
+          {children}
+        </ClientRoot>
       </body>
-      
     </html>
   );
 }

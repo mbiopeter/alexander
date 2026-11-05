@@ -30,6 +30,7 @@ export function AnalyticsTracker() {
     const pagePath = pathname || "/";
     const pageTitle = document.title.slice(0, 100);
     const basic = { page_path: pagePath };
+    trackEvent("page_view", { ...basic, page_title: pageTitle, page_location: `${window.location.origin}${pagePath}` });
     trackEvent("route_view", { ...basic, page_title: pageTitle });
 
     const sentDepths = new Set<number>();
@@ -82,13 +83,6 @@ export function AnalyticsTracker() {
       if (element instanceof HTMLSelectElement) kind = "select";
       else if (element instanceof HTMLInputElement && ["checkbox", "radio", "range"].includes(element.type)) kind = element.type;
       if (kind) trackEvent("ui_change", { ...basic, section_name: getContext(element), control_type: kind });
-    };
-
-    const onToggle = (event: Event) => {
-      const el = event.target;
-      if (!(el instanceof HTMLDetailsElement) || !el.open || !el.classList.contains("mbio-faq-item")) return;
-      const items = Array.from(el.parentElement?.querySelectorAll(":scope > details.mbio-faq-item") || []);
-      trackEvent("mbiotraders_faq_open", { ...basic, question_number: items.indexOf(el) + 1 });
     };
 
     const onSubmit = (event: Event) => {
@@ -145,7 +139,6 @@ export function AnalyticsTracker() {
     document.addEventListener("focusin", onFocusIn, true);
     document.addEventListener("submit", onSubmit, true);
     document.addEventListener("change", onChange, true);
-    document.addEventListener("toggle", onToggle, true);
     document.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
@@ -154,7 +147,6 @@ export function AnalyticsTracker() {
       document.removeEventListener("focusin", onFocusIn, true);
       document.removeEventListener("submit", onSubmit, true);
       document.removeEventListener("change", onChange, true);
-      document.removeEventListener("toggle", onToggle, true);
       document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener("scroll", onScroll);
       observer?.disconnect();

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import {
   analyticsOptedOut,
@@ -111,8 +111,13 @@ test("global tracker includes SPA routing, event delegation, scroll, section vie
   assert.match(tracker, /IntersectionObserver/);
   assert.match(tracker, /querySelectorAll.*section\[id\]/);
   assert.doesNotMatch(tracker, /\.value\b|\.textContent\b|\.innerText\b/);
-  assert.match(read("src/app/layout.tsx"), /<GoogleAnalytics gaId=\{gaId\}/);
-  assert.match(read("src/app/layout.tsx"), /<AnalyticsTracker\s*\/>/);
+  const layout = read("src/app/layout.tsx");
+  const browserBoot = read("src/lib/browser-boot.ts");
+  assert.match(browserBoot, /mbiopeter-google-tag/);
+  assert.match(browserBoot, /googletagmanager\.com\/gtag\/js/);
+  assert.match(browserBoot, /send_page_view: false/);
+  assert.match(tracker, /trackEvent\("page_view"/);
+  assert.match(read("src/components/client-root.tsx"), /<AnalyticsTracker\s*\/>/);
 });
 
 test("specialized funnels include actual project, code, quiz and contact actions", () => {
@@ -121,33 +126,48 @@ test("specialized funnels include actual project, code, quiz and contact actions
     ["src/components/training-playground.tsx", "playground_run_complete"],
     ["src/components/theory-quiz.tsx", "quiz_complete"],
     ["src/components/projects/projects-explorer.tsx", "project_filter"],
-    ["src/components/mbiotrade-tour.tsx", "mbiotraders_tour_tab"],
   ]) assert.match(read(file), new RegExp(event));
 });
 
-test("SEO includes explicit mbioTraders indexing, structured data, robots and Search Console support", () => {
+test("SEO keeps live portfolio pages, canonical sitemap and Search Console integration", () => {
   const sitemap = read("src/app/sitemap.ts");
-  assert.match(sitemap, /"\/mbiotrade\/"/);
+  assert.match(sitemap, /"\/services\/"/);
+  assert.match(sitemap, /"\/projects\/"/);
   assert.match(sitemap, /new Set\(routes\)/);
+  assert.match(sitemap, /publicProjects\.length/);
   assert.match(read("src/app/robots.ts"), /sitemap:/);
-  assert.match(read("src/app/mbiotrade/page.tsx"), /SoftwareApplication/);
-  assert.match(read("src/app/mbiotrade/page.tsx"), /BreadcrumbList/);
-  assert.match(read("src/app/mbiotrade/page.tsx"), /FAQPage/);
   assert.match(read("src/app/layout.tsx"), /NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION/);
+  assert.match(read("src/app/layout.tsx"), /applicationName: "Mbiopeter"/);
 });
 
-test("product page advertises existing v34 features and retains a real downloadable guide", () => {
-  const page = read("src/app/mbiotrade/page.tsx");
-  for (const term of ["BTC/USD", "60%", "5m", "15m", "30m", "1H", "4H", "1D", "Kraken", "Install App", "2R", "CSV"]) {
-    assert.ok(page.includes(term), `missing product feature: ${term}`);
-  }
-  assert.ok(existsSync(resolve("public/downloads/mbiotraders-signal-guide.pdf")));
-  assert.match(page, /href="\/downloads\/mbiotraders-signal-guide\.pdf"/);
+test("independent public project directory has a truthful empty state", () => {
+  const source = read("src/app/public-projects/page.tsx");
+  assert.match(source, /publicProjects\.length === 0/);
+  assert.match(source, /No standalone releases listed right now/);
+  assert.match(source, /index: false/);
+  assert.match(read("src/components/site-shell.tsx"), /publicProjects\.length > 0/);
 });
 
 test("privacy and opt-out are present without changing core design files", () => {
   assert.match(read("src/app/privacy/page.tsx"), /AnalyticsPreferences/);
   assert.match(read("src/lib/analytics.ts"), /ANALYTICS_OPT_OUT_KEY/);
-  assert.match(read("src/app/layout.tsx"), /optOutInitScript/);
-  assert.match(read("src/app/layout.tsx"), /styles\/mbiotrade\.css/);
+  assert.match(read("src/lib/browser-boot.ts"), /analyticsOptOutKey/);
+  assert.match(read("src/app/layout.tsx"), /styles\/playground\.css/);
+});
+
+
+test("root bootstraps without executable React script elements and keeps JSON-LD SEO", () => {
+  const layout = read("src/app/layout.tsx");
+  const boot = read("src/lib/browser-boot.ts");
+  const packageFile = JSON.parse(read("package.json"));
+  const lock = JSON.parse(read("package-lock.json"));
+  assert.match(layout, /import \{ ClientRoot \} from "@\/components\/client-root"/);
+  assert.match(layout, /type="application\/ld\+json"/);
+  assert.doesNotMatch(layout, /<Script\b|strategy="beforeInteractive"/);
+  assert.doesNotMatch(layout, /<script[^>]*__html: THEME_INIT_SCRIPT/);
+  assert.match(boot, /document\.createElement\("script"\)/);
+  assert.match(boot, /send_page_view: false/);
+  assert.equal(packageFile.dependencies["@next/third-parties"], undefined);
+  assert.equal(lock.packages[""].dependencies["@next/third-parties"], undefined);
+  assert.equal(lock.packages["node_modules/@next/third-parties"], undefined);
 });

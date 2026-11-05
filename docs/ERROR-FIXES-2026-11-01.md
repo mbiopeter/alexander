@@ -1,6 +1,6 @@
 # Website build and playground checks — November 1, 2026
 
-This release keeps the current portfolio design, contact flows, Google Analytics event collection, SEO pages, and mbioTraders showcase unchanged.
+This release keeps the current portfolio design, contact flows, Google Analytics event collection, and SEO pages unchanged.
 
 ## Fixed source and test problems
 

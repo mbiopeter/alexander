@@ -1,6 +1,6 @@
 ## Analytics and search visibility (new)
 
-Google Analytics 4 events, privacy controls, updated mbioTraders documentation, structured data, and sitemap configuration are described in **[docs/ANALYTICS-AND-SEO.md](docs/ANALYTICS-AND-SEO.md)**. Set `NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX` locally or in Vercel (your own public Measurement ID), then redeploy. Run `npm run test:analytics` for the dedicated event/SEO regression suite.
+Google Analytics 4 events, privacy controls, structured data, and sitemap configuration are described in **[docs/ANALYTICS-AND-SEO.md](docs/ANALYTICS-AND-SEO.md)**. Set `NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX` locally or in Vercel (your own public Measurement ID), then redeploy. Run `npm run test:analytics` for the dedicated event/SEO regression suite.
 
 # Mbiopeter — developer, creator & coding playground · 2.4.0
 
@@ -110,8 +110,7 @@ The coffee actions still open your hosted Paystack payment page. Configure the r
 | `/services/python-automation/` | Automation for data, files and reports.                                                            |
 | `/services/debugging/`         | Diagnosis, fixes and code review.                                                                  |
 | `/services/maintenance/`       | Maintenance and improvements.                                                                      |
-| `/public-projects/`            | Directory of independently deployed apps, starting with mbioTraders.                              |
-| `/mbiotrade/`                  | Detailed mbioTraders landing page with interactive illustrative feature tour.                     |
+| `/public-projects/`            | Reserved directory for independently deployed apps (currently no listed releases).                |
 | `/projects/`                   | Searchable and filterable project examples.                                                        |
 | `/projects/focusboard/`        | Task board, local persistence, detailed build notes and downloadable source.                        |
 | `/projects/django-api-lab/`    | Labelled API simulation, build decisions and downloadable source.                                  |
@@ -191,25 +190,21 @@ Use Vercel’s Next.js preset, Netlify’s Next.js runtime, or a Node host. The 
 - [WhatsApp click to chat](https://faq.whatsapp.com/5913398998672934)
 - [Paystack Payment Pages](https://support.paystack.com/en/articles/2132546)
 
-## Featured public project: mbioTraders
+## Public projects and portfolio design
 
-The portfolio now features **[mbioTraders](/mbiotrade/)**, a standalone market-signal dashboard launched at **https://traders.mbiopeter.co.ke/**. It is **signals only**: charts, a technical-strength gauge, multi-timeframe momentum and audible setup alerts. It does **not** place orders or connect to trading accounts.
+The existing portfolio demos, learning materials, coding playground, services, enquiry
+and support features are preserved. The standalone public-project directory is
+available for future releases and does not advertise unavailable projects.
+The original light and navy/emerald dark themes remain available.
 
-The updated project page uses the supplied dashboard design as a clearly labelled illustrative preview, with an interactive four-section product tour. Home, Projects and Public Projects remain connected to one official live URL in `src/data/public-projects.ts`.
-
-The site-wide **dark theme** now uses mbioTraders-inspired navy/emerald colors. The original light mode, services, interactive demos, coding playground, contact forms, WhatsApp/Paystack features, and navigation are retained.
-
-Read `docs/MBIOTRADE-LANDING.md` and `docs/PUBLIC-PROJECTS.md` for instructions. The portfolio is hosted at **https://mbiopeter.co.ke**; this is not the same deployment as mbioTraders.
-
-## Current update — mbioTraders showcase and dark theme
-
-- Professional launch page, full screenshot preview, interactive product-tour crops and accurate signal-only copy.
-- Dark-theme navbar, buttons, cards and code illustration use emerald accents on navy surfaces.
-- Official launch URL updated to `https://traders.mbiopeter.co.ke/` everywhere it is configured.
-- Original website pages and functionality remain in the complete source archive.
+See `docs/PUBLIC-PROJECTS.md` for adding a new independent application.
 
 ## Local build and release checks
 
 `npm run build:ready` lets the application compile before you have configured WhatsApp, TikTok or Paystack. Missing destinations are clearly reported and their controls remain disabled; **invalid supplied values still stop the build**. Before publicly enabling all integrations, set real values in `.env.local` or your host settings and run `npm run check:config` (or `npm run build:strict`). Do not commit `.env.local` or fill it with invented account links.
 
 The corrected generated "count multiples" exercise fixtures now match the published integer-division solutions. The code runner readiness test now reflects the existing public Judge0 CE default without implying that the remote provider is currently online.
+
+### Browser runtime fix
+
+The site no longer renders executable scripts as React elements. A single client root initializes the existing theme controls and loads the GA4 tag once through a browser effect, while the root layout retains server-rendered, non-executable JSON-LD for SEO. Before testing a replacement checkout, remove the old `.next` cache with `rm -rf .next`; then run `npm ci`, `npm run check`, `npm run build:ready`, and `npm run dev`.

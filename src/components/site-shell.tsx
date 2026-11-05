@@ -121,7 +121,7 @@ function Header() {
                 aria-current={activePath(pathname, link.href) ? "page" : undefined}>
                 {link.label}
               </Link>
-              {link.href === "/projects/" && (
+              {link.href === "/projects/" && publicProjects.length > 0 && (
                 <div
                   ref={publicMenuRef}
                   className="nav-projects"
@@ -209,7 +209,7 @@ function Header() {
                 aria-current={activePath(pathname, link.href) ? "page" : undefined}>
                 {link.label}<ArrowUpRight size={17} />
               </Link>
-              {link.href === "/projects/" && (
+              {link.href === "/projects/" && publicProjects.length > 0 && (
                 <div className="mobile-public-projects">
                   <button
                     type="button"
@@ -309,7 +309,7 @@ function Footer() {
                   {link.label}
                 </Link>
               ))}
-              <Link href="/public-projects/">Public Projects</Link>
+              {publicProjects.length > 0 && <Link href="/public-projects/">Public Projects</Link>}
               <Link href="/notes/">Notes &amp; resources</Link>
             </nav>
           </div>

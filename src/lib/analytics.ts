@@ -34,7 +34,7 @@ export function setAnalyticsOptOut(disabled: boolean): boolean {
   try {
     window.localStorage.setItem(ANALYTICS_OPT_OUT_KEY, String(disabled));
     const id = getAnalyticsId();
-    if (id) (window as Window & Record<string, unknown>)[`ga-disable-${id}`] = disabled;
+    if (id) Reflect.set(window, `ga-disable-${id}`, disabled);
     return true;
   } catch {
     return false;

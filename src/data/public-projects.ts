@@ -13,14 +13,4 @@ export type PublicProject = {
   status: "Live" | "Preview";
 };
 
-export const publicProjects: PublicProject[] = [
-  {
-    slug: "mbiotrade",
-    name: "mbioTraders",
-    category: "Market intelligence",
-    description: "An installable signal dashboard for Gold, five forex pairs and BTC/USD with 5-minute entry confirmation, real browser notifications, economic-news safeguards and signal history.",
-    href: "/mbiotrade/",
-    liveUrl: "https://traders.mbiopeter.co.ke/",
-    status: "Live",
-  },
-];
+export const publicProjects: PublicProject[] = [];

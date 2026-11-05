@@ -1,10 +1,3 @@
-## Current update — mbioTraders redesign and navy/emerald dark theme
-
-- Refreshed `/mbiotrade/` for the current **signal-only** mbioTraders app at `https://traders.mbiopeter.co.ke/`.
-- Added optimized dashboard images from the uploaded design, a redesigned hero, accurate feature explanations, an interactive keyboard-accessible four-tab tour and metadata preview.
-- Updated the site-wide dark theme from lime-on-charcoal to emerald-on-navy while preserving the old light theme.
-- Preserved all existing portfolio functions, public project navigation, demos, playground, services and contact/payment settings.
-
 # Mbiopeter 2.1.0 — update notes
 
 This update builds on the existing portfolio design and features. The green/ink
@@ -102,26 +95,18 @@ Current verification evidence and integration limits are recorded in
 - Practice now shows a session score and every code run reports passed test cases plus a percentage score.
 - The code runner defaults to the public Judge0 CE community endpoint, so no API key is required. Optional custom Judge0 endpoints and authentication remain supported.
 
-## v2.2.0 — MbioTrade portfolio landing
+## Current portfolio cleanup
 
-- Added responsive `/mbiotrade/` project landing matching the existing portfolio theme.
-- Added an interactive illustrative chart preview and links to `https://mbiotrade.vercel.app/`.
-- Featured MbioTrade on the homepage and Projects page; linked it in desktop/mobile navigation, footer, and sitemap.
-- Preserved the three original interactive demos and all existing integrations, pages and playground functionality.
-- Added `docs/MBIOTRADE-LANDING.md` and dependency-free integration tests.
+The independent-app directory remains available for future releases, while the
+navigation hides it when there are no standalone apps listed. Core portfolio
+features, the coding playground, interactive demos, analytics, SEO, and the
+existing light and dark styles are retained.
 
-## v2.3.0 — Public Projects dropdown and detailed MbioTrade showcase
 
-- Replaced the single MbioTrade nav tab with **Public Projects** in the desktop navigation (hover/click) and mobile navigation (expand/collapse).
-- Added `/public-projects/` as a directory sourced from `src/data/public-projects.ts`. Future public apps can be added in the registry without rewriting the navigation.
-- Redesigned `/mbiotrade/` with interactive four-screen tour panels, enhanced strategy cards, broker-sync and optional worker sections, and clear FAQ/safety notes.
-- Kept homepage/project-gallery highlights and the official MbioTrade launch link. No Deriv tokens, trading API calls or background trading were added to this portfolio.
-- Scoped all visual changes to the new public-projects styles and MbioTrade components, preserving the prior services, demos, tutorials, coding playground, backups and contact tools.
-- Added checks for the menu, project registry, links, responsive components and trading-data isolation. See `docs/PUBLIC-PROJECTS.md`.
+## Browser loading stability follow-up
 
-## Deployment warning fixes (2026-11-01)
-
-- Tracked a public-only `.env.production` to configure the canonical site origin for Vercel builds.
-- Approved only the pinned `esbuild@0.28.2` dependency install script using npm's `allowScripts` field.
-- Added `docs/VERCEL-WARNINGS-AND-BUILD.md`. The Vercel-injected `cache-dir` warning may still appear and is not a build failure.
-- No site UI, portfolio, analytics, SEO, WhatsApp, payments, or playground application code changed.
+- Added a named `ClientRoot` export for the root App Router client boundary.
+- Replaced React lazy/dynamic Monaco loading with an effect-driven module loader and functional plain-text fallback.
+- Added a root rendering error screen with a reload action.
+- Analytics, SEO, portfolio projects, themes and contact features remain in place.
+- Browser reproduction and full production verification must be completed in the target environment. See `docs/CLIENT-RUNTIME-FIX.md`.
